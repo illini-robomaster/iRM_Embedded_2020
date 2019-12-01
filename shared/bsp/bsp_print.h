@@ -9,11 +9,11 @@ extern "C" {
 
 #include "printf.h" // third party tiny-printf implemnetations
 
-  /**
-   * @brief initialize print utility via UART
-   *
-   * @param huart uart handle
-   */
+/**
+ * @brief initialize print utility via UART
+ *
+ * @param huart uart handle
+ */
 void bsp_print_init(UART_HandleTypeDef *huart);
 
 #ifdef __cplusplus

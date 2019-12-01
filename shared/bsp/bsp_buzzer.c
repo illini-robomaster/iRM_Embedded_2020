@@ -4,7 +4,7 @@
 static pwm_t buzzer_pwm;
 
 void buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, 
-      uint32_t clock_freq) {
+    uint32_t clock_freq) {
   pwm_init(&buzzer_pwm, htim, channel, clock_freq, 0, 0); 
 }
 
