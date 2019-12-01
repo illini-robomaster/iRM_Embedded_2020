@@ -51,11 +51,11 @@ void fifo_s_destory(fifo_s_t* pfifo) {
     ASSERT(NULL != pfifo);
     ASSERT(NULL != pfifo->start_addr);
     //! free FIFO memory
-    free(pfifo->start_addr);
+    vPortFree(pfifo->start_addr);
     //! delete mutex
     osMutexDelete(pfifo->mutex);
     //! free FIFO Control Block memory.
-    free(pfifo);
+    vPortFree(pfifo);
     return;
 }
 
