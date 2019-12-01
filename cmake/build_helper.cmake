@@ -1,11 +1,12 @@
 function(irm_add_arm_executable name)
-    cmake_parse_arguments(ARG "" "TARGET" "DEPENDS;SOURCES" ${ARGN})
+    cmake_parse_arguments(ARG "" "TARGET" "INCLUDES;DEPENDS;SOURCES" ${ARGN})
     set(HEX_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.hex)
     set(BIN_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.bin)
     set(MAP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.map)
 
     add_executable(${name}.elf ${ARG_SOURCES})
     target_link_libraries(${name}.elf PRIVATE ${ARG_DEPENDS} ${ARG_TARGET})
+    target_include_directories(${name}.elf PRIVATE ${ARG_INCLUDES})
     target_link_options(${name}.elf PRIVATE -Wl,-Map=${MAP_FILE})
 
     add_custom_command(TARGET ${name}.elf POST_BUILD
