@@ -1,0 +1,1 @@
+add_subdirectory(DJI_Board_TypeA)
