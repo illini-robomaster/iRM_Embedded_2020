@@ -39,6 +39,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_C_FLAGS "${COMMON_FLAGS} -std=gnu99")
 set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -std=gnu++11")
 
+# Debug flags
 set(CMAKE_C_FLAGS_DEBUG "-Og -g -DDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g -DDEBUG")
 
+# Relase flags defaults to -O3 -DNDEBUG

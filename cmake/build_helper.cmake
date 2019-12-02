@@ -18,6 +18,22 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
+## irm_add_arm_executable(<name>
+#                         TARGET <board_specific_driver_library>
+#                         SOURCES <src1>.c <src2>.cc <src3> ...
+#                         [DEPENDS <dep1> <dep2> ...]
+#                         [INCLUDES <inc1> <inc2> ...])
+#
+#   helper function for generating arm executables <name>.elf, <name>.bin, <name>.hex
+#   `flash-<name>` (and optionally `debug-<name>` in debug build) will be created as 
+#   shortcuts command to flash via stlink-utils and launching gdb 
+#   
+#   e.g. irm_add_arm_executable(hero TARGET DJI_Board_TypeA ...) creates shortcuts
+#   target named `flash-hero` and `debug-hero`. Running the targets in command line
+#   is as easy as 
+#
+#   `make flash-hero` and / or `make debug-hero`
+#
 function(irm_add_arm_executable name)
     cmake_parse_arguments(ARG "" "TARGET" "INCLUDES;DEPENDS;SOURCES" ${ARGN})
     set(HEX_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.hex)
