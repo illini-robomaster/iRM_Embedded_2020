@@ -18,9 +18,16 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-add_subdirectory(third_party)
-add_subdirectory(bsp)
+file(GLOB_RECURSE BSP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/bsp/*.c)
+file(GLOB_RECURSE THIRD_PARTY_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.c)
 
-add_library(rm_shared INTERFACE)
-target_link_libraries(rm_shared INTERFACE third_party bsp)
+set(IRM_SOURCES ${THIRD_PARTY_SOURCES} ${BSP_SOURCES})
+set(IRM_INCLUDES
+    ${CMAKE_CURRENT_SOURCE_DIR}/bsp
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
+
+irm_add_board_specific_library(DJI_Board_TypeA_irm
+    TARGET DJI_Board_TypeA
+    SOURCES ${IRM_SOURCES}
+    INCLUDES ${IRM_INCLUDES})
 

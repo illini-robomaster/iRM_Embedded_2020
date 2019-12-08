@@ -107,7 +107,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
 // NOTE(alvin): bsp library should overwrite this weak function
-__weak void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len);
+void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len);
 /* USER CODE END EXPORTED_FUNCTIONS */
 
 /**

@@ -20,9 +20,9 @@
 
 ## irm_add_arm_executable(<name>
 #                         TARGET <board_specific_driver_library>
-#                         SOURCES <src1>.c <src2>.cc <src3> ...
-#                         [DEPENDS <dep1> <dep2> ...]
-#                         [INCLUDES <inc1> <inc2> ...])
+#                         SOURCES <src1>.c [<src2>.cc <src3>.s ...]
+#                         [DEPENDS <dep1> ...]
+#                         [INCLUDES <inc1> ...])
 #
 #   helper function for generating arm executables <name>.elf, <name>.bin, <name>.hex
 #   `flash-<name>` (and optionally `debug-<name>` in debug build) will be created as 
@@ -35,13 +35,14 @@
 #   `make flash-hero` and / or `make debug-hero`
 #
 function(irm_add_arm_executable name)
-    cmake_parse_arguments(ARG "" "TARGET" "INCLUDES;DEPENDS;SOURCES" ${ARGN})
+    cmake_parse_arguments(ARG "" "TARGET" "SOURCES;INCLUDES;DEPENDS" ${ARGN})
     set(HEX_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.hex)
     set(BIN_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.bin)
     set(MAP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.map)
 
     add_executable(${name}.elf ${ARG_SOURCES})
-    target_link_libraries(${name}.elf PRIVATE ${ARG_DEPENDS} ${ARG_TARGET})
+    target_link_libraries(${name}.elf 
+        PRIVATE ${ARG_DEPENDS} ${ARG_TARGET} ${ARG_TARGET}_irm)
     target_include_directories(${name}.elf PRIVATE ${ARG_INCLUDES})
     target_link_options(${name}.elf PRIVATE -Wl,-Map=${MAP_FILE})
 
@@ -61,4 +62,21 @@ function(irm_add_arm_executable name)
             DEPENDS ${name}.elf)
     endif()
 endfunction(irm_add_arm_executable)
+
+## irm_add_board_specific_library(<name>
+#                                 TARGET <board_specific_driver_library>
+#                                 SOURCES <src1>.c [<src2>.cc <src3>.s ...]
+#                                 [INCLUDES <inc1> ...]
+#                                 [DEPENDS <dep1> ...])
+#
+#   helper function for generating a board specific static library
+#   see shared/CMakeLists.txt for example usage
+function(irm_add_board_specific_library name)
+    cmake_parse_arguments(ARG "" "TARGET" "SOURCES;INCLUDES;DEPENDS" ${ARGN})
+    add_library(${name} ${ARG_SOURCES})
+    target_link_libraries(${name} 
+        PUBLIC ${ARG_TARGET}_interface
+        PRIVATE ${ARG_DEPENDS})
+    target_include_directories(${name} PUBLIC ${ARG_INCLUDES})
+endfunction(irm_add_board_specific_library)
 

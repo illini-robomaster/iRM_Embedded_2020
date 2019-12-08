@@ -32,7 +32,10 @@ set(MCU_LINKER_SCRIPT STM32F427IIHx_FLASH.ld)
 ######################################################
 add_library(${PROJECT_NAME}_interface INTERFACE)
 target_compile_definitions(${PROJECT_NAME}_interface INTERFACE
-    ${MCU_LINE} USE_HAL_DRIVER USE_HAL_TIM_REGISTER_CALLBACKS ARM_MATH_CM4)
+    ${MCU_LINE} ARM_MATH_CM4
+    USE_HAL_DRIVER
+    USE_HAL_TIM_REGISTER_CALLBACKS
+    USE_HAL_UART_REGISTER_CALLBACKS)
 target_compile_options(${PROJECT_NAME}_interface INTERFACE
     $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp>
     -mcpu=${MCU_ARCH} -mthumb -mthumb-interwork -mfpu=${MCU_FPU} -mfloat-abi=${MCU_FLOAT_ABI}
@@ -79,11 +82,9 @@ file(GLOB_RECURSE DRIVER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/*.c)
 file(GLOB_RECURSE MIDDLEWARE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/*.c)
 file(GLOB_RECURSE STARTUP_ASM ${CMAKE_CURRENT_SOURCE_DIR}/startup_stm32f427xx.s)
 
-add_library(${PROJECT_NAME}
-    ${FATFS_SOURCES} ${USB_SOURCES} ${DRIVER_SOURCES} ${MIDDLEWARE_SOURCES} ${STARTUP_ASM})
-# CORE_SOURCES are deferred to later compilation because it contains strong definitions
-# that overwrite weak symbols presented in STARTUP_ASM
-target_sources(${PROJECT_NAME} INTERFACE ${CORE_SOURCES})
+add_library(${PROJECT_NAME} OBJECT
+    ${CORE_SOURCES} ${FATFS_SOURCES} ${USB_SOURCES}
+    ${DRIVER_SOURCES} ${MIDDLEWARE_SOURCES} ${STARTUP_ASM})
 # ST libraries throws those warnings
 target_compile_options(${PROJECT_NAME} PRIVATE
     -Wno-maybe-uninitialized -Wno-unused-parameter -Wno-sign-compare)

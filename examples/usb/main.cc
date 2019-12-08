@@ -18,17 +18,15 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_PRINT_H_
-#define _BSP_PRINT_H_
+#include "main.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "bsp_usb.h"
 
-int print(const char *format, ...);
-
-#ifdef __cplusplus
+static void example_usb_callback(uint8_t *buf, uint32_t len) {
+  usb_transmit(buf, len);
 }
-#endif
 
-#endif // _BSP_PRINT_H_
+void RM_RTOS_Init(void) {
+  usb_init();
+  usb_register_callback(example_usb_callback);
+}

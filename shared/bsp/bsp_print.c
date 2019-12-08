@@ -19,17 +19,26 @@
  ****************************************************************************/
 
 #include "bsp_print.h"
+#include "bsp_usb.h"
 
-static UART_HandleTypeDef *bsp_print_port = NULL;
+#include "main.h"
+#include "printf.h" // third party tiny-printf implemnetations
 
-void bsp_print_init(UART_HandleTypeDef *huart) {
-  bsp_print_port = huart;
+#define MAX_PRINT_LEN 32
+
+int print(const char *format, ...) {
+#ifdef NDEBUG
+  UNUSED(format);
+  return 0;
+#else
+  char    buffer[MAX_PRINT_LEN];
+  va_list args; 
+  int     length;
+
+  va_start(args, format);
+  length = vsnprintf(buffer, MAX_PRINT_LEN, format, args);
+  va_end(args);
+
+  return usb_transmit((uint8_t*)buffer, length);  
+#endif
 }
-
-/* implement low level io for third party printf library */
-void _putchar(char ch) {
-  if (bsp_print_port) {
-    HAL_UART_Transmit(bsp_print_port, (uint8_t*)&ch, 1, 0xffff);
-  }
-}
-

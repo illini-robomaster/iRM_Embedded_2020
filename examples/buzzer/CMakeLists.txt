@@ -18,10 +18,8 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-project(bsp C)
+project(example_buzzer ASM C CXX)
 
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
-
-add_library(${PROJECT_NAME} INTERFACE)
-target_sources(${PROJECT_NAME} INTERFACE ${SOURCES})
-target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+irm_add_arm_executable(${PROJECT_NAME}
+    TARGET DJI_Board_TypeA
+    SOURCES main.cc)

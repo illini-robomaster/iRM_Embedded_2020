@@ -18,17 +18,25 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_PRINT_H_
-#define _BSP_PRINT_H_
+#include "main.h"
+#include "tim.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "bsp_buzzer.h"
 
-int print(const char *format, ...);
+static buzzer_freq_t startup[] = {
+  Mi3M, Silent, Mi3M, Silent, Mi3M, Silent, 
+  Do1M, Silent, Mi3M, Silent, 
+  So5M, Silent, So5L, Silent, 
+  Finish,
+};
 
-#ifdef __cplusplus
+static uint32_t startup_delay[] = {
+  80, 80, 80, 240, 80, 240,
+  80, 80, 80, 240, 
+  80, 560, 80, 560,
+};
+
+void RM_RTOS_Init(void) {
+  buzzer_init(&htim12, 1, 1000000);
+  buzzer_sing_song(startup, startup_delay);
 }
-#endif
-
-#endif // _BSP_PRINT_H_

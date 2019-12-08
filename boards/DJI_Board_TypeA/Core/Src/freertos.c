@@ -60,6 +60,7 @@ __weak void RM_RTOS_Timers_Init(void) {}
 __weak void RM_RTOS_Queues_Init(void) {}
 __weak void RM_RTOS_Threads_Init(void) {}
 __weak void RM_RTOS_Ready(void) {}
+__weak void RM_RTOS_Default_Task(const void *argument) { UNUSED(argument); }
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -142,7 +143,7 @@ void StartDefaultTask(void const * argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
-  UNUSED(argument);
+  RM_RTOS_Default_Task(argument);
   /* Infinite loop */
   for(;;)
   {
