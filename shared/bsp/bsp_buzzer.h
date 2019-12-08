@@ -25,7 +25,6 @@
 extern "C" {
 #endif
 
-#include "stm32f4xx.h"
 #include "bsp_pwm.h"
 
 typedef enum {

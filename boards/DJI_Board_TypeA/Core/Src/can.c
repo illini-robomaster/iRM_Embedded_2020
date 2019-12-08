@@ -124,10 +124,10 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
   
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**CAN2 GPIO Configuration    
-    PB6     ------> CAN2_TX
-    PB12     ------> CAN2_RX 
+    PB12     ------> CAN2_RX
+    PB13     ------> CAN2_TX 
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_12;
+    GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -185,10 +185,10 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
     }
   
     /**CAN2 GPIO Configuration    
-    PB6     ------> CAN2_TX
-    PB12     ------> CAN2_RX 
+    PB12     ------> CAN2_RX
+    PB13     ------> CAN2_TX 
     */
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_6|GPIO_PIN_12);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_12|GPIO_PIN_13);
 
     /* CAN2 interrupt Deinit */
     HAL_NVIC_DisableIRQ(CAN2_TX_IRQn);

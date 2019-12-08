@@ -45,11 +45,15 @@ target_include_directories(${PROJECT_NAME}_interface INTERFACE
     Core/Inc
     FATFS/Target
     FATFS/App
+    USB_DEVICE/App
+    USB_DEVICE/Target
     Drivers/STM32F4xx_HAL_Driver/Inc
     Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
     Drivers/CMSIS/Include
     Drivers/CMSIS/Device/ST/STM32F4xx/Include
     DSP/Include
+    Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc
+    Middlewares/ST/STM32_USB_Device_Library/Core/Inc
     Middlewares/Third_Party/FatFs/src
     Middlewares/Third_Party/FreeRTOS/Source/include
     Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
@@ -70,12 +74,13 @@ target_link_libraries(${PROJECT_NAME}_libDSP PRIVATE ${PROJECT_NAME}_interface)
 ###################################################
 file(GLOB_RECURSE CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/*.c)
 file(GLOB_RECURSE FATFS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/FATFS/*.c)
+file(GLOB_RECURSE USB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/USB_DEVICE/*.c)
 file(GLOB_RECURSE DRIVER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/*.c)
 file(GLOB_RECURSE MIDDLEWARE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/*.c)
 file(GLOB_RECURSE STARTUP_ASM ${CMAKE_CURRENT_SOURCE_DIR}/startup_stm32f427xx.s)
 
 add_library(${PROJECT_NAME}
-    ${FATFS_SOURCES} ${DRIVER_SOURCES} ${MIDDLEWARE_SOURCES} ${STARTUP_ASM})
+    ${FATFS_SOURCES} ${USB_SOURCES} ${DRIVER_SOURCES} ${MIDDLEWARE_SOURCES} ${STARTUP_ASM})
 # CORE_SOURCES are deferred to later compilation because it contains strong definitions
 # that overwrite weak symbols presented in STARTUP_ASM
 target_sources(${PROJECT_NAME} INTERFACE ${CORE_SOURCES})

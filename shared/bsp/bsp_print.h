@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-#include "stm32f4xx.h"
+#include "usart.h"
 
 #include "printf.h" // third party tiny-printf implemnetations
 

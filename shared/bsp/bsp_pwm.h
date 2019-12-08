@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-#include "stm32f4xx.h"
+#include "tim.h"
 
 /**
  * @ingroup bsp

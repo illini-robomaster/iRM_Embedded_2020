@@ -19,7 +19,7 @@
  ****************************************************************************/
 
 #include "bsp_pwm.h"
-#include "FreeRTOS.h"
+#include "cmsis_os.h"
 #include "bsp_error_handler.h"
 
 pwm_t *pwm_init(pwm_t *my_pwm, TIM_HandleTypeDef *htim, uint8_t channel, 

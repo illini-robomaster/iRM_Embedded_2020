@@ -19,7 +19,6 @@
  ****************************************************************************/
 
 #include "bsp_buzzer.h"
-#include "arm_math.h"
 
 static pwm_t buzzer_pwm;
 
