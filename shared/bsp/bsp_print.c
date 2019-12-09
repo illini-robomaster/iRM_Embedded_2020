@@ -30,7 +30,7 @@ int print(const char *format, ...) {
 #ifdef NDEBUG
   UNUSED(format);
   return 0;
-#else
+#else // == #ifdef DEBUG
   char    buffer[MAX_PRINT_LEN];
   va_list args; 
   int     length;
@@ -40,5 +40,5 @@ int print(const char *format, ...) {
   va_end(args);
 
   return usb_transmit((uint8_t*)buffer, length);  
-#endif
+#endif // #ifdef NDEBUG
 }

@@ -25,6 +25,18 @@
 extern "C" {
 #endif
 
+  /**
+   * @brief print debug message via USB-OTG-FS
+   *
+   * @param format  formated string
+   * @param ...     same argument lists as in printf
+   *
+   * @return  number of bytes printed
+   *
+   * @note    this function requires sufficient stack allocation
+   * @note    maximum print length is 32
+   * @note    will perform no-op in NDEBUG mode
+   */
 int print(const char *format, ...);
 
 #ifdef __cplusplus

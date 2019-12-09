@@ -1,15 +1,26 @@
+/****************************************************************************
+ *                                                                          *
+ *  Copyright (C) 2020 RoboMaster.                                          *
+ *  Illini RoboMaster @ University of Illinois at Urbana-Champaign          *
+ *                                                                          *
+ *  This program is free software: you can redistribute it and/or modify    *
+ *  it under the terms of the GNU General Public License as published by    *
+ *  the Free Software Foundation, either version 3 of the License, or       *
+ *  (at your option) any later version.                                     *
+ *                                                                          *
+ *  This program is distributed in the hope that it will be useful,         *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *  GNU General Public License for more details.                            *
+ *                                                                          *
+ *  You should have received a copy of the GNU General Public License       *
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.    *
+ *                                                                          *
+ ****************************************************************************/
+
 #include "bsp_usb.h"
 
 static usb_callback_t rm_usb_rx_callback = NULL;
-
-static void default_callback(uint8_t *buf, uint32_t len) {
-  UNUSED(buf);
-  UNUSED(len);
-}
-
-void usb_init(void) {
-  rm_usb_rx_callback = default_callback;
-}
 
 void usb_register_callback(usb_callback_t callback) {
   rm_usb_rx_callback = callback;

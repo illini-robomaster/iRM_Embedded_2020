@@ -27,6 +27,5 @@ static void example_usb_callback(uint8_t *buf, uint32_t len) {
 }
 
 void RM_RTOS_Init(void) {
-  usb_init();
   usb_register_callback(example_usb_callback);
 }
