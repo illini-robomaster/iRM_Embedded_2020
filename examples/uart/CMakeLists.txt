@@ -18,6 +18,8 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-add_subdirectory(buzzer)
-add_subdirectory(uart)
-add_subdirectory(usb)
+project(example_uart ASM C CXX)
+
+irm_add_arm_executable(${PROJECT_NAME}
+    TARGET DJI_Board_TypeA
+    SOURCES main.cc)

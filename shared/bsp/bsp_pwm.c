@@ -53,24 +53,40 @@ pwm_t *pwm_init(pwm_t *my_pwm, TIM_HandleTypeDef *htim, uint8_t channel,
   return my_pwm;
 }
 
-void pwm_start(pwm_t *my_pwm) {
+int pwm_start(const pwm_t *my_pwm) {
+  if (!my_pwm)
+    return -1;
+
   HAL_TIM_PWM_Start(my_pwm->htim, my_pwm->channel);
+  return 0;
 }
 
-void pwm_stop(pwm_t *my_pwm) {
+int pwm_stop(const pwm_t *my_pwm) {
+  if (!my_pwm)
+    return -1;
+
   HAL_TIM_PWM_Stop(my_pwm->htim, my_pwm->channel);
+  return 0;
 }
 
-void pwm_set_freq(pwm_t *my_pwm, uint32_t output_freq) {
+int pwm_set_freq(pwm_t *my_pwm, uint32_t output_freq) {
+  if (!my_pwm)
+    return -1;
+
   uint32_t auto_reload = 
     output_freq > 0 ? my_pwm->clock_freq / output_freq - 1 : 0;
   my_pwm->output_freq = output_freq;
   __HAL_TIM_SET_AUTORELOAD(my_pwm->htim, auto_reload);
   __HAL_TIM_SET_COUNTER(my_pwm->htim, 0);
+  return 0;
 }
 
-void pwm_set_pulse_width(pwm_t *my_pwm, uint32_t pulse_width) {
+int pwm_set_pulse_width(pwm_t *my_pwm, uint32_t pulse_width) {
+  if (!my_pwm)
+    return -1;
+
   my_pwm->pulse_width = pulse_width;
   __HAL_TIM_SET_COMPARE(my_pwm->htim, my_pwm->channel, 
       my_pwm->clock_freq * pulse_width / 1000000);
+  return 0;
 }

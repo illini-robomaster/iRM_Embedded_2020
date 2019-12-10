@@ -24,7 +24,7 @@
 #include "main.h"
 #include "printf.h" // third party tiny-printf implemnetations
 
-#define MAX_PRINT_LEN 32
+#define MAX_PRINT_LEN 80
 
 int print(const char *format, ...) {
 #ifdef NDEBUG

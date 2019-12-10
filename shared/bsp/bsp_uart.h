@@ -18,29 +18,42 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_usb.h"
+#ifndef _BSP_UART_H_
+#define _BSP_UART_H_
 
-static usb_callback_t rm_usb_rx_callback = NULL;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void usb_register_callback(const usb_callback_t callback) {
-  rm_usb_rx_callback = callback;
+#include "usart.h"
+
+struct uart_s;
+
+typedef void (*uart_callback_t)(struct uart_s*);
+
+typedef struct uart_s {
+  UART_HandleTypeDef  *huart;
+  /* rx */
+  uint32_t            rx_size;
+  uint8_t             *rx_data0;
+  uint8_t             *rx_data1;
+  uart_callback_t     rx_callback;
+  /* tx */
+  uint32_t            tx_size;
+  uint32_t            tx_pending;
+  uint8_t             *tx_write;
+  uint8_t             *tx_read;
+  uart_callback_t     tx_callback;
+} uart_t;
+
+uart_t* uart_init(uart_t *uart, UART_HandleTypeDef *huart, uint32_t rx_size, uint32_t tx_size);
+
+uint8_t* uart_read(uart_t *uart, uint32_t *length);
+
+int32_t uart_write(uart_t *uart, uint8_t *data, uint32_t length);
+
+#ifdef __cplusplus
 }
+#endif
 
-void usb_unregister_callback(void) {
-  rm_usb_rx_callback = NULL;
-}
-
-int usb_transmit(uint8_t *buf, uint32_t len) {
-  uint8_t status = CDC_Transmit_FS(buf, (uint16_t)len);
-  if (status == USBD_OK)
-    return len;
-  else if (status == USBD_BUSY)
-    return -1;
-  else // status == USBD_FAIL (shouldn't get here)
-    return -2;
-}
-
-void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len) {
-  if (rm_usb_rx_callback)
-    rm_usb_rx_callback(Buf, Len);
-}
+#endif /* _BSP_UART_H_ */

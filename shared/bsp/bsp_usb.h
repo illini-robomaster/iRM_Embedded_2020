@@ -40,7 +40,7 @@ typedef void (*usb_callback_t)(uint8_t *buf, uint32_t len);
  *
  * @param callback  a funtion pointer of type usb_callback_t
  */
-void usb_register_callback(usb_callback_t callback);
+void usb_register_callback(const usb_callback_t callback);
 
 /**
  * @brief un-register usb rx callback function
@@ -63,4 +63,4 @@ int usb_transmit(uint8_t *buf, uint32_t len);
 }
 #endif
 
-#endif
+#endif /* _BSP_USB_H_ */

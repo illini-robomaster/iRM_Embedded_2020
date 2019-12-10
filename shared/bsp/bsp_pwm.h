@@ -60,30 +60,39 @@ pwm_t *pwm_init(pwm_t *my_pwm, TIM_HandleTypeDef *htim, uint8_t channel,
  * @brief start sending pwm signals
  *
  * @param my_pwm    pwm instance
+ *
+ * @return 0 if success, -1 if failed
  */
-void pwm_start(pwm_t *my_pwm);
+int pwm_start(const pwm_t *my_pwm);
 
 /**
  * @brief stop sending pwm signals
  *
  * @param my_pwm    pwm instance
+ *
+ * @return 0 if success, -1 if failed
  */
-void pwm_stop(pwm_t *my_pwm);
+int pwm_stop(const pwm_t *my_pwm);
 
 /**
  * @brief set pwm output frequency (i.e. 1 / period) in [Hz]
  *
  * @param my_pwm      pwm instance
  * @param output_freq pwm output frequency in [Hz]
+ *
+ * @return 0 if success, -1 if failed
  */
-void pwm_set_freq(pwm_t *my_pwm, uint32_t output_freq);
+int pwm_set_freq(pwm_t *my_pwm, uint32_t output_freq);
 
 /**
  * @brief adjust pulse width for a pwm channel
+ *
  * @param my_pwm        pwm instance
  * @param pulse_width   pulse width in [us]
+ *
+ * @return 0 if success, -1 if failed
  */
-void pwm_set_pulse_width(pwm_t *my_pwm, uint32_t pulse_width);
+int pwm_set_pulse_width(pwm_t *my_pwm, uint32_t pulse_width);
 
 /** @} */
 
@@ -91,4 +100,4 @@ void pwm_set_pulse_width(pwm_t *my_pwm, uint32_t pulse_width);
 }
 #endif
 
-#endif
+#endif /* _BSP_PWM_H_ */

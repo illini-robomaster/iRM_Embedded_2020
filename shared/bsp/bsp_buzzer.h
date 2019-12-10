@@ -62,8 +62,10 @@ typedef enum {
  * @param htim        timer handle
  * @param channel     timer channel associated with the buzzer
  * @param clock_freq  clock frequency associated with this timer
+ *
+ * @return 0 for success, -1 for failure
  */
-void buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, 
+int buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, 
     uint32_t clock_freq);
 
 /**
@@ -85,4 +87,4 @@ void buzzer_sing_song(const buzzer_freq_t *freq, const uint32_t *delay);
 }
 #endif
 
-#endif
+#endif /* _BSP_BUZZER_H_ */

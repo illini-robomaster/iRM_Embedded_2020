@@ -18,29 +18,31 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_usb.h"
+#include "cmsis_os.h"
 
-static usb_callback_t rm_usb_rx_callback = NULL;
+#include "main.h"
+#include "tim.h"
 
-void usb_register_callback(const usb_callback_t callback) {
-  rm_usb_rx_callback = callback;
+#include "bsp_uart.h"
+
+static uart_t uart8;
+
+void RM_RTOS_Init(void) {
+  uart_init(&uart8, &huart8, 30, 30);
 }
 
-void usb_unregister_callback(void) {
-  rm_usb_rx_callback = NULL;
-}
+void RM_RTOS_Default_Task(const void *argument) {
+  uint32_t length;
+  uint8_t *data;
 
-int usb_transmit(uint8_t *buf, uint32_t len) {
-  uint8_t status = CDC_Transmit_FS(buf, (uint16_t)len);
-  if (status == USBD_OK)
-    return len;
-  else if (status == USBD_BUSY)
-    return -1;
-  else // status == USBD_FAIL (shouldn't get here)
-    return -2;
-}
+  UNUSED(argument);
 
-void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len) {
-  if (rm_usb_rx_callback)
-    rm_usb_rx_callback(Buf, Len);
+  while (1) {
+    data = uart_read(&uart8, &length);
+    data[length] = '\0';
+    if (length) {
+      uart_write(&uart8, data, length);
+      osDelay(5);
+    }
+  }
 }

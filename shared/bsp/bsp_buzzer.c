@@ -20,14 +20,22 @@
 
 #include "bsp_buzzer.h"
 
-static pwm_t buzzer_pwm;
+static pwm_t    buzzer_pwm;
+static uint8_t  buzzer_initialized = 0;
 
-void buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, 
-    uint32_t clock_freq) {
+int buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq) {
+  if (!htim)
+    return -1;
+
   pwm_init(&buzzer_pwm, htim, channel, clock_freq, 0, 0); 
+  buzzer_initialized = 1;
+  return 0;
 }
 
 void buzzer_sing_tone(const buzzer_freq_t freq) {
+  if (!buzzer_initialized)
+    return;
+
   pwm_set_freq(&buzzer_pwm, freq);
   pwm_set_pulse_width(&buzzer_pwm, (buzzer_pwm.htim->Instance->ARR + 1) / 2);
 }

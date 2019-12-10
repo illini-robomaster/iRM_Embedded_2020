@@ -44,7 +44,7 @@ extern "C" {
  * @author Nickel_Liang
  * @date   2018-04-15
  */
-extern void bsp_error_handler(const char* func, int line, char* msg);
+void bsp_error_handler(const char* func, int line, const char* msg);
 
 /** @} */
 
@@ -52,4 +52,4 @@ extern void bsp_error_handler(const char* func, int line, char* msg);
 }
 #endif
 
-#endif
+#endif /* _BSP_ERROR_HANDLER_H_ */
