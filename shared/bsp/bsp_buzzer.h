@@ -65,7 +65,7 @@ typedef enum {
  *
  * @return 0 for success, -1 for failure
  */
-int buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, 
+int8_t buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, 
     uint32_t clock_freq);
 
 /**

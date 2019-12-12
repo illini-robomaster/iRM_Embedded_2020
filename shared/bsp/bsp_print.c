@@ -26,7 +26,7 @@
 
 #define MAX_PRINT_LEN 80
 
-int print(const char *format, ...) {
+int32_t print(const char *format, ...) {
 #ifdef NDEBUG
   UNUSED(format);
   return 0;

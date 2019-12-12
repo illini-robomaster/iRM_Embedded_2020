@@ -30,7 +30,7 @@ void usb_unregister_callback(void) {
   rm_usb_rx_callback = NULL;
 }
 
-int usb_transmit(uint8_t *buf, uint32_t len) {
+int32_t usb_transmit(uint8_t *buf, uint32_t len) {
   uint8_t status = CDC_Transmit_FS(buf, (uint16_t)len);
   if (status == USBD_OK)
     return len;

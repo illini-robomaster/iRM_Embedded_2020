@@ -23,7 +23,7 @@
 static pwm_t    buzzer_pwm;
 static uint8_t  buzzer_initialized = 0;
 
-int buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq) {
+int8_t buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq) {
   if (!htim)
     return -1;
 

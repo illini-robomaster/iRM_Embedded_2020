@@ -25,6 +25,8 @@
 extern "C" {
 #endif
 
+#include <inttypes.h>
+
   /**
    * @brief print debug message via USB-OTG-FS
    *
@@ -37,7 +39,7 @@ extern "C" {
    * @note    maximum print length is 32
    * @note    will perform no-op in NDEBUG mode
    */
-int print(const char *format, ...);
+int32_t print(const char *format, ...);
 
 #ifdef __cplusplus
 }

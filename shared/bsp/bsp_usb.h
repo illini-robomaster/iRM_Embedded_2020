@@ -55,7 +55,7 @@ void usb_unregister_callback(void);
  *
  * @return number of bytes succesfully transmitted, -1 if usb busy, -2 if failed
  */
-int usb_transmit(uint8_t *buf, uint32_t len);
+int32_t usb_transmit(uint8_t *buf, uint32_t len);
 
 #endif // HAL_PCD_MODULE_ENABLED
 

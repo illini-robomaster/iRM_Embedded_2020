@@ -53,7 +53,7 @@ pwm_t *pwm_init(pwm_t *my_pwm, TIM_HandleTypeDef *htim, uint8_t channel,
   return my_pwm;
 }
 
-int pwm_start(const pwm_t *my_pwm) {
+int8_t pwm_start(const pwm_t *my_pwm) {
   if (!my_pwm)
     return -1;
 
@@ -61,7 +61,7 @@ int pwm_start(const pwm_t *my_pwm) {
   return 0;
 }
 
-int pwm_stop(const pwm_t *my_pwm) {
+int8_t pwm_stop(const pwm_t *my_pwm) {
   if (!my_pwm)
     return -1;
 
@@ -69,7 +69,7 @@ int pwm_stop(const pwm_t *my_pwm) {
   return 0;
 }
 
-int pwm_set_freq(pwm_t *my_pwm, uint32_t output_freq) {
+int8_t pwm_set_freq(pwm_t *my_pwm, uint32_t output_freq) {
   if (!my_pwm)
     return -1;
 
@@ -81,7 +81,7 @@ int pwm_set_freq(pwm_t *my_pwm, uint32_t output_freq) {
   return 0;
 }
 
-int pwm_set_pulse_width(pwm_t *my_pwm, uint32_t pulse_width) {
+int8_t pwm_set_pulse_width(pwm_t *my_pwm, uint32_t pulse_width) {
   if (!my_pwm)
     return -1;
 
