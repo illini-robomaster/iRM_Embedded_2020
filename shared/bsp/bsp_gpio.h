@@ -95,4 +95,4 @@ gpio_state_t gpio_read(gpio_t *gpio);
 }
 #endif
 
-#endif
+#endif /* _BSP_GPIO_H_ */
