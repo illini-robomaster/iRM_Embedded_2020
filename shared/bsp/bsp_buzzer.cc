@@ -18,58 +18,28 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_PWM_H_
-#define _BSP_PWM_H_
-
-#include "tim.h"
+#include "bsp_buzzer.h"
 
 namespace BSP {
 
-class PWM {
- public:
-   /**
-    * @brief constructor for a pwm output manager
-    *
-    * @param htim         HAL timer handle
-    * @param channel      channel associated with the timer, choose from [1,2,3,4]
-    * @param clock_freq   clock frequency associated with the timer
-    * @param output_freq  desired pwm output frequency, in [Hz]
-    * @param pulse_width  desired pwm output pulse width, is [us]
-    */
-  PWM(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq,
-      uint32_t output_freq, uint32_t pulse_width);
+Buzzer::Buzzer(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq)
+      : pwm_(htim, channel, clock_freq, 0, 0) {
+  pwm_.Start();
+}
 
-  /**
-   * @brief start pwm output signal generation
-   */
-  void Start();
+void Buzzer::SingTone(const BuzzerNote &note) {
+  if (note != BuzzerNote::Finish) {
+    pwm_.SetFrequency(static_cast<uint32_t>(note));
+    pwm_.SetPulseWidth(1000000 / static_cast<uint32_t>(note) / 2);
+  }
+}
 
-  /**
-   * @brief stop pwm output signal generation
-   */
-  void Stop();
+void Buzzer::SingSong(const BuzzerNoteDelayed *delayed_notes, buzzer_delay_t delay_func) {
+  while (delayed_notes->note != BuzzerNote::Finish) {
+    SingTone(delayed_notes->note);
+    delay_func(delayed_notes->delay);
+    ++delayed_notes;
+  }
+}
 
-  /**
-   * @brief set a new pwm output frequency
-   *
-   * @param output_freq   desired pwm output freqeuncy, in [Hz]
-   */
-  void SetFrequency(uint32_t output_freq);
-
-  /**
-   * @brief set a new pwm output pulse width
-   *
-   * @param pulse_width   desired pwm output pulse width, in [us]
-   */
-  void SetPulseWidth(uint32_t pulse_width);
- private:
-  TIM_HandleTypeDef *htim_;
-  uint32_t          channel_;
-  uint32_t          clock_freq_;
-  uint32_t          output_freq_;
-  uint32_t          pulse_width_;
-};
-
-} /* namespace BSP */
-
-#endif /* _BSP_PWM_H_ */
+} /* namespace bsp */

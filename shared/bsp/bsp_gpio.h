@@ -21,78 +21,24 @@
 #ifndef _BSP_GPIO_H_
 #define _BSP_GPIO_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "bsp_error_handler.h"
 #include "main.h"
 
-/**
- * @ingroup bsp
- * @defgroup bsp_gpio BSP GPIO
- * @{
- */
+namespace BSP {
 
-/**
- * @enum    gpio_state_t
- * @brief   describe gpio state as in high / low
- * @var HIGH    gpio in high state
- * @var LOW     gpio in low state
- */
-typedef enum {
-  HIGH = 0,
-  LOW = 1,
-}   gpio_state_t;
+class GPIO {
+ public:
+  GPIO(GPIO_TypeDef *group, uint16_t pin);
+  void High();
+  void Low();
+  void Toggle();
+  uint8_t Read();
+ private:
+  GPIO_TypeDef        *group_;
+  uint16_t            pin_;
+  uint8_t             state_;
+};
 
-/**
- * @struct  gpio_t
- * @brief   hold all necessary information for a gpio pin
- * @var group   gpio group number
- * @var pin     gpio pin number
- * @var state   gpio state
- */
-typedef struct {
-  GPIO_TypeDef    *group;
-  uint16_t        pin;
-  gpio_state_t    state;
-}   gpio_t;
-
-/**
- * @brief initialize a GPIO instance with a group id and pin number
- *
- * @param gpio  gpio struct to be initialized (could be NULL)
- * @param group pointer to a gpio group id
- * @param pin   gpio pin number
- *
- * @return initialized gpio_t instance
- */
-gpio_t* gpio_init(gpio_t *gpio, GPIO_TypeDef *group, uint16_t pin);
-
-/**
- * @brief output low signal to a gpio pin
- * @param gpio pointer to a gpio instance
- */
-void gpio_low(gpio_t *gpio);
-
-/**
- * @brief output high signal to a gpio pin
- * @param gpio pointer to a gpio instance
- */
-void gpio_high(gpio_t *gpio);
-
-void gpio_toggle(gpio_t *gpio);
-
-/**
- * @brief read in signal from a gpio pin
- * @param gpio pointer to a gpio instance
- */
-gpio_state_t gpio_read(gpio_t *gpio);
-
-/** @} */
-
-#ifdef __cplusplus
-}
-#endif
+} /* namespace BSP */
 
 #endif /* _BSP_GPIO_H_ */

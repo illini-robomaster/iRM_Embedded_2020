@@ -21,10 +21,6 @@
 #ifndef _BSP_PRINT_H_
 #define _BSP_PRINT_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <inttypes.h>
 
   /**
@@ -40,9 +36,5 @@ extern "C" {
    * @note    will perform no-op in NDEBUG mode
    */
 int32_t print(const char *format, ...);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // _BSP_PRINT_H_

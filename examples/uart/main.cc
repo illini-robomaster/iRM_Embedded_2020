@@ -48,18 +48,19 @@
 
 extern osThreadId defaultTaskHandle;
 
-static uart_t uart8;
+static BSP::UART *uart8;
 static osEvent uart_event;
 
 /* notify application when rx data is pending read */
-void custom_uart_handler(uart_t *uart) {
+void custom_uart_handler(BSP::UART *uart) {
   UNUSED(uart);
   osSignalSet(defaultTaskHandle, RX_SIGNAL);
 }
 
 void RM_RTOS_Init(void) {
-  uart_init(&uart8, &huart8, 50);
-  uart_start_receiving(&uart8, 50, custom_uart_handler);
+  uart8 = new BSP::UART(&huart8);
+  uart8->SetupRx(50, custom_uart_handler);
+  uart8->SetupTx(50);
 }
 
 void RM_RTOS_Default_Task(const void *argument) {
@@ -75,10 +76,10 @@ void RM_RTOS_Default_Task(const void *argument) {
     if (uart_event.value.signals & RX_SIGNAL) { // uncessary check
       /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
       start = osKernelSysTick();
-      data = uart_read(&uart8, &length);
-      uart_write(&uart8, data, length);
-      uart_write(&uart8, data, length);
-      uart_write(&uart8, data, length);
+      length = uart8->Read(&data);
+      uart8->Write(data, length);
+      uart8->Write(data, length);
+      uart8->Write(data, length);
       end = osKernelSysTick();
       print("non blocking tx rx loopback api used %u ms\r\n", end - start);
     }
