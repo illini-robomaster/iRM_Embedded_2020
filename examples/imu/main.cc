@@ -22,8 +22,9 @@
 #include "spi.h"
 
 void RM_RTOS_Init(void) {
-  uint8_t tx = 0x75 | 0x80;
-  uint8_t rx;
-  HAL_SPI_Transmit(&hspi5, &tx, 1, 55);
-  HAL_SPI_Receive(&hspi5, &rx, 1, 55);
+  uint8_t tx[2];
+  uint8_t rx[2];
+  tx[0] = 0x75 | 0x80;
+  HAL_SPI_TransmitReceive(&hspi5, tx, rx, 2, 55);
+  while(1);
 }
