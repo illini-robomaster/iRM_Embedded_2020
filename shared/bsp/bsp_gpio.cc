@@ -18,31 +18,32 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_buzzer.h"
+#include "bsp_gpio.h"
+#include "FreeRTOS.h"
 
-static pwm_t    buzzer_pwm;
-static uint8_t  buzzer_initialized = 0;
+namespace BSP {
 
-int8_t buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq) {
-  if (!htim)
-    return -1;
+GPIO::GPIO(GPIO_TypeDef *group, uint16_t pin) 
+    : group_(group), pin_(pin), state_(0) {}
 
-  pwm_init(&buzzer_pwm, htim, channel, clock_freq, 0, 0); 
-  buzzer_initialized = 1;
-  return 0;
+void GPIO::High() {
+  HAL_GPIO_WritePin(group_, pin_, GPIO_PIN_SET);
+  state_ = 1;
 }
 
-void buzzer_sing_tone(const buzzer_freq_t freq) {
-  if (!buzzer_initialized)
-    return;
-
-  pwm_set_freq(&buzzer_pwm, freq);
-  pwm_set_pulse_width(&buzzer_pwm, (buzzer_pwm.htim->Instance->ARR + 1) / 2);
+void GPIO::Low() {
+  HAL_GPIO_WritePin(group_, pin_, GPIO_PIN_RESET);
+  state_ = 0;
 }
 
-void buzzer_sing_song(const buzzer_freq_t *freq, const uint32_t *delay) {
-  while (*freq != Finish) {
-    buzzer_sing_tone(*freq++);
-    HAL_Delay(*delay++);
-  }
+void GPIO::Toggle() {
+  HAL_GPIO_TogglePin(group_, pin_);
+  state_ ^= 1;
 }
+
+uint8_t GPIO::Read() {
+  state_ = (HAL_GPIO_ReadPin(group_, pin_) == GPIO_PIN_SET);
+  return state_;
+}
+
+} /* namespace BSP */

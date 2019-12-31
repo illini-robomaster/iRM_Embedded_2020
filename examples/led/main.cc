@@ -29,20 +29,20 @@
 #define LED_GREEN_Pin GPIO_PIN_14
 #define LED_GREEN_GPIO_Port GPIOF
 
-static gpio_t red_led, green_led;
+static BSP::GPIO *gpio_red, *gpio_green;
 
 void RM_RTOS_Init(void) {
-  gpio_init(&red_led, LED_RED_GPIO_Port, LED_RED_Pin);
-  gpio_init(&green_led, LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-  gpio_high(&red_led);
-  gpio_low(&green_led);
+  gpio_red = new BSP::GPIO(LED_RED_GPIO_Port, LED_RED_Pin);
+  gpio_green = new BSP::GPIO(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
+  gpio_red->High();
+  gpio_green->Low();
 }
 
 void RM_RTOS_Default_Task(const void *args) {
   UNUSED(args);
   while (1) {
-    gpio_toggle(&red_led);
-    gpio_toggle(&green_led);
+    gpio_red->Toggle();
+    gpio_green->Toggle();
     osDelay(500);
   }
 }

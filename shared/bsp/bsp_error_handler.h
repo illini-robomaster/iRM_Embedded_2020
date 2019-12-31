@@ -21,17 +21,7 @@
 #ifndef _BSP_ERROR_HANDLER_H_
 #define _BSP_ERROR_HANDLER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "bsp_print.h"
-
-/**
- * @ingroup bsp
- * @defgroup bsp_error_handler BSP Error Handler
- * @{
- */
 
 #define BSP_DEBUG   print("[DEBUG] %s:%d ", __FUNCTION__, __LINE__)
 
@@ -45,11 +35,5 @@ extern "C" {
  * @date   2018-04-15
  */
 void bsp_error_handler(const char* func, int line, const char* msg);
-
-/** @} */
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _BSP_ERROR_HANDLER_H_ */

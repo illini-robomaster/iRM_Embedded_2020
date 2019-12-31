@@ -21,13 +21,11 @@
 #ifndef _BSP_BUZZER_H_
 #define _BSP_BUZZER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "bsp_pwm.h"
 
-typedef enum {
+namespace BSP {
+
+enum class BuzzerNote {
   Do1L = 262,     ///*261.63Hz*/    3822us
   Re2L = 294,     ///*293.66Hz*/    3405us
   Mi3L = 330,     ///*329.63Hz*/    3034us
@@ -44,47 +42,58 @@ typedef enum {
   La6M = 880,     ///*880.00Hz*/    1136us
   Si7M = 988,     ///*987.77Hz*/    1012us
 
-  Do1H = 1047,     ///*1046.50Hz*/   956us
-  Re2H = 1175,     ///*1174.66Hz*/   851us
-  Mi3H = 1319,     ///*1318.51Hz*/   758us
-  Fa4H = 1397,     ///*1396.91Hz*/   716us
-  So5H = 1568,     ///*1567.98Hz*/   638us
-  La6H = 1760,     ///*1760.00Hz*/   568us
-  Si7H = 1976,     ///*1975.53Hz*/   506us
+  Do1H = 1047,    ///*1046.50Hz*/   956us
+  Re2H = 1175,    ///*1174.66Hz*/   851us
+  Mi3H = 1319,    ///*1318.51Hz*/   758us
+  Fa4H = 1397,    ///*1396.91Hz*/   716us
+  So5H = 1568,    ///*1567.98Hz*/   638us
+  La6H = 1760,    ///*1760.00Hz*/   568us
+  Si7H = 1976,    ///*1975.53Hz*/   506us
 
-  Silent  = 0,
-  Finish  = -1,
-} buzzer_freq_t;
+  Silent = 0,
+  Finish = -1,
+};
 
-/**
- * @brief initialize onboard buzzer
- *
- * @param htim        timer handle
- * @param channel     timer channel associated with the buzzer
- * @param clock_freq  clock frequency associated with this timer
- *
- * @return 0 for success, -1 for failure
- */
-int8_t buzzer_init(TIM_HandleTypeDef *htim, uint32_t channel, 
-    uint32_t clock_freq);
+struct BuzzerNoteDelayed {
+  BuzzerNote  note;
+  uint32_t    delay;
+};
 
-/**
- * @brief sing a single tone indefinitely
- *
- * @param freq  frequency of the tone
- */
-void buzzer_sing_tone(const buzzer_freq_t freq);
+typedef void (*buzzer_delay_t)(uint32_t milli);
 
-/**
- * @brief sing a sequence of tones with programmable delay
- *
- * @param freq  pointer to an array of frequencies
- * @param delay pointer to an array of delay times [us]
- */
-void buzzer_sing_song(const buzzer_freq_t *freq, const uint32_t *delay);
+class Buzzer {
+ public:
+   /**
+    * @brief constructor for a buzzer instance
+    *
+    * @param htim       hal timer handle
+    * @param channel    timer channle associated with the timer choose from [1, 2, 3, 4]
+    * @param clock_freq clock frequency associated with the timer
+    */
+  Buzzer(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq);
 
-#ifdef __cplusplus
-}
-#endif
+  /**
+   * @brief sing a single tone indefinitely long
+   *
+   * @param note  note frequency to sing
+   */
+  void SingTone(const BuzzerNote &note);
+
+  /**
+   * @brief sing a sequence of delayed notes
+   *
+   * @param notes       pointer to an array of delayed notes
+   * @param delay_func  a void function that can delay arbitrary number of milliseconds,
+   *                    defaults to HAL_Delay implementation
+   *                    
+   */
+  void SingSong(const BuzzerNoteDelayed *notes, 
+      buzzer_delay_t delay_func = [](uint32_t milli) { HAL_Delay(milli); });
+ private:
+  /* pwm instance associated with the buzzer */
+  PWM     pwm_;
+};
+
+} /* namespace BSP */
 
 #endif /* _BSP_BUZZER_H_ */

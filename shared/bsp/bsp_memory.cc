@@ -18,37 +18,23 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_gpio.h"
-#include "FreeRTOS.h"
+#include <cstddef>
+#include "cmsis_os.h"
 
-gpio_t* gpio_init(gpio_t *gpio, GPIO_TypeDef *group, uint16_t pin) {
-  if (!gpio)
-    gpio = pvPortMalloc(sizeof(gpio_t));
+/* overload c++ default dynamic memory allocator */
 
-  gpio->group = group;
-  gpio->pin   = pin;
-  gpio->state = LOW;
-
-  return gpio;
+void* operator new(size_t size) {
+  return pvPortMalloc(size);
 }
 
-void gpio_low(gpio_t *gpio) {
-  HAL_GPIO_WritePin(gpio->group, gpio->pin, GPIO_PIN_RESET);
-  gpio->state = LOW;
+void* operator new[] (size_t size) {
+  return pvPortMalloc(size);
 }
 
-void gpio_high(gpio_t *gpio) {
-  HAL_GPIO_WritePin(gpio->group, gpio->pin, GPIO_PIN_SET);
-  gpio->state = HIGH;
+void operator delete(void *ptr) {
+  vPortFree(ptr);
 }
 
-void gpio_toggle(gpio_t *gpio) {
-  HAL_GPIO_TogglePin(gpio->group, gpio->pin);
-  gpio->state ^= 1;
+void operator delete[](void *ptr) {
+  vPortFree(ptr);
 }
-
-gpio_state_t gpio_read(gpio_t *gpio) {
-  gpio->state = (gpio_state_t)HAL_GPIO_ReadPin(gpio->group, gpio->pin);
-  return gpio->state;
-}
-

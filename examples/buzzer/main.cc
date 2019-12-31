@@ -23,20 +23,27 @@
 
 #include "bsp_buzzer.h"
 
-static buzzer_freq_t startup[] = {
-  Mi3M, Silent, Mi3M, Silent, Mi3M, Silent, 
-  Do1M, Silent, Mi3M, Silent, 
-  So5M, Silent, So5L, Silent, 
-  Finish,
-};
+using Note = BSP::BuzzerNote;
 
-static uint32_t startup_delay[] = {
-  80, 80, 80, 240, 80, 240,
-  80, 80, 80, 240, 
-  80, 560, 80, 560,
+static BSP::BuzzerNoteDelayed startup[] = {
+  { Note::Mi3M,   80 },
+  { Note::Silent, 80 }, 
+  { Note::Mi3M,   80 },
+  { Note::Silent, 240 },
+  { Note::Mi3M,   80 },
+  { Note::Silent, 240 },
+  { Note::Do1M,   80 },
+  { Note::Silent, 80 },
+  { Note::Mi3M,   80 },
+  { Note::Silent, 240 },
+  { Note::So5M,   80 },
+  { Note::Silent, 560 },
+  { Note::So5L,   80  },
+  { Note::Silent, 560 },
+  { Note::Finish, 0 },
 };
 
 void RM_RTOS_Init(void) {
-  buzzer_init(&htim12, 1, 1000000);
-  buzzer_sing_song(startup, startup_delay);
+  BSP::Buzzer buzzer(&htim12, 1, 1000000);
+  buzzer.SingSong(startup);
 }
