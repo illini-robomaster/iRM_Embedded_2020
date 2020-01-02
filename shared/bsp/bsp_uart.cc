@@ -108,6 +108,17 @@ UART::UART(UART_HandleTypeDef *huart) : huart_(huart),
     bsp_error_handler(__FUNCTION__, __LINE__, "Uart repeated initialization");
 }
 
+UART::~UART() {
+  if (rx_data0_)
+    delete[] rx_data0_;
+  if (rx_data1_)
+    delete[] rx_data1_;
+  if (tx_write_)
+    delete[] tx_write_;
+  if (tx_read_)
+    delete[] tx_read_;
+}
+
 void UART::SetupRx(uint32_t rx_buffer_size, uart_callback_t callback) {
   /* uart rx already setup */
   if (rx_size_ || rx_data0_ || rx_data1_)
@@ -191,17 +202,15 @@ int32_t UART::Write(uint8_t *data, uint32_t length) {
       length = tx_size_ - tx_pending_;
     memcpy(tx_write_ + tx_pending_, data, length);
     tx_pending_ += length;
-    taskEXIT_CRITICAL();
   }
   else {
-    /* uart tx not transmitting so exit critical session early */
-    taskEXIT_CRITICAL();
     if (length > tx_size_)
       length = tx_size_;
     /* directly write into the read buffer and start transmission */
     memcpy(tx_read_, data, length);
     HAL_UART_Transmit_DMA(huart_, tx_read_, length);
   }
+  taskEXIT_CRITICAL();
 
   return length;
 }

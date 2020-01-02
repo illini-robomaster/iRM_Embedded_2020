@@ -23,6 +23,20 @@
 
 #include <inttypes.h>
 
+#include "usart.h"
+
+/**
+ * @brief use a uart port for debug print
+ *
+ * @param huart HAL uart handle
+ */
+void print_use_uart(UART_HandleTypeDef *huart);
+
+/**
+ * @brief use USB virtual com port for debug print
+ */
+void print_use_usb();
+
   /**
    * @brief print debug message via USB-OTG-FS
    *

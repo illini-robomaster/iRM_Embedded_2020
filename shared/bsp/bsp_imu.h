@@ -18,31 +18,44 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "main.h"
-#include "cmsis_os.h"
+#pragma once
 
-#include "bsp_imu.h"
+#include "gpio.h"
+#include "spi.h"
 
-#define ONBOARD_IMU_SPI       hspi5
-#define ONBOARD_IMU_CS_GROUP  GPIOF
-#define ONBOARD_IMU_CS_PIN    GPIO_PIN_6
+#include "bsp_gpio.h"
 
-volatile uint32_t start, duration;
+namespace BSP {
 
-BSP::MPU6500 *imu;
+typedef struct {
+  float x;
+  float y;
+  float z;
+} vec3f_t;
 
-void RM_RTOS_Init(void) {
-  imu = new BSP::MPU6500(&ONBOARD_IMU_SPI, ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
-  print_use_uart(&huart8);
-}
+class MPU6500 {
+ public:
+  MPU6500(SPI_HandleTypeDef *hspi, GPIO_TypeDef *cs_group, uint16_t cs_pin);
+  // sample latest sensor data
+  void UpdateData();
+  // reset sensor registers
+  void Reset();
 
-void RM_RTOS_Default_Task(const void *arguments) {
-  UNUSED(arguments);
-  while (true) {
-    imu->UpdateData();
-    print("Temp: %f ", imu->temp);
-    print("ACC_X: %f ACC_Y: %f ACC_Z: %f ", imu->acce.x, imu->acce.y, imu->acce.z);
-    print("GYRO_X: %f GYRO_Y: %f GYRO_Z: %f\r\n", imu->gyro.x, imu->gyro.y, imu->gyro.z);
-    osDelay(100);
-  }
-}
+  // 3-axis accelarometer
+  vec3f_t acce;
+  // 3-axis gyroscope
+  vec3f_t gyro;
+  // sensor temperature
+  float   temp;
+
+ private:
+  void WriteReg(const uint8_t reg, uint8_t data);
+  void WriteRegs(const uint8_t reg_start, uint8_t *data, uint8_t len);
+  void ReadReg(const uint8_t reg, uint8_t *data);
+  void ReadRegs(const uint8_t reg_start, uint8_t *data, uint8_t len);
+
+  SPI_HandleTypeDef *hspi_;
+  GPIO chip_select_;
+};
+
+} /* namespace BSP */

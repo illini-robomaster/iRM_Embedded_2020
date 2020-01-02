@@ -39,6 +39,11 @@ class UART {
   UART(UART_HandleTypeDef *huart);
 
   /**
+   * @brief destructor (potentially deallocate buffer memories associated with tx / rx)
+   */
+  ~UART();
+
+  /**
    * @brief set up uart reciever in the background optionally registering a callback
    *
    * @param rx_buffer_size  receive buffer size (all data that has not been read 
@@ -91,7 +96,6 @@ class UART {
    * @note multiple burst calls to this function can potentially cause tx buffer 
    *       to fill up, so remember to check return value for the actual number
    *       of bytes succesfully transmitted
-   * @note the implementation is NOT thread safe!
    */
   int32_t Write(uint8_t *data, uint32_t length);
 
