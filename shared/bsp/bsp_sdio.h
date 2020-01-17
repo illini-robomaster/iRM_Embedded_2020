@@ -31,7 +31,7 @@ class SDFileLogger {
     *
     * @param filename filename of the log file to create
     */
-  SDFileLogger(const char *filename);
+  explicit SDFileLogger(const char *filename);
 
   /**
    * @brief destructor (deallocate associated memories)

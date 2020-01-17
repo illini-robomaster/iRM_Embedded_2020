@@ -33,16 +33,16 @@ static UART *uarts[MAX_NUM_UARTS] = { 0 };
 static size_t num_uarts = 0;
 
 /* check if huart is associated with any initialized uart_t structs */
-static uint8_t uart_handle_exists(UART_HandleTypeDef *huart) {
+static inline bool uart_handle_exists(UART_HandleTypeDef *huart) {
   for (size_t i = 0; i < num_uarts; ++i)
     if (uarts[i]->Uses(huart))
-      return 1;
+      return true;
 
-  return 0;
+  return false;
 }
 
 /* get initialized uart_t instance given its huart handle struct */
-static UART* find_uart_instance(UART_HandleTypeDef *huart) {
+static inline UART* find_uart_instance(UART_HandleTypeDef *huart) {
   for (size_t i = 0; i < num_uarts; ++i)
     if (uarts[i]->Uses(huart))
       return uarts[i];
@@ -102,10 +102,8 @@ static void uart_tx_complete_callback(UART_HandleTypeDef *huart) {
 UART::UART(UART_HandleTypeDef *huart) : huart_(huart),
     rx_size_(0), rx_data0_(NULL), rx_data1_(NULL), rx_callback_(NULL),
     tx_size_(0), tx_pending_(0), tx_write_(NULL), tx_read_(NULL) {
-  if (!uart_handle_exists(huart))
-    uarts[num_uarts++] = this;
-  else
-    bsp_error_handler(__FUNCTION__, __LINE__, "Uart repeated initialization");
+  RM_ASSERT_FALSE(uart_handle_exists(huart), "Uart repeated initialization");
+  uarts[num_uarts++] = this;
 }
 
 UART::~UART() {
@@ -194,7 +192,7 @@ int32_t UART::ReadFromISR(uint8_t **data) {
   return length;
 }
 
-int32_t UART::Write(uint8_t *data, uint32_t length) {
+int32_t UART::Write(const uint8_t *data, uint32_t length) {
   taskENTER_CRITICAL();
   if (huart_->gState == HAL_UART_STATE_BUSY_TX || tx_pending_) {
     /* uart tx currently transmitting -> atomically queue up new data */

@@ -36,7 +36,7 @@ class UART {
    *
    * @param huart pointer to a HAL uart handle
    */
-  UART(UART_HandleTypeDef *huart);
+  explicit UART(UART_HandleTypeDef *huart);
 
   /**
    * @brief destructor (potentially deallocate buffer memories associated with tx / rx)
@@ -97,7 +97,7 @@ class UART {
    *       to fill up, so remember to check return value for the actual number
    *       of bytes succesfully transmitted
    */
-  int32_t Write(uint8_t *data, uint32_t length);
+  int32_t Write(const uint8_t *data, uint32_t length);
 
   /**
    * @brief check if the uart instance is associated with a particular HAL uart handle

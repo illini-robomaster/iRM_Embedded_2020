@@ -21,19 +21,22 @@
 #include "main.h"
 #include "cmsis_os.h"
 
+#include "bsp_gpio.h"
 #include "bsp_imu.h"
 
 #define ONBOARD_IMU_SPI       hspi5
 #define ONBOARD_IMU_CS_GROUP  GPIOF
 #define ONBOARD_IMU_CS_PIN    GPIO_PIN_6
+#define PRING_UART            huart8
 
 volatile uint32_t start, duration;
 
 BSP::MPU6500 *imu;
 
 void RM_RTOS_Init(void) {
-  imu = new BSP::MPU6500(&ONBOARD_IMU_SPI, ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
-  print_use_uart(&huart8);
+  BSP::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
+  imu = new BSP::MPU6500(&ONBOARD_IMU_SPI, chip_select);
+  print_use_uart(&PRING_UART);
 }
 
 void RM_RTOS_Default_Task(const void *arguments) {

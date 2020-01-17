@@ -35,10 +35,22 @@ typedef struct {
 
 class MPU6500 {
  public:
-  MPU6500(SPI_HandleTypeDef *hspi, GPIO_TypeDef *cs_group, uint16_t cs_pin);
-  // sample latest sensor data
+  /**
+   * @brief constructor for a MPU6500 IMU sensor
+   *
+   * @param hspi         HAL SPI handle associated with the sensor
+   * @param chip_select  chip select gpio pin
+   */
+  MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select);
+
+  /**
+   * @brief sample latest sensor data
+   */
   void UpdateData();
-  // reset sensor registers
+
+  /**
+   * @brief reset sensor registers
+   */
   void Reset();
 
   // 3-axis accelarometer
@@ -49,10 +61,10 @@ class MPU6500 {
   float   temp;
 
  private:
-  void WriteReg(const uint8_t reg, uint8_t data);
-  void WriteRegs(const uint8_t reg_start, uint8_t *data, uint8_t len);
-  void ReadReg(const uint8_t reg, uint8_t *data);
-  void ReadRegs(const uint8_t reg_start, uint8_t *data, uint8_t len);
+  void WriteReg(uint8_t reg, uint8_t data);
+  void WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len);
+  void ReadReg(uint8_t reg, uint8_t *data);
+  void ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len);
 
   SPI_HandleTypeDef *hspi_;
   GPIO chip_select_;

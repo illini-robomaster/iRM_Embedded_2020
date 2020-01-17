@@ -34,6 +34,7 @@ add_library(${PROJECT_NAME}_interface INTERFACE)
 target_compile_definitions(${PROJECT_NAME}_interface INTERFACE
     ${MCU_LINE} ARM_MATH_CM4
     USE_HAL_DRIVER
+    USE_HAL_CAN_REGISTER_CALLBACKS
     USE_HAL_TIM_REGISTER_CALLBACKS
     USE_HAL_UART_REGISTER_CALLBACKS)
 target_compile_options(${PROJECT_NAME}_interface INTERFACE

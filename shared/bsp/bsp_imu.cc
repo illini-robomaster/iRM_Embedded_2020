@@ -30,8 +30,8 @@
 
 namespace BSP {
 
-MPU6500::MPU6500(SPI_HandleTypeDef *hspi, GPIO_TypeDef *cs_group, uint16_t cs_pin) 
-      : hspi_(hspi), chip_select_(cs_group, cs_pin) {
+MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select) 
+      : hspi_(hspi), chip_select_(chip_select) {
   uint8_t init_data[7][2] = {
     { MPU6500_PWR_MGMT_1,     0x03 }, // auto select clock source
     { MPU6500_PWR_MGMT_2,     0x00 }, // enable acc & gyro
@@ -79,11 +79,11 @@ void MPU6500::Reset() {
   HAL_Delay(1); // seems like signal path reset needs some time
 }
 
-void MPU6500::WriteReg(const uint8_t reg, uint8_t data) {
+void MPU6500::WriteReg(uint8_t reg, uint8_t data) {
   WriteRegs(reg, &data, 1);
 }
 
-void MPU6500::WriteRegs(const uint8_t reg_start, uint8_t *data, uint8_t len) {
+void MPU6500::WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
   uint8_t tx = reg_start & 0x7f;
 
   chip_select_.Low();
@@ -92,11 +92,11 @@ void MPU6500::WriteRegs(const uint8_t reg_start, uint8_t *data, uint8_t len) {
   chip_select_.High();
 }
 
-void MPU6500::ReadReg(const uint8_t reg, uint8_t *data) {
+void MPU6500::ReadReg(uint8_t reg, uint8_t *data) {
   ReadRegs(reg, data, 1);
 }
 
-void MPU6500::ReadRegs(const uint8_t reg_start, uint8_t *data, uint8_t len) {
+void MPU6500::ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
   chip_select_.Low();
   *data = static_cast<uint8_t>(reg_start | 0x80);
   HAL_SPI_Transmit(hspi_, data, 1, MPU6500_DELAY);
