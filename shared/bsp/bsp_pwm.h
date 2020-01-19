@@ -18,8 +18,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_PWM_H_
-#define _BSP_PWM_H_
+#pragma once
 
 #include "tim.h"
 
@@ -71,5 +70,3 @@ class PWM {
 };
 
 } /* namespace BSP */
-
-#endif /* _BSP_PWM_H_ */

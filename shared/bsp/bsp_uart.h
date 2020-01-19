@@ -18,8 +18,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_UART_H_
-#define _BSP_UART_H_
+#pragma once
 
 #include "usart.h"
 
@@ -133,5 +132,3 @@ class UART {
 };
 
 } /* namespace BSP */
-
-#endif /* _BSP_UART_H_ */

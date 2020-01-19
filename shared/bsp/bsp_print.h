@@ -18,8 +18,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_PRINT_H_
-#define _BSP_PRINT_H_
+#pragma once
 
 #include <inttypes.h>
 
@@ -50,5 +49,3 @@ void print_use_usb();
    * @note    will perform no-op in NDEBUG mode
    */
 int32_t print(const char *format, ...);
-
-#endif // _BSP_PRINT_H_

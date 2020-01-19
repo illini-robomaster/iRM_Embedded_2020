@@ -18,8 +18,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_GPIO_H_
-#define _BSP_GPIO_H_
+#pragma once
 
 #include "bsp_error_handler.h"
 #include "main.h"
@@ -40,5 +39,3 @@ class GPIO {
 };
 
 } /* namespace BSP */
-
-#endif /* _BSP_GPIO_H_ */

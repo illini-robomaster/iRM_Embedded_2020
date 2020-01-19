@@ -18,8 +18,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_BUZZER_H_
-#define _BSP_BUZZER_H_
+#pragma once
 
 #include "bsp_pwm.h"
 
@@ -95,5 +94,3 @@ class Buzzer {
 };
 
 } /* namespace BSP */
-
-#endif /* _BSP_BUZZER_H_ */

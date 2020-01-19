@@ -18,8 +18,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef _BSP_USB_H_
-#define _BSP_USB_H_
+#pragma once
 
 #include "main.h"
 
@@ -49,5 +48,3 @@ void usb_unregister_callback(void);
  * @return number of bytes succesfully transmitted, -1 if usb busy, -2 if failed
  */
 int32_t usb_transmit(uint8_t *buf, uint32_t len);
-
-#endif /* _BSP_USB_H_ */

@@ -42,13 +42,15 @@ CAN::CAN(CAN_HandleTypeDef *hcan, uint32_t start_id)
     can2 = this;
 }
 
-int CAN::RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback) {
+int CAN::RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback, void *args) {
   int callback_id = std_id - start_id_;
 
   if (callback_id < 0 || callback_id >= MAX_CAN_DEVICES)
     return -1;
 
   rx_callbacks_[callback_id] = callback;
+  rx_args_[callback_id] = args;
+
   return 0;
 }
 
@@ -83,7 +85,7 @@ void CAN::RxCallback() {
   int callback_id = header.StdId - start_id_;
   // find corresponding callback
   if (callback_id >= 0 && callback_id < MAX_CAN_DEVICES && rx_callbacks_[callback_id])
-    rx_callbacks_[callback_id](data);
+    rx_callbacks_[callback_id](data, rx_args_[callback_id]);
 }
 
 void CAN::ConfigureFilter(CAN_HandleTypeDef *hcan) {
