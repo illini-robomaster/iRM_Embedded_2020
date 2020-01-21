@@ -18,18 +18,8 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-file(GLOB_RECURSE BSP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/bsp/*.cc)
-file(GLOB_RECURSE LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libraries/*.cc)
-file(GLOB_RECURSE THIRD_PARTY_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.c)
+project(example_motor ASM C CXX)
 
-set(IRM_SOURCES ${BSP_SOURCES} ${LIB_SOURCES} ${THIRD_PARTY_SOURCES})
-set(IRM_INCLUDES
-    ${CMAKE_CURRENT_SOURCE_DIR}/bsp
-    ${CMAKE_CURRENT_SOURCE_DIR}/libraries
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
-
-irm_add_board_specific_library(DJI_Board_TypeA_irm
+irm_add_arm_executable(${PROJECT_NAME}_m3508
     TARGET DJI_Board_TypeA
-    SOURCES ${IRM_SOURCES}
-    INCLUDES ${IRM_INCLUDES})
-
+    SOURCES m3508.cc)

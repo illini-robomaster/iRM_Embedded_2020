@@ -20,31 +20,37 @@
 
 #pragma once
 
-#include "can.h"
+/**
+ * @brief clip a value to fall into a given range
+ *
+ * @tparam T    type of the value
+ * @param value value to the clipped
+ * @param min   range min
+ * @param max   range max
+ *
+ * @return clipped value that falls in the range [min, max]
+ *
+ * @note undefined behavior if min > max
+ */
+template<typename T>
+T clip(T value, T min, T max) {
+  return value < min ? min : (value > max ? max : value);
+}
 
-#define MAX_CAN_DATA_SIZE 8
-#define MAX_CAN_DEVICES   12
-
-namespace BSP {
-
-typedef void (*can_rx_callback_t)(const uint8_t data[], void *args);
-
-class CAN {
- public:
-  CAN(CAN_HandleTypeDef *hcan, uint32_t start_id);
-
-  bool Uses(CAN_HandleTypeDef *hcan) { return hcan_ == hcan; }
-  int RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback, void *args = NULL);
-  int Transmit(uint16_t id, const uint8_t data[], uint32_t length);
-  void RxCallback();
-
- private:
-  void ConfigureFilter(CAN_HandleTypeDef *hcan);
-
-  CAN_HandleTypeDef   *hcan_;
-  uint32_t            start_id_;
-  can_rx_callback_t   rx_callbacks_[MAX_CAN_DEVICES] = { 0 };
-  void                *rx_args_[MAX_CAN_DEVICES] = { NULL };
-};
-
-} /* namespace BSP */
+/**
+ * @brief wrap around a value to fall into a given range
+ *
+ * @tparam T    type of the value
+ * @param value value to be wrapped around
+ * @param min   range min
+ * @param max   range max
+ *
+ * @return wrapped around value that falls in the range [min, max]
+ *
+ * @note undefined behavior if value is more than one cycle away from min or max
+ */
+template<typename T>
+T wrap(T value, T min, T max) {
+  const T range = max - min;
+  return value < min ? value + range : (value > max ? value - range : value);
+}

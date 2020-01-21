@@ -18,33 +18,17 @@
  *                                                                          *
  ****************************************************************************/
 
-#pragma once
+#include "cmsis_os.h"
+#include "main.h"
 
-#include "can.h"
+#include "motor.h"
 
-#define MAX_CAN_DATA_SIZE 8
-#define MAX_CAN_DEVICES   12
-
-namespace BSP {
-
-typedef void (*can_rx_callback_t)(const uint8_t data[], void *args);
-
-class CAN {
- public:
-  CAN(CAN_HandleTypeDef *hcan, uint32_t start_id);
-
-  bool Uses(CAN_HandleTypeDef *hcan) { return hcan_ == hcan; }
-  int RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback, void *args = NULL);
-  int Transmit(uint16_t id, const uint8_t data[], uint32_t length);
-  void RxCallback();
-
- private:
-  void ConfigureFilter(CAN_HandleTypeDef *hcan);
-
-  CAN_HandleTypeDef   *hcan_;
-  uint32_t            start_id_;
-  can_rx_callback_t   rx_callbacks_[MAX_CAN_DEVICES] = { 0 };
-  void                *rx_args_[MAX_CAN_DEVICES] = { NULL };
-};
-
-} /* namespace BSP */
+void RM_RTOS_Default_Task(const void *args) {
+  UNUSED(args);
+  BSP::CAN can1(&hcan1, 0x201);
+  control::MotorCANBase *motor = new control::Motor3508(&can1, 0x201);
+  while (1) {
+    motor->PrintData();
+    osDelay(100);
+  }
+}
