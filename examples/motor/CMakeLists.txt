@@ -23,3 +23,7 @@ project(example_motor ASM C CXX)
 irm_add_arm_executable(${PROJECT_NAME}_m3508
     TARGET DJI_Board_TypeA
     SOURCES m3508.cc)
+
+irm_add_arm_executable(${PROJECT_NAME}_m6623
+    TARGET DJI_Board_TypeA
+    SOURCES m6623.cc)

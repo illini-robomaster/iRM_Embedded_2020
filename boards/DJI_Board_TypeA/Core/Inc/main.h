@@ -83,6 +83,8 @@ void RM_RTOS_Default_Task(const void *argument);
 #define MOS_CTL3_GPIO_Port GPIOH
 #define MOS_CTL4_Pin GPIO_PIN_5
 #define MOS_CTL4_GPIO_Port GPIOH
+#define USB_KEY_Pin GPIO_PIN_2
+#define USB_KEY_GPIO_Port GPIOB
 #define BEEP_Pin GPIO_PIN_6
 #define BEEP_GPIO_Port GPIOH
 #define OLED_BUTTON_Pin GPIO_PIN_6

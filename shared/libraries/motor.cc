@@ -24,10 +24,12 @@
 #include "motor.h"
 #include "utils.h"
 
+using namespace BSP;
+
 namespace control {
 
 static void can_motor_callback(const uint8_t data[], void *args) {
-  MotorCANBase *motor = static_cast<MotorCANBase*>(args);
+  MotorCANBase *motor = reinterpret_cast<MotorCANBase*>(args);
   motor->UpdateData(data);
 }
 
@@ -49,16 +51,10 @@ MotorCANBase::MotorCANBase(BSP::CAN *can, uint16_t rx_id)
     tx_id_ = TX2_ID;
   else
     tx_id_ = TX1_ID;
-
-  can->RegisterRxCallback(rx_id, can_motor_callback, this);
-
-  MotorCANBase *motor[] = { this };
-  for (size_t i = 0; i < 30; ++i)
-    TransmitOutput(motor, 1);
 }
 
 void MotorCANBase::TransmitOutput(MotorCANBase *motors[], uint8_t num_motors) {
-  static uint8_t data[8] = { 0 };
+  uint8_t data[8] = { 0 };
 
   RM_ASSERT_GT(num_motors, 0, "Meaningless empty can motor transmission");
   RM_ASSERT_LT(num_motors, 4, "Exceeding maximum of 4 motor commands per CAN message");
@@ -90,6 +86,10 @@ float MotorCANBase::GetOmegaDelta(float target) const {
   return target - omega_;
 }
 
+Motor3508::Motor3508(CAN *can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
+  can->RegisterRxCallback(rx_id, can_motor_callback, this);
+}
+
 void Motor3508::UpdateData(const uint8_t data[]) {
   const int16_t raw_theta = data[0] << 8 | data[1];
   const int16_t raw_omega = data[2] << 8 | data[3];
@@ -114,6 +114,10 @@ void Motor3508::SetOutput(int16_t val) {
   output_ = clip<int16_t>(val, -MAX_ABS_CURRENT, MAX_ABS_CURRENT);
 }
 
+Motor6623::Motor6623(CAN *can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
+  can->RegisterRxCallback(rx_id, can_motor_callback, this);
+}
+
 void Motor6623::UpdateData(const uint8_t data[]) {
   const int16_t raw_theta = data[0] << 8 | data[1];
   raw_current_get_ = (data[2] << 8 | data[3]) * CURRENT_CORRECTION;
@@ -121,6 +125,12 @@ void Motor6623::UpdateData(const uint8_t data[]) {
 
   constexpr float THETA_SCALE = 2 * PI / 8192;
   theta_ = raw_theta * THETA_SCALE;
+}
+
+void Motor6623::PrintData() const {
+  print("theta: %.4f ", GetTheta());
+  print("raw current get: %d ", raw_current_get_);
+  print("raw current set: %d \r\n", raw_current_set_);
 }
 
 void Motor6623::SetOutput(int16_t val) {
@@ -139,6 +149,10 @@ float Motor6623::GetOmegaDelta(const float target) const {
   return 0;
 }
 
+Motor2006::Motor2006(CAN *can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
+  can->RegisterRxCallback(rx_id, can_motor_callback, this);
+}
+
 void Motor2006::UpdateData(const uint8_t data[]) {
   const int16_t raw_theta = data[0] << 8 | data[1];
   const int16_t raw_omega = data[2] << 8 | data[3];
@@ -148,6 +162,12 @@ void Motor2006::UpdateData(const uint8_t data[]) {
   constexpr float OMEGA_SCALE = 2 * PI / 60; // rpm -> rad / sec
   theta_ = raw_theta * THETA_SCALE;
   omega_ = raw_omega * OMEGA_SCALE;
+}
+
+void Motor2006::PrintData() const {
+  print("theta: %.4f ", GetTheta());
+  print("omega: %.4f ", GetOmega());
+  print("raw current get: %d \r\n", raw_current_get_);
 }
 
 void Motor2006::SetOutput(int16_t val) {

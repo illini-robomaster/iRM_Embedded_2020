@@ -18,6 +18,8 @@
  *                                                                          *
  ****************************************************************************/
 
+#include "cmsis_os.h"
+
 #include "bsp_can.h"
 #include "bsp_error_handler.h"
 
@@ -68,8 +70,8 @@ int CAN::RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback, void *a
   if (callback_id < 0 || callback_id >= MAX_CAN_DEVICES)
     return -1;
 
-  rx_callbacks_[callback_id] = callback;
   rx_args_[callback_id] = args;
+  rx_callbacks_[callback_id] = callback;
 
   return 0;
 }
@@ -87,13 +89,14 @@ int CAN::Transmit(uint16_t id, const uint8_t data[], uint32_t length) {
     .DLC                = length,
     .TransmitGlobalTime = DISABLE,
   };
+
   uint32_t mailbox;
 
   if (HAL_CAN_AddTxMessage(hcan_, &header, (uint8_t*)data, &mailbox) != HAL_OK)
     return -1;
 
   // poll for can transmission to complete
-  while(HAL_CAN_IsTxMessagePending(hcan_, mailbox));
+  while (HAL_CAN_IsTxMessagePending(hcan_, mailbox));
 
   return length;
 }

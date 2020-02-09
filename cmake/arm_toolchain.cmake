@@ -40,7 +40,7 @@ set(CMAKE_C_FLAGS "${COMMON_FLAGS} -std=gnu99")
 set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -std=gnu++11")
 
 # Debug flags
-set(CMAKE_C_FLAGS_DEBUG "-Og -g -DDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-Og -g -DDEBUG -fno-exceptions")
+set(CMAKE_C_FLAGS_DEBUG "-O0 -g -DDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -DDEBUG -fno-exceptions")
 
 # Relase flags defaults to -O3 -DNDEBUG

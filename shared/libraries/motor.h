@@ -61,7 +61,7 @@ class MotorCANBase : public MotorBase {
 
 class Motor3508 : public MotorCANBase {
  public:
-  Motor3508(BSP::CAN *can, uint16_t rx_id) : MotorCANBase(can, rx_id) {}
+  Motor3508(BSP::CAN *can, uint16_t rx_id);
   void UpdateData(const uint8_t data[]) override final;
   void PrintData() const override final;
   void SetOutput(int16_t val) override final; 
@@ -73,7 +73,9 @@ class Motor3508 : public MotorCANBase {
 
 class Motor6623 : public MotorCANBase {
  public:
+  Motor6623(BSP::CAN *can, uint16_t rx_id);
   void UpdateData(const uint8_t data[]) override final;
+  void PrintData() const override final;
   void SetOutput(int16_t val) override final;
   float GetOmega() const override final;
   float GetOmegaDelta(const float target) const override final;
@@ -87,7 +89,9 @@ class Motor6623 : public MotorCANBase {
 
 class Motor2006 : public MotorCANBase {
  public:
+  Motor2006(BSP::CAN *can, uint16_t rx_id);
   void UpdateData(const uint8_t data[]) override final;
+  void PrintData() const override final;
   void SetOutput(int16_t val) override final;
 
  private:
