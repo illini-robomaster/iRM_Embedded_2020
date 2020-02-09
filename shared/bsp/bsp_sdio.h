@@ -22,7 +22,7 @@
 
 #include "fatfs.h"
 
-namespace BSP {
+namespace bsp {
 
 class SDFileLogger {
  public:
@@ -55,4 +55,4 @@ class SDFileLogger {
   FIL fobj_;
 };
 
-} /* namespace BSP */
+} /* namespace bsp */

@@ -27,13 +27,13 @@
 
 #define MAX_PRINT_LEN 80
 
-static BSP::UART *print_uart = NULL;
+static bsp::UART *print_uart = NULL;
 
 void print_use_uart(UART_HandleTypeDef *huart) {
   if (print_uart)
     delete print_uart;
 
-  print_uart = new BSP::UART(huart);
+  print_uart = new bsp::UART(huart);
   print_uart->SetupTx(MAX_PRINT_LEN * 2); // burst transfer size up to 2x max buffer size
 }
 

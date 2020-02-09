@@ -28,7 +28,7 @@
 #define MPU6500_ACC_FACTOR  4096.0f
 #define MPU6500_GYRO_FACTOR 32.768f
 
-namespace BSP {
+namespace bsp {
 
 MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select) 
       : hspi_(hspi), chip_select_(chip_select) {
@@ -104,4 +104,4 @@ void MPU6500::ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
   chip_select_.High();
 }
 
-} /* namespace BSP */
+} /* namespace bsp */

@@ -21,7 +21,7 @@
 #include "bsp_gpio.h"
 #include "FreeRTOS.h"
 
-namespace BSP {
+namespace bsp {
 
 GPIO::GPIO(GPIO_TypeDef *group, uint16_t pin) 
     : group_(group), pin_(pin), state_(0) {}
@@ -46,4 +46,4 @@ uint8_t GPIO::Read() {
   return state_;
 }
 
-} /* namespace BSP */
+} /* namespace bsp */

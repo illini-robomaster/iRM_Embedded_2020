@@ -20,7 +20,7 @@
 
 #include "bsp_buzzer.h"
 
-namespace BSP {
+namespace bsp {
 
 Buzzer::Buzzer(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq)
       : pwm_(htim, channel, clock_freq, 0, 0) {

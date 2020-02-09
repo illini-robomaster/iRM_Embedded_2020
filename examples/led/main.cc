@@ -29,11 +29,11 @@
 #define LED_GREEN_Pin GPIO_PIN_14
 #define LED_GREEN_GPIO_Port GPIOF
 
-static BSP::GPIO *gpio_red, *gpio_green;
+static bsp::GPIO *gpio_red, *gpio_green;
 
 void RM_RTOS_Init(void) {
-  gpio_red = new BSP::GPIO(LED_RED_GPIO_Port, LED_RED_Pin);
-  gpio_green = new BSP::GPIO(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
+  gpio_red = new bsp::GPIO(LED_RED_GPIO_Port, LED_RED_Pin);
+  gpio_green = new bsp::GPIO(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
   gpio_red->High();
   gpio_green->Low();
 }

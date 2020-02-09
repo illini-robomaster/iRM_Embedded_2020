@@ -48,17 +48,17 @@
 
 extern osThreadId defaultTaskHandle;
 
-static BSP::UART *uart8;
+static bsp::UART *uart8;
 static osEvent uart_event;
 
 /* notify application when rx data is pending read */
-void custom_uart_handler(BSP::UART *uart) {
+void custom_uart_handler(bsp::UART *uart) {
   UNUSED(uart);
   osSignalSet(defaultTaskHandle, RX_SIGNAL);
 }
 
 void RM_RTOS_Init(void) {
-  uart8 = new BSP::UART(&huart8);
+  uart8 = new bsp::UART(&huart8);
   uart8->SetupRx(50, custom_uart_handler);
   uart8->SetupTx(50);
 }

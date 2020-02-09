@@ -22,7 +22,7 @@
 #include "cmsis_os.h"
 #include "bsp_error_handler.h"
 
-namespace BSP {
+namespace bsp {
 
 PWM::PWM(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq,
     uint32_t output_freq, uint32_t pulse_width)
@@ -70,4 +70,4 @@ void PWM::SetPulseWidth(uint32_t pulse_width) {
   __HAL_TIM_SET_COMPARE(htim_, channel_, clock_freq_ * pulse_width_ / 1000000);
 }
 
-} /* namespace BSP */
+} /* namespace bsp */

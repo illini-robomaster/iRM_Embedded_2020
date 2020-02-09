@@ -23,11 +23,18 @@
 #include "bsp_can.h"
 #include "bsp_error_handler.h"
 
-namespace BSP {
+namespace bsp {
 
 static CAN *can1 = 0;
 static CAN *can2 = 0;
 
+/**
+ * @brief find instantiated can line
+ *
+ * @param hcan  HAL can hanle
+ *
+ * @return can instance if found, otherwise NULL
+ */
 static inline CAN* find_can_instance(CAN_HandleTypeDef *hcan) {
   if (can1 && hcan == &hcan1)
     return can1;
@@ -36,10 +43,22 @@ static inline CAN* find_can_instance(CAN_HandleTypeDef *hcan) {
   return NULL;
 }
 
+/**
+ * @brief check if any associated CAN instance is instantiated or not
+ *
+ * @param hcan  HAL can handle
+ *
+ * @return true if found, otherwise false
+ */
 static inline bool can_handle_exists(CAN_HandleTypeDef *hcan) {
   return (can1 && hcan == &hcan1) || (can2 && hcan == &hcan2);
 }
 
+/**
+ * @brief callback handler for CAN rx feedback data
+ *
+ * @param hcan  HAL can handle
+ */
 static void can_rx_fifo0_message_pending_callback(CAN_HandleTypeDef *hcan) {
   CAN* can = find_can_instance(hcan);
   if (!can)
@@ -133,4 +152,4 @@ void CAN::ConfigureFilter(CAN_HandleTypeDef *hcan) {
       "CAN filter configuration failed.");
 }
 
-} /* namespace BSP */
+} /* namespace bsp */

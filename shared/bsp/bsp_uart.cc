@@ -27,7 +27,7 @@
 
 #define MAX_NUM_UARTS 5
 
-namespace BSP {
+namespace bsp {
 
 static UART *uarts[MAX_NUM_UARTS] = { 0 };
 static size_t num_uarts = 0;
@@ -239,13 +239,13 @@ void UART::RxCompleteCallback() {
     rx_callback_(this);
 }
 
-} /* namespace BSP */
+} /* namespace bsp */
 
 /* overwrite the weak function defined in board specific usart.c to handle IRQ requests */
 void RM_UART_IRQHandler(UART_HandleTypeDef *huart) {
   if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
     __HAL_UART_CLEAR_IDLEFLAG(huart);
-    BSP::UART *uart = BSP::find_uart_instance(huart);
+    bsp::UART *uart = bsp::find_uart_instance(huart);
     if (!uart)
       return;
     uart->RxCompleteCallback();

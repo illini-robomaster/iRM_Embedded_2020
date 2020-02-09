@@ -23,7 +23,7 @@
 #include "bsp_error_handler.h"
 #include "main.h"
 
-namespace BSP {
+namespace bsp {
 
 class GPIO {
  public:
@@ -38,4 +38,4 @@ class GPIO {
   uint8_t             state_;
 };
 
-} /* namespace BSP */
+} /* namespace bsp */

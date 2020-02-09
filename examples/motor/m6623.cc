@@ -28,13 +28,13 @@
 #define KEY_GPIO_GROUP  GPIOB
 #define KEY_GPIO_PIN    GPIO_PIN_2
 
-BSP::CAN *can1 = NULL;
+bsp::CAN *can1 = NULL;
 control::MotorCANBase *motor = NULL;
 
 void RM_RTOS_Init() {
   print_use_uart(&huart8);
 
-  can1 = new BSP::CAN(&hcan1, 0x201);
+  can1 = new bsp::CAN(&hcan1, 0x201);
   motor = new control::Motor6623(can1, 0x209);
 }
 
@@ -42,7 +42,7 @@ void RM_RTOS_Default_Task(const void *args) {
   UNUSED(args);
   control::MotorCANBase *motors[] = {motor};
 
-  BSP::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);
+  bsp::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);
   while (1) {
     motor->PrintData();
     if (key.Read())

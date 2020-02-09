@@ -25,7 +25,7 @@
 
 #include "bsp_gpio.h"
 
-namespace BSP {
+namespace bsp {
 
 typedef struct {
   float x;
@@ -70,4 +70,4 @@ class MPU6500 {
   GPIO chip_select_;
 };
 
-} /* namespace BSP */
+} /* namespace bsp */

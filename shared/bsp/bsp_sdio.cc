@@ -22,7 +22,7 @@
 
 #include "bsp_sdio.h"
 
-namespace BSP {
+namespace bsp {
 
 bool SDFileLogger::mounted_ = false;
 
@@ -62,4 +62,4 @@ int32_t SDFileLogger::Log(const uint8_t *data, uint32_t length) {
   return ret;
 }
 
-} /* namespace BSP */
+} /* namespace bsp */

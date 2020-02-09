@@ -31,7 +31,7 @@ static osThreadId   sd_task_handle;
 
 void sd_task(void const *argu) {
   UNUSED(argu);
-  BSP::SDFileLogger logger("log.txt");
+  bsp::SDFileLogger logger("log.txt");
   logger.Log(tx1, strlen((char*)tx1));
   logger.Log(tx2, strlen((char*)tx2));
   while (true);

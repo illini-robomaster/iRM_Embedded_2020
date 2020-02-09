@@ -31,11 +31,11 @@
 
 volatile uint32_t start, duration;
 
-BSP::MPU6500 *imu;
+bsp::MPU6500 *imu;
 
 void RM_RTOS_Init(void) {
-  BSP::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
-  imu = new BSP::MPU6500(&ONBOARD_IMU_SPI, chip_select);
+  bsp::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
+  imu = new bsp::MPU6500(&ONBOARD_IMU_SPI, chip_select);
   print_use_uart(&PRING_UART);
 }
 

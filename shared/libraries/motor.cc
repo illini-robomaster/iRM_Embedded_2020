@@ -24,7 +24,7 @@
 #include "motor.h"
 #include "utils.h"
 
-using namespace BSP;
+using namespace bsp;
 
 namespace control {
 
@@ -33,7 +33,7 @@ static void can_motor_callback(const uint8_t data[], void *args) {
   motor->UpdateData(data);
 }
 
-MotorCANBase::MotorCANBase(BSP::CAN *can, uint16_t rx_id) 
+MotorCANBase::MotorCANBase(bsp::CAN *can, uint16_t rx_id) 
       : theta_(0), omega_(0), can_(can), rx_id_(rx_id) {
   constexpr uint16_t GROUP_SIZE = 4;
   constexpr uint16_t RX1_ID_START = 0x201;

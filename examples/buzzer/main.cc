@@ -23,9 +23,9 @@
 
 #include "bsp_buzzer.h"
 
-using Note = BSP::BuzzerNote;
+using Note = bsp::BuzzerNote;
 
-static BSP::BuzzerNoteDelayed startup[] = {
+static bsp::BuzzerNoteDelayed startup[] = {
   { Note::Mi3M,   80 },
   { Note::Silent, 80 }, 
   { Note::Mi3M,   80 },
@@ -44,6 +44,6 @@ static BSP::BuzzerNoteDelayed startup[] = {
 };
 
 void RM_RTOS_Init(void) {
-  BSP::Buzzer buzzer(&htim12, 1, 1000000);
+  bsp::Buzzer buzzer(&htim12, 1, 1000000);
   buzzer.SingSong(startup);
 }

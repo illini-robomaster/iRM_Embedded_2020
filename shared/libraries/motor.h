@@ -38,7 +38,7 @@ class MotorBase {
 
 class MotorCANBase : public MotorBase {
  public:
-  MotorCANBase(BSP::CAN *can, uint16_t rx_id);
+  MotorCANBase(bsp::CAN *can, uint16_t rx_id);
 
   virtual void  UpdateData(const uint8_t data[]) = 0;
   virtual void  PrintData() const = 0;
@@ -54,14 +54,14 @@ class MotorCANBase : public MotorBase {
   float omega_;
 
  private:
-  BSP::CAN  *can_;
+  bsp::CAN  *can_;
   uint16_t  rx_id_;
   uint16_t  tx_id_;
 };
 
 class Motor3508 : public MotorCANBase {
  public:
-  Motor3508(BSP::CAN *can, uint16_t rx_id);
+  Motor3508(bsp::CAN *can, uint16_t rx_id);
   void UpdateData(const uint8_t data[]) override final;
   void PrintData() const override final;
   void SetOutput(int16_t val) override final; 
@@ -73,7 +73,7 @@ class Motor3508 : public MotorCANBase {
 
 class Motor6623 : public MotorCANBase {
  public:
-  Motor6623(BSP::CAN *can, uint16_t rx_id);
+  Motor6623(bsp::CAN *can, uint16_t rx_id);
   void UpdateData(const uint8_t data[]) override final;
   void PrintData() const override final;
   void SetOutput(int16_t val) override final;
@@ -89,7 +89,7 @@ class Motor6623 : public MotorCANBase {
 
 class Motor2006 : public MotorCANBase {
  public:
-  Motor2006(BSP::CAN *can, uint16_t rx_id);
+  Motor2006(bsp::CAN *can, uint16_t rx_id);
   void UpdateData(const uint8_t data[]) override final;
   void PrintData() const override final;
   void SetOutput(int16_t val) override final;
@@ -106,7 +106,7 @@ class MotorPWMBase : public MotorBase {
   virtual void SetOutput(int16_t val) override;
 
  private:
-  BSP::PWM pwm_;
+  bsp::PWM pwm_;
   uint32_t idle_throttle_;
 };
 

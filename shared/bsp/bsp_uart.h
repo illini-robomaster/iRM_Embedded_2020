@@ -22,7 +22,7 @@
 
 #include "usart.h"
 
-namespace BSP {
+namespace bsp {
 
 class UART;
 
@@ -131,4 +131,4 @@ class UART {
   uint8_t         *tx_read_;
 };
 
-} /* namespace BSP */
+} /* namespace bsp */

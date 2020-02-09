@@ -22,7 +22,7 @@
 
 #include "bsp_pwm.h"
 
-namespace BSP {
+namespace bsp {
 
 enum class BuzzerNote {
   Do1L = 262,     ///*261.63Hz*/    3822us
@@ -93,4 +93,4 @@ class Buzzer {
   PWM     pwm_;
 };
 
-} /* namespace BSP */
+} /* namespace bsp */

@@ -22,7 +22,7 @@
 
 #include "tim.h"
 
-namespace BSP {
+namespace bsp {
 
 class PWM {
  public:
@@ -69,4 +69,4 @@ class PWM {
   uint32_t          pulse_width_;
 };
 
-} /* namespace BSP */
+} /* namespace bsp */
