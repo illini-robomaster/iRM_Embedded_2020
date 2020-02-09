@@ -184,7 +184,7 @@ MotorPWMBase::MotorPWMBase(TIM_HandleTypeDef *htim, uint8_t channel,
 
 void MotorPWMBase::SetOutput(int16_t val) {
   output_ = val;
-  pwm_.SetPulseWidth(val);
+  pwm_.SetPulseWidth(val + idle_throttle_);
 }
 
 void Motor2305::SetOutput(int16_t val) {
