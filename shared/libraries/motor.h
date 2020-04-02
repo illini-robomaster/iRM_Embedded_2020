@@ -105,8 +105,8 @@ class MotorCANBase : public MotorBase {
   static void TransmitOutput(MotorCANBase *motors[], uint8_t num_motors);
 
  protected:
-  float theta_;
-  float omega_;
+  volatile float theta_;
+  volatile float omega_;
 
  private:
   bsp::CAN  *can_;
@@ -129,8 +129,8 @@ class Motor3508 : public MotorCANBase {
   void SetOutput(int16_t val) override final; 
 
  private:
-  int16_t raw_current_get_ = 0;
-  uint8_t raw_temperature_ = 0;
+  volatile int16_t raw_current_get_ = 0;
+  volatile uint8_t raw_temperature_ = 0;
 };
 
 /**
@@ -151,8 +151,8 @@ class Motor6623 : public MotorCANBase {
   float GetOmegaDelta(const float target) const override final;
 
  private:
-  int16_t raw_current_get_ = 0;
-  int16_t raw_current_set_ = 0;
+  volatile int16_t raw_current_get_ = 0;
+  volatile int16_t raw_current_set_ = 0;
 
   static const int16_t CURRENT_CORRECTION = -1; // current direction is reversed
 };
@@ -172,7 +172,7 @@ class Motor2006 : public MotorCANBase {
   void SetOutput(int16_t val) override final;
 
  private:
-  int16_t raw_current_get_ = 0;
+  volatile int16_t raw_current_get_ = 0;
 };
 
 /**
