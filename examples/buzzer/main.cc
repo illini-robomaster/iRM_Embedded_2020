@@ -33,7 +33,7 @@ static bsp::BuzzerNoteDelayed Mario[] = {
     {Note::So5L, 80},
 };
 
-static bsp::BuzzerNoteDelayed War_Chant_of_Mars[] = {
+static bsp::BuzzerNoteDelayed War_Cant_of_Mars[] = {
     //    {Note::So5M, 400},   {Note::So5M, 200},  {Note::So5M, 200},
     //    {Note::So5M, 400},   {Note::Fa4M, 200},  {Note::Mi3M, 400},
     //    {Note::So5M, 200},   {Note::Do1H, 400},  {Note::Re2H, 200},
@@ -68,5 +68,5 @@ static bsp::BuzzerNoteDelayed War_Chant_of_Mars[] = {
 void RM_RTOS_Init(void) {
   bsp::Buzzer buzzer(&htim12, 1, 1000000);
   buzzer.SingSong(Mario);
-  buzzer.SingSong(War_Chant_of_Mars);
+  buzzer.SingSong(War_Cant_of_Mars);
 }
