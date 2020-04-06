@@ -25,25 +25,48 @@
 
 using Note = bsp::BuzzerNote;
 
-static bsp::BuzzerNoteDelayed startup[] = {
-  { Note::Mi3M,   80 },
-  { Note::Silent, 80 }, 
-  { Note::Mi3M,   80 },
-  { Note::Silent, 240 },
-  { Note::Mi3M,   80 },
-  { Note::Silent, 240 },
-  { Note::Do1M,   80 },
-  { Note::Silent, 80 },
-  { Note::Mi3M,   80 },
-  { Note::Silent, 240 },
-  { Note::So5M,   80 },
-  { Note::Silent, 560 },
-  { Note::So5L,   80  },
-  { Note::Silent, 560 },
-  { Note::Finish, 0 },
+static bsp::BuzzerNoteDelayed Mario[] = {
+    {Note::Mi3M, 80},    {Note::Silent, 80}, {Note::Mi3M, 80},
+    {Note::Silent, 240}, {Note::Mi3M, 80},   {Note::Silent, 240},
+    {Note::Do1M, 80},    {Note::Silent, 80}, {Note::Mi3M, 80},
+    {Note::Silent, 240}, {Note::So5M, 80},   {Note::Silent, 560},
+    {Note::So5L, 80},
+};
+
+static bsp::BuzzerNoteDelayed War_Chant_of_Mars[] = {
+    //    {Note::So5M, 400},   {Note::So5M, 200},  {Note::So5M, 200},
+    //    {Note::So5M, 400},   {Note::Fa4M, 200},  {Note::Mi3M, 400},
+    //    {Note::So5M, 200},   {Note::Do1H, 400},  {Note::Re2H, 200},
+    //    {Note::Mi3H, 400},   {Note::Mi3H, 200},  {Note::Mi3H, 400},
+    //    {Note::Re2H, 200},   {Note::Do1H, 400},  {Note::Do1H, 400},
+    //    {Note::Si7M, 200},   {Note::La6M, 400},  {Note::La6M, 200},
+    //    {Note::La6M, 400},   {Note::Si7M, 200},  {Note::Do1H, 400},
+    //    {Note::Si7M, 200},   {Note::Do1H, 400},  {Note::La6M, 200},
+    //    {Note::So5M, 400},   {Note::La6M, 200},  {Note::So5M, 400},
+    //    {Note::Mi3M, 200},   {Note::So5M, 800},  {Note::So5M, 400},
+    //    {Note::So5M, 200},   {Note::So5M, 400},  {Note::So5M, 200},
+    //    {Note::So5M, 400},   {Note::Fa4M, 200},  {Note::Mi3M, 400},
+    //    {Note::So5M, 200},   {Note::Do1H, 400},  {Note::Re2H, 200},
+    //    {Note::Mi3H, 400},   {Note::Mi3H, 200},  {Note::Mi3H, 400},
+    //    {Note::Re2H, 200},   {Note::Do1H, 800},  {Note::Do1H, 800},
+    //    {Note::Re2H, 800},   {Note::Re2H, 800},  {Note::Do1H, 800},
+    //    {Note::Si7M, 800},   {Note::Do1H, 1600}, {Note::Silent, 400},
+    {Note::Silent, 400}, {Note::So5M, 800},  {Note::Fa4M, 400},
+    {Note::Mi3M, 400},   {Note::So5M, 200},  {Note::Do1H, 400},
+    {Note::Re2H, 200},   {Note::Mi3H, 1200}, {Note::Do1H, 800},
+    //    {Note::Silent, 400}, {Note::La6M, 800},   {Note::Si7M, 400},
+    //    {Note::Do1H, 400},   {Note::Si7M, 200},   {Note::Do1H, 400},
+    //    {Note::La6M, 200},   {Note::So5M, 1600},  {Note::Mi3M, 800},
+    //    {Note::Silent, 400}, {Note::So5M, 800},   {Note::Fa4M, 400},
+    //    {Note::Mi3M, 400},   {Note::So5M, 200},   {Note::Do1H, 400},
+    //    {Note::Re2H, 200},   {Note::Mi3H, 1600},  {Note::Do1H, 800},
+    //    {Note::Do1H, 800},   {Note::Re2H, 800},   {Note::Re2H, 800},
+    //    {Note::Do1H, 800},   {Note::Si7M, 800},   {Note::Do1H, 1600},
+    //    {Note::Silent, 800}, {Note::Silent, 800}, {Note::Finish, 0},
 };
 
 void RM_RTOS_Init(void) {
   bsp::Buzzer buzzer(&htim12, 1, 1000000);
-  buzzer.SingSong(startup);
+  buzzer.SingSong(Mario);
+  buzzer.SingSong(War_Chant_of_Mars);
 }
