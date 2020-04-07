@@ -23,7 +23,7 @@
 namespace bsp {
 
 Buzzer::Buzzer(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq)
-      : pwm_(htim, channel, clock_freq, 0, 0) {
+    : pwm_(htim, channel, clock_freq, 0, 0) {
   pwm_.Start();
 }
 
@@ -34,7 +34,8 @@ void Buzzer::SingTone(const BuzzerNote &note) {
   }
 }
 
-void Buzzer::SingSong(const BuzzerNoteDelayed *delayed_notes, buzzer_delay_t delay_func) {
+void Buzzer::SingSong(const BuzzerNoteDelayed *delayed_notes,
+                      buzzer_delay_t delay_func) {
   while (delayed_notes->note != BuzzerNote::Finish) {
     SingTone(delayed_notes->note);
     delay_func(delayed_notes->delay);
