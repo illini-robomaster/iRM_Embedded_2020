@@ -30,7 +30,7 @@ namespace control {
 
 static void can_motor_callback(const uint8_t data[], void *args) {
   MotorCANBase *motor = reinterpret_cast<MotorCANBase*>(args);
-  motor->UpdateData(data);
+  motor->DataCallback(data);
 }
 
 MotorCANBase::MotorCANBase(bsp::CAN *can, uint16_t rx_id) 
@@ -51,6 +51,17 @@ MotorCANBase::MotorCANBase(bsp::CAN *can, uint16_t rx_id)
     tx_id_ = TX2_ID;
   else
     tx_id_ = TX1_ID;
+}
+
+void MotorCANBase::PopulateMotorMsg(motor_msg_t *msg) {
+  msg->theta = GetTheta();
+  msg->omega = GetOmega();
+  msg->timestamp = timestamp_;
+}
+
+void MotorCANBase::DataCallback(const uint8_t data[]) {
+  timestamp_ = HAL_GetTick();
+  UpdateData(data);
 }
 
 void MotorCANBase::TransmitOutput(MotorCANBase *motors[], uint8_t num_motors) {
