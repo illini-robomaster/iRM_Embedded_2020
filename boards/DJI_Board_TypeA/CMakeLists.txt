@@ -69,8 +69,8 @@ target_include_directories(${PROJECT_NAME}_interface INTERFACE
 
 file(GLOB_RECURSE DSP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DSP/Source/*.c)
 add_library(${PROJECT_NAME}_libDSP ${DSP_SOURCES})
-target_compile_options(${PROJECT_NAME}_libDSP PRIVATE
-    -D__FPU_PRESENT=1 -Wno-strict-aliasing)
+target_compile_options(${PROJECT_NAME}_libDSP PRIVATE -Wno-strict-aliasing)
+target_compile_definitions(${PROJECT_NAME}_libDSP PRIVATE __FPU_PRESENT)
 target_link_libraries(${PROJECT_NAME}_libDSP PRIVATE ${PROJECT_NAME}_interface)
 
 ###################################################
