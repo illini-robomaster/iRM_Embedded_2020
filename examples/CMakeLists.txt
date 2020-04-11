@@ -24,6 +24,5 @@ add_subdirectory(uart)
 add_subdirectory(usb)
 add_subdirectory(sdio)
 add_subdirectory(imu)
-add_subdirectory(dbus)
 
 add_subdirectory(motor)
