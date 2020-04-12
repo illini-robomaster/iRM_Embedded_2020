@@ -52,8 +52,8 @@ static bsp::UART *uart8;
 static osEvent uart_event;
 
 /* notify application when rx data is pending read */
-void custom_uart_handler(bsp::UART *uart) {
-  UNUSED(uart);
+void custom_uart_handler(void *args) {
+  UNUSED(args);
   osSignalSet(defaultTaskHandle, RX_SIGNAL);
 }
 

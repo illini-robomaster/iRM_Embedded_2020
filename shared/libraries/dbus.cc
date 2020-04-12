@@ -36,33 +36,29 @@ typedef struct {
     } __packed mouse;
     /* keyboard key information */
     uint16_t code;
+    uint16_t reserved;
 } __packed dbus_t;
 
-static remote::DBUS *dbus = NULL;
-
-static void dbus_callback(bsp::UART *uart) {
-  if (!dbus)
-    return;
-  
+static void dbus_callback(void *args) {
+  remote::DBUS *dbus = reinterpret_cast<remote::DBUS*>(args);
   uint8_t *data;
   /* data frame is not aligned */
-  if (uart->ReadFromISR(&data) != DBUS_DATA_LEN)
+  if (dbus->uart.ReadFromISR(&data) != DBUS_DATA_LEN)
     return;
    
-  /* fill in rocker value */
+  /* rocker values */
   dbus_t *repr = reinterpret_cast<dbus_t*>(data);
   dbus->ch0 = repr->ch0 - RC_ROCKER_MID;
   dbus->ch1 = repr->ch1 - RC_ROCKER_MID;
   dbus->ch2 = repr->ch2 - RC_ROCKER_MID;
   dbus->ch3 = repr->ch3 - RC_ROCKER_MID;
+  /* switch values */
 }
 
 namespace remote {
 
-DBUS::DBUS(UART_HandleTypeDef *huart) : uart_(huart) {
-  RM_ASSERT_FALSE(dbus, "duplicate initializations");
-  dbus = this;
-  uart_.SetupRx(DBUS_DATA_LEN * 3, dbus_callback);
+DBUS::DBUS(UART_HandleTypeDef *huart) : uart(huart) {
+  uart.SetupRx(DBUS_DATA_LEN * 3, dbus_callback, this);
 }
 
 } /* namespace remote */

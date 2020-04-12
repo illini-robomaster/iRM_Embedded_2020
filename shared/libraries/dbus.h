@@ -47,8 +47,7 @@ class DBUS {
       } bit;
   } key;
 
- private:
-  bsp::UART uart_;
+  bsp::UART uart;
 };
 
 } /* namespace remote */

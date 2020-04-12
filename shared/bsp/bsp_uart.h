@@ -26,7 +26,7 @@ namespace bsp {
 
 class UART;
 
-typedef void (*uart_callback_t)(UART*);
+typedef void (*uart_callback_t)(void*);
 
 class UART {
  public:
@@ -48,8 +48,9 @@ class UART {
    * @param rx_buffer_size  receive buffer size (all data that has not been read 
    *                        out is queued into this buffer)
    * @param callback        an optional callback that get called as soon as data becomes available
+   * @param args            optional arguments passed in to the callback function
    */
-  void SetupRx(uint32_t rx_buffer_size, uart_callback_t callback = NULL);
+  void SetupRx(uint32_t rx_buffer_size, uart_callback_t callback = NULL, void *args = NULL);
 
   /**
    * @brief set up non blocking transmission functionality
@@ -124,6 +125,7 @@ class UART {
   uint8_t         *rx_data0_;
   uint8_t         *rx_data1_;
   uart_callback_t rx_callback_;
+  void            *rx_args_;
   /* tx */
   uint32_t        tx_size_;
   uint32_t        tx_pending_;

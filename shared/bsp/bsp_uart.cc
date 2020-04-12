@@ -117,7 +117,7 @@ UART::~UART() {
     delete[] tx_read_;
 }
 
-void UART::SetupRx(uint32_t rx_buffer_size, uart_callback_t callback) {
+void UART::SetupRx(uint32_t rx_buffer_size, uart_callback_t callback, void* args) {
   /* uart rx already setup */
   if (rx_size_ || rx_data0_ || rx_data1_)
     return ;
@@ -126,6 +126,7 @@ void UART::SetupRx(uint32_t rx_buffer_size, uart_callback_t callback) {
   rx_data0_ = new uint8_t[rx_buffer_size];
   rx_data1_ = new uint8_t[rx_buffer_size];
   rx_callback_ = callback;
+  rx_args_ = args;
 
   /* UART IDLE Interrupt can notify application of data reception ASAP */
   __HAL_UART_CLEAR_FLAG(huart_, UART_FLAG_IDLE);
@@ -236,7 +237,7 @@ void UART::TxCompleteCallback() {
 
 void UART::RxCompleteCallback() {
   if (rx_callback_)
-    rx_callback_(this);
+    rx_callback_(rx_args_);
 }
 
 } /* namespace bsp */
