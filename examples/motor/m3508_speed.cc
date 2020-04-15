@@ -18,29 +18,48 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_buzzer.h"
+#include "cmsis_os.h"
+#include "main.h"
 
-namespace bsp {
+#include "bsp_gpio.h"
+#include "bsp_print.h"
 
-Buzzer::Buzzer(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq)
-    : pwm_(htim, channel, clock_freq, 0, 0) {
-  pwm_.Start();
+#include "controller.h"
+#include "motor.h"
+
+#define KEY_GPIO_GROUP  GPIOB
+#define KEY_GPIO_PIN    GPIO_PIN_2
+
+#define TARGET_SPEED    80
+
+bsp::CAN *can1 = NULL;
+control::MotorCANBase *motor = NULL;
+
+void RM_RTOS_Init() {
+  print_use_uart(&huart8);
+
+  can1 = new bsp::CAN(&hcan1, 0x201);
+  motor = new control::Motor3508(can1, 0x201);
 }
 
-void Buzzer::SingTone(const BuzzerNote &note) {
-  if (note != BuzzerNote::Finish) {
-    pwm_.SetFrequency(static_cast<uint32_t>(note));
-    pwm_.SetPulseWidth(1000000 / static_cast<uint32_t>(note) / 2);
+void RM_RTOS_Default_Task(const void *args) {
+  UNUSED(args);
+  control::MotorCANBase *motors[] = {motor};
+  control::PIDController pid(20, 8, 0);
+
+  bsp::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);
+
+  float target;
+
+  while (1) {
+    if (key.Read())
+      target = TARGET_SPEED;
+    else
+      target = 0;
+
+    motor->SetOutput(pid.ComputeOutput(motor->GetOmegaDelta(target)));
+    control::MotorCANBase::TransmitOutput(motors, 1);
+    motor->PrintData();
+    osDelay(10);
   }
 }
-
-void Buzzer::SingSong(const BuzzerNoteDelayed *delayed_notes,
-                      buzzer_delay_t delay_func) {
-  while (delayed_notes->note != BuzzerNote::Finish) {
-    SingTone(delayed_notes->note);
-    delay_func(delayed_notes->delay);
-    ++delayed_notes;
-  }
-}
-
-} /* namespace bsp */

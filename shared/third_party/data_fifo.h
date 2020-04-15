@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-#include "stm32f4xx_hal.h"
+#include "main.h"
 #include "cmsis_os.h"
 
 #define ASSERT(x) do {                          \
