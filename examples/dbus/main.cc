@@ -23,11 +23,21 @@
 #include "main.h"
 #include "dbus.h"
 
+#include "bsp_print.h"
+ 
+remote::DBUS *dbus;
+
 void RM_RTOS_Default_Task(const void *arguments) {
   UNUSED(arguments);
 
-  remote::DBUS dbus(&huart1);
+  print_use_uart(&huart8);
+  dbus = new remote::DBUS(&huart1);
+
+  // NOTE(alvin): print is split because of stack usage is almost reaching limits
   while (true) {
+    print("CH0: %-4d CH1: %-4d CH2: %-4d CH3: %-4d ", 
+          dbus->ch0, dbus->ch1, dbus->ch2, dbus->ch3);
+    print("SWL: %d SWR: %d @ %d ms\r\n", dbus->swl, dbus->swr, dbus->timestamp);
     osDelay(100);
   }
 }
