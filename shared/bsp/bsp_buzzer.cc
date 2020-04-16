@@ -43,4 +43,8 @@ void Buzzer::SingSong(const BuzzerNoteDelayed *delayed_notes,
   }
 }
 
+void Buzzer::SingStop(){
+	pwm_.Stop();
+}
+
 } /* namespace bsp */

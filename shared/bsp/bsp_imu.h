@@ -53,7 +53,7 @@ class MPU6500 {
    */
   void Reset();
 
-  // 3-axis accelarometer
+  // 3-axis accelerometer
   vec3f_t acce;
   // 3-axis gyroscope
   vec3f_t gyro;

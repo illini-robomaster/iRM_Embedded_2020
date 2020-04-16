@@ -11,10 +11,10 @@ namespace control {
 class PIDController {
  public:
    /**
-    * @brief PID controller constructer
+    * @brief PID controller constructor
     *
     * @param kp proportional gain
-    * @param ki intergral gain
+    * @param ki integral gain
     * @param kd derivative gain
     */
   PIDController(float kp, float ki, float kd);

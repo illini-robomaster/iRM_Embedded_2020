@@ -51,7 +51,7 @@ class PWM {
   /**
    * @brief set a new pwm output frequency
    *
-   * @param output_freq   desired pwm output freqeuncy, in [Hz]
+   * @param output_freq   desired pwm output frequency, in [Hz]
    */
   void SetFrequency(uint32_t output_freq);
 

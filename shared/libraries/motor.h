@@ -186,7 +186,7 @@ class MotorPWMBase : public MotorBase {
     * @param htim           HAL timer handle
     * @param channel        HAL timer channel, from [0, 4)
     * @param clock_freq     clock frequency associated with the timer, in [Hz]
-    * @param output_freq    desired output freqeuncy, in [Hz]
+    * @param output_freq    desired output frequency, in [Hz]
     * @param idle_throttle  idling pulse width, in [us]
     */
   MotorPWMBase(TIM_HandleTypeDef *htim, uint8_t channel, 
