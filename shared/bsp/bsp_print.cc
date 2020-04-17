@@ -25,7 +25,7 @@
 #include "main.h"
 #include "printf.h" // third party tiny-printf implemnetations
 
-#define MAX_PRINT_LEN 80
+#define MAX_PRINT_LEN 128
 
 static bsp::UART *print_uart = NULL;
 
@@ -62,4 +62,12 @@ int32_t print(const char *format, ...) {
   else
     return usb_transmit((uint8_t*)buffer, length);  
 #endif // #ifdef NDEBUG
+}
+
+void set_cursor(int row, int col) {
+  print("\033[%d;%dH", row, col);
+}
+
+void clear_screen(void) {
+  print("\033[2J");
 }

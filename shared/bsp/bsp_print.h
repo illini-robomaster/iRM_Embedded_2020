@@ -49,3 +49,18 @@ void print_use_usb();
    * @note    will perform no-op in NDEBUG mode
    */
 int32_t print(const char *format, ...);
+
+/* escape codes helper functions -- http://www.termsys.demon.co.uk/vtansi.htm */
+
+/**
+ * @brief set the cursor with escape codes
+ *
+ * @param row row of the cursor
+ * @param col column of the cursor
+ */
+void set_cursor(int row, int col);
+
+/**
+ * @brief clear uart screen
+ */
+void clear_screen(void);

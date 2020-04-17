@@ -18,61 +18,40 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "main.h"
 #include "cmsis_os.h"
-
-#include "bsp_gpio.h"
-#include "bsp_imu.h"
 #include "bsp_os.h"
 
-#include <cstring>
+static TIM_HandleTypeDef *htim_os = NULL;
 
-#define ONBOARD_IMU_SPI       hspi5
-#define ONBOARD_IMU_CS_GROUP  GPIOF
-#define ONBOARD_IMU_CS_PIN    GPIO_PIN_6
-#define PRING_UART            huart8
-
-volatile uint32_t start, duration;
-
-static bsp::MPU6500 *imu;
-static osThreadId   imu_task_handle;
-
-static char stats[256];
-
-
-void imu_task(void const *argu) {
-  UNUSED(argu);
-  uint32_t sys_tick = osKernelSysTick();
-  while (true) {
-    imu->UpdateData();
-    osDelayUntil(&sys_tick, 1);
-  }
+void configureTimerForRunTimeStats(void) {
+  if (!htim_os)
+    return ;
+  __HAL_TIM_SET_AUTORELOAD(htim_os, 0xffffffff);
+  __HAL_TIM_SET_COUNTER(htim_os, 0);
+  __HAL_TIM_ENABLE(htim_os);
 }
 
-void RM_RTOS_Default_Task(const void *arguments) {
-  UNUSED(arguments);
-  while (true) {
-    vTaskGetRunTimeStats(stats);
-    set_cursor(0, 0);
-    clear_screen();
-    print("Temp: %.4f ", imu->temp);
-    print("ACC_X: %.4f ACC_Y: %.4f ACC_Z: %.4f ", imu->acce.x, imu->acce.y, imu->acce.z);
-    print("GYRO_X: %.4f GYRO_Y: %.4f GYRO_Z: %.4f", imu->gyro.x, imu->gyro.y, imu->gyro.z);
-    print("\r\nCPU Usage:\r\n%s", stats);
-    osDelay(100);
-  }
+unsigned long getRunTimeCounterValue(void) {
+  return bsp::get_highres_tick_us();
 }
 
-void RM_RTOS_Init(void) {
-  bsp::set_highres_clock_timer(&htim2);
-  bsp::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
-  imu = new bsp::MPU6500(&ONBOARD_IMU_SPI, chip_select);
-  print_use_uart(&PRING_UART);
+void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName) {
+  (void)xTask;
+  (void)pcTaskName;
+
+  while (1);
 }
 
+namespace bsp {
 
-void RM_RTOS_Threads_Init(void) {
-  osThreadDef(imuTask, imu_task, osPriorityNormal, 0, 256);
-  imu_task_handle = osThreadCreate(osThread(imuTask), NULL);
+void set_highres_clock_timer(TIM_HandleTypeDef *htim) {
+  htim_os = htim;
 }
 
+uint32_t get_highres_tick_us(void) {
+  if (!htim_os)
+    return 0;
+  return htim_os->Instance->CNT;
+}
+
+} /* namespace bsp */
