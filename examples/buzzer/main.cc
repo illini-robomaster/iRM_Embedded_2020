@@ -69,5 +69,4 @@ void RM_RTOS_Init(void) {
   bsp::Buzzer buzzer(&htim12, 1, 1000000);
   buzzer.SingSong(Mario);
   buzzer.SingSong(War_Cant_of_Mars);
-  buzzer.SingStop();
 }

@@ -92,11 +92,6 @@ class Buzzer {
                   HAL_Delay(milli);
                 });
 
-  /**
-   * @brief stop singing (end the PWM task)
-   */
-  void SingStop();
-
  private:
   /* pwm instance associated with the buzzer */
   PWM pwm_;
