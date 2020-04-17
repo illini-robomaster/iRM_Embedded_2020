@@ -28,6 +28,8 @@ namespace bsp {
  * @brief set the timer to be used to generate high resolution ticks in [us]
  *
  * @param htim  HAL timer handle pointer
+ *
+ * @note this has to be called before starting rtos scheduler
  */
 void set_highres_clock_timer(TIM_HandleTypeDef *htim);
 
