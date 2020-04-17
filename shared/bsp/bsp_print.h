@@ -39,7 +39,7 @@ void print_use_usb();
   /**
    * @brief print debug message via USB-OTG-FS
    *
-   * @param format  formated string
+   * @param format  formatted string
    * @param ...     same argument lists as in printf
    *
    * @return  number of bytes printed
