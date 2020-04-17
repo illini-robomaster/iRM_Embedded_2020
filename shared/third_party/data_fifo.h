@@ -102,7 +102,7 @@ int32_t fifo_s_puts(fifo_s_t *pfifo, uint8_t *psource, uint32_t number);
  * Get an element from FIFO
  *
  * @param  pfifo      Pointer of valid FIFO
- * @return            Data element poped from FIFO
+ * @return            Data element popped from FIFO
  */
 uint8_t fifo_s_get(fifo_s_t* pfifo);
 
@@ -110,9 +110,9 @@ uint8_t fifo_s_get(fifo_s_t* pfifo);
  * Get elements from FIFO
  *
  * @param  pfifo      Pointer of a valid FIFO
- * @param  source     Where to store poped elements
- * @param  len        How many elements to retrive
- * @return            Actual number of elements retrived
+ * @param  source     Where to store popped elements
+ * @param  len        How many elements to retrieve
+ * @return            Actual number of elements retrieved
  */
 uint16_t fifo_s_gets(fifo_s_t* pfifo, uint8_t* source, uint8_t len);
 
