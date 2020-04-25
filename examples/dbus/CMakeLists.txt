@@ -18,12 +18,9 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-add_subdirectory(buzzer)
-add_subdirectory(led)
-add_subdirectory(uart)
-add_subdirectory(usb)
-add_subdirectory(sdio)
-add_subdirectory(imu)
-add_subdirectory(dbus)
+project(example_dbus ASM C CXX)
 
-add_subdirectory(motor)
+irm_add_arm_executable(${PROJECT_NAME}
+    TARGET DJI_Board_TypeA
+    SOURCES main.cc)
+

@@ -24,10 +24,6 @@
 
 namespace bsp {
 
-class UART;
-
-typedef void (*uart_callback_t)(UART*);
-
 class UART {
  public:
   /**
@@ -40,16 +36,15 @@ class UART {
   /**
    * @brief destructor (potentially deallocate buffer memories associated with tx / rx)
    */
-  ~UART();
+  virtual ~UART();
 
   /**
    * @brief set up uart receiver in the background optionally registering a callback
    *
    * @param rx_buffer_size  receive buffer size (all data that has not been read 
    *                        out is queued into this buffer)
-   * @param callback        an optional callback that get called as soon as data becomes available
    */
-  void SetupRx(uint32_t rx_buffer_size, uart_callback_t callback = NULL);
+  void SetupRx(uint32_t rx_buffer_size);
 
   /**
    * @brief set up non blocking transmission functionality
@@ -115,15 +110,14 @@ class UART {
   /**
    * @brief Reception complete call back. SHOULD NOT BE CALLED FROM OTHER PLACES
    */
-  void RxCompleteCallback();
+  virtual void RxCompleteCallback();
 
- private:
+ protected:
   UART_HandleTypeDef *huart_;
   /* rx */
   uint32_t        rx_size_;
   uint8_t         *rx_data0_;
   uint8_t         *rx_data1_;
-  uart_callback_t rx_callback_;
   /* tx */
   uint32_t        tx_size_;
   uint32_t        tx_pending_;

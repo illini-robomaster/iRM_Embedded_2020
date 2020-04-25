@@ -100,7 +100,7 @@ static void uart_tx_complete_callback(UART_HandleTypeDef *huart) {
 }
 
 UART::UART(UART_HandleTypeDef *huart) : huart_(huart),
-    rx_size_(0), rx_data0_(NULL), rx_data1_(NULL), rx_callback_(NULL),
+    rx_size_(0), rx_data0_(NULL), rx_data1_(NULL),
     tx_size_(0), tx_pending_(0), tx_write_(NULL), tx_read_(NULL) {
   RM_ASSERT_FALSE(uart_handle_exists(huart), "Uart repeated initialization");
   uarts[num_uarts++] = this;
@@ -117,7 +117,7 @@ UART::~UART() {
     delete[] tx_read_;
 }
 
-void UART::SetupRx(uint32_t rx_buffer_size, uart_callback_t callback) {
+void UART::SetupRx(uint32_t rx_buffer_size) {
   /* uart rx already setup */
   if (rx_size_ || rx_data0_ || rx_data1_)
     return ;
@@ -125,14 +125,13 @@ void UART::SetupRx(uint32_t rx_buffer_size, uart_callback_t callback) {
   rx_size_ = rx_buffer_size;
   rx_data0_ = new uint8_t[rx_buffer_size];
   rx_data1_ = new uint8_t[rx_buffer_size];
-  rx_callback_ = callback;
+
+  /* enable uart rx dma transfer in back ground */
+  uart_receive_dma_double_buffer(huart_, rx_data0_, rx_data1_, rx_size_);
 
   /* UART IDLE Interrupt can notify application of data reception ASAP */
   __HAL_UART_CLEAR_FLAG(huart_, UART_FLAG_IDLE);
   __HAL_UART_ENABLE_IT(huart_, UART_IT_IDLE);
-
-  /* enable uart rx dma transfer in back ground */
-  uart_receive_dma_double_buffer(huart_, rx_data0_, rx_data1_, rx_size_);
 }
 
 void UART::SetupTx(uint32_t tx_buffer_size) {
@@ -234,21 +233,24 @@ void UART::TxCompleteCallback() {
   taskEXIT_CRITICAL_FROM_ISR(isrflags);
 }
 
-void UART::RxCompleteCallback() {
-  if (rx_callback_)
-    rx_callback_(this);
-}
+void UART::RxCompleteCallback() {}
 
 } /* namespace bsp */
 
 /* overwrite the weak function defined in board specific usart.c to handle IRQ requests */
 void RM_UART_IRQHandler(UART_HandleTypeDef *huart) {
+  bsp::UART *uart = bsp::find_uart_instance(huart);
+  if (!uart)
+    return;
+
   if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
-    __HAL_UART_CLEAR_IDLEFLAG(huart);
-    bsp::UART *uart = bsp::find_uart_instance(huart);
-    if (!uart)
-      return;
     uart->RxCompleteCallback();
+    __HAL_UART_CLEAR_IDLEFLAG(huart);
+  }
+
+  // TODO(alvin): add actual error handler in the future, ignore it for now
+  if (__HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR)) {
+    __HAL_UART_CLEAR_PEFLAG(huart);
   }
 }
 
