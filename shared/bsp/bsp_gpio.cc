@@ -46,4 +46,29 @@ uint8_t GPIO::Read() {
   return state_;
 }
 
+GPIT* GPIT::gpits[NUM_GPITS] = { NULL };
+
+GPIT::GPIT(uint16_t pin) : pin_(pin) {
+  int gpio_idx = GetGPIOIndex(pin);
+  if (gpio_idx >= 0 && gpio_idx < NUM_GPITS && !gpits[gpio_idx])
+    gpits[gpio_idx] = this;
+}
+
+void GPIT::IntCallback(uint16_t pin) {
+  int gpio_idx = GetGPIOIndex(pin);
+  if (gpio_idx >= 0 && gpio_idx < NUM_GPITS && gpits[gpio_idx])
+    gpits[gpio_idx]->IntCallback();
+}
+
+int GPIT::GetGPIOIndex(uint16_t pin) {
+  for (int i = 0; i < NUM_GPITS; ++i)
+    if (pin == (1 << i))
+      return i;
+  return -1;
+}
+
 } /* namespace bsp */
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  bsp::GPIT::IntCallback(GPIO_Pin);
+}

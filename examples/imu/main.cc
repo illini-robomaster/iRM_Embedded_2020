@@ -32,32 +32,27 @@
 #define ONBOARD_IMU_CS_PIN    GPIO_PIN_6
 #define PRING_UART            huart8
 
-volatile uint32_t start, duration;
-
 static bsp::MPU6500 *imu;
-static osThreadId   imu_task_handle;
 
 static char stats[256];
 
-
-void imu_task(void const *argu) {
-  UNUSED(argu);
-  uint32_t sys_tick = osKernelSysTick();
-  while (true) {
-    imu->UpdateData();
-    osDelayUntil(&sys_tick, 1);
-  }
-}
-
 void RM_RTOS_Default_Task(const void *arguments) {
   UNUSED(arguments);
+  
+  bsp::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
+  imu = new bsp::MPU6500(&ONBOARD_IMU_SPI, chip_select, MPU6500_IT_Pin);
+
+  print("IMU Initialized!\r\n");
+  osDelay(3000);
+
   while (true) {
     vTaskGetRunTimeStats(stats);
     set_cursor(0, 0);
     clear_screen();
-    print("Temp: %.4f ", imu->temp);
-    print("ACC_X: %.4f ACC_Y: %.4f ACC_Z: %.4f ", imu->acce.x, imu->acce.y, imu->acce.z);
-    print("GYRO_X: %.4f GYRO_Y: %.4f GYRO_Z: %.4f", imu->gyro.x, imu->gyro.y, imu->gyro.z);
+    print("Temp: %10.4f\r\n", imu->temp);
+    print("ACC_X: %9.4f ACC_Y: %9.4f ACC_Z: %9.4f\r\n", imu->acce.x, imu->acce.y, imu->acce.z);
+    print("GYRO_X: %8.4f GYRO_Y: %8.4f GYRO_Z: %8.4f\r\n", imu->gyro.x, imu->gyro.y, imu->gyro.z);
+    print("MAG_X: %9.0f MAG_Y: %9.0f MAG_Z: %9.0f\r\n", imu->mag.x, imu->mag.y, imu->mag.z);
     print("\r\nCPU Usage:\r\n%s", stats);
     osDelay(100);
   }
@@ -65,14 +60,6 @@ void RM_RTOS_Default_Task(const void *arguments) {
 
 void RM_RTOS_Init(void) {
   bsp::set_highres_clock_timer(&htim2);
-  bsp::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
-  imu = new bsp::MPU6500(&ONBOARD_IMU_SPI, chip_select);
   print_use_uart(&PRING_UART);
-}
-
-
-void RM_RTOS_Threads_Init(void) {
-  osThreadDef(imuTask, imu_task, osPriorityNormal, 0, 256);
-  imu_task_handle = osThreadCreate(osThread(imuTask), NULL);
 }
 
