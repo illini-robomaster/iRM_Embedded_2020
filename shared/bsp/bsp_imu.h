@@ -59,6 +59,8 @@ class MPU6500 : public GPIT {
   vec3f_t mag;
   // sensor temperature
   float   temp;
+  // sensor timestamp
+  uint32_t timestamp = 0;
 
  private:
   /**

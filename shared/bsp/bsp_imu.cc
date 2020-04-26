@@ -23,6 +23,7 @@
 #include "bsp_error_handler.h"
 #include "bsp_imu.h"
 #include "bsp_mpu6500_reg.h"
+#include "bsp_os.h"
 
 #define MPU6500_DELAY       55 // SPI delay
 // configured with initialization sequences
@@ -143,6 +144,7 @@ void MPU6500::SPITxRxCpltCallback() {
 }
 
 void MPU6500::IntCallback() {
+  timestamp = get_highres_tick_us();
   UpdateData();
 }
 
