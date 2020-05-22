@@ -28,41 +28,27 @@
 
 #include "walle_utils.h"
  
-static osThreadId servo_test_task_handle;
+static osThreadId eye_test_task_handle;
 static remote::DBUS *dbus;
 
-void servo_test_task(void const *argu) {
+void eye_test_task(void const *argu) {
   UNUSED(argu);
   print_use_uart(&huart8);
 
   dbus = new remote::DBUS(&huart1);
-  LinearMapper<int, int> mapper(-660, 660, -10, 10);
 
-  bsp::PWM servo1(&htim4, 3, 1000000, 50, 1400);
-  bsp::PWM servo2(&htim4, 4, 1000000, 50, 1400);
+  MG90S left_eye(&htim4, 1, 1100, 1400);
+  MG90S right_eye(&htim4, 2, 2100, 1800);
 
-  servo1.Start();
-  servo2.Start();
-  
-  const uint32_t pw_min = 400;
-  const uint32_t pw_max = 2400;
-  uint32_t pw1 = 1400;
-  uint32_t pw2 = 1400;
   while (true) {
-    pw1 += mapper.Map(dbus->ch3);
-    pw2 += mapper.Map(dbus->ch1);
-    pw1 = clip<uint32_t>(pw1, pw_min, pw_max);
-    pw2 = clip<uint32_t>(pw2, pw_min, pw_max);
-
-    servo1.SetPulseWidth(pw1);
-    servo2.SetPulseWidth(pw2);
-
-    print("Pulse Width 1: %lu us Pulse Widht 2: %lu us\r\n", pw1, pw2);
+    left_eye.SetOutput(dbus->swl == remote::UP);
+    right_eye.SetOutput(dbus->swr == remote::UP);
     osDelay(50);
   }
 }
 
 void RM_RTOS_Threads_Init(void) {
-  osThreadDef(servoTestTask, servo_test_task, osPriorityNormal, 0, 1024);
-  servo_test_task_handle = osThreadCreate(osThread(servoTestTask), NULL);
+  osThreadDef(eyeTestTask, eye_test_task, osPriorityNormal, 0, 1024);
+  eye_test_task_handle = osThreadCreate(osThread(eyeTestTask), NULL);
 }
+

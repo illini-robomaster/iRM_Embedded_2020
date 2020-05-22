@@ -30,3 +30,13 @@ irm_add_arm_executable(test_servo
     TARGET DJI_Board_TypeA
     SOURCES test_servo.cc
     DEPENDS Walle-utils)
+
+irm_add_arm_executable(test_eye
+    TARGET DJI_Board_TypeA
+    SOURCES test_eye.cc
+    DEPENDS Walle-utils)
+
+irm_add_arm_executable(walle
+    TARGET DJI_Board_TypeA
+    SOURCES walle.cc
+    DEPENDS Walle-utils)

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "bsp_error_handler.h"
-
 #include "bsp_print.h"
+#include "bsp_pwm.h"
 
 template<class Ti, class To>
 class LinearMapper {
@@ -18,4 +18,22 @@ class LinearMapper {
  private:
   const float k_;
   const float b_;
+};
+
+class MG90S {
+ public:
+  static const int32_t MIN_PULSE_WIDTH=400;
+  static const int32_t MAX_PULSE_WIDTH=2400;
+
+  MG90S(TIM_HandleTypeDef *htim, uint8_t channel, 
+        uint32_t lower_pw, uint32_t upper_pw);
+
+  void SetOutput(float input);
+
+  void SetIncrement(float inc);
+
+ private:
+  float output_;
+  LinearMapper<float, int32_t> mapper_;
+  bsp::PWM pwm_;
 };
