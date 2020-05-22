@@ -31,7 +31,7 @@ static CAN *can2 = 0;
 /**
  * @brief find instantiated can line
  *
- * @param hcan  HAL can hanle
+ * @param hcan  HAL can handle
  *
  * @return can instance if found, otherwise NULL
  */

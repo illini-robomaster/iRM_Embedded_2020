@@ -50,7 +50,7 @@ static inline UART* find_uart_instance(UART_HandleTypeDef *huart) {
   return NULL;
 }
 
-/* modified verision of HAL_UART_Receive_DMA that utilize double buffer mode */
+/* modified version of HAL_UART_Receive_DMA that utilize double buffer mode */
 static HAL_StatusTypeDef uart_receive_dma_double_buffer(
     UART_HandleTypeDef *huart, uint8_t *data0, uint8_t *data1, uint16_t size) {
   /* Check that a Rx process is not already ongoing */
@@ -162,9 +162,9 @@ int32_t UART::Read(uint8_t **data) {
 
   /* return the buffer pointer currently not being used by DMA transfer */
   if (huart_->hdmarx->Instance->CR & DMA_SxCR_CT)
-    *data = rx_data0_; // DMA is transfering data into rx_data1
+    *data = rx_data0_; // DMA is transferring data into rx_data1
   else
-    *data = rx_data1_; // DMA is transfering data into rx_data0
+    *data = rx_data1_; // DMA is transferring data into rx_data0
 
   return length;
 }
@@ -184,9 +184,9 @@ int32_t UART::ReadFromISR(uint8_t **data) {
 
   /* return the buffer pointer currently not being used by DMA transfer */
   if (huart_->hdmarx->Instance->CR & DMA_SxCR_CT)
-    *data = rx_data0_; // DMA is transfering data into rx_data1
+    *data = rx_data0_; // DMA is transferring data into rx_data1
   else
-    *data = rx_data1_; // DMA is transfering data into rx_data0
+    *data = rx_data1_; // DMA is transferring data into rx_data0
 
   return length;
 }

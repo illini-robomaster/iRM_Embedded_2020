@@ -67,7 +67,7 @@ void PWM::SetFrequency(uint32_t output_freq) {
 
 void PWM::SetPulseWidth(uint32_t pulse_width) {
   this->pulse_width_ = pulse_width;
-  __HAL_TIM_SET_COMPARE(htim_, channel_, clock_freq_ * pulse_width_ / 1000000);
+  __HAL_TIM_SET_COMPARE(htim_, channel_, clock_freq_ * pulse_width_ / 1000000 - 1);
 }
 
 } /* namespace bsp */
