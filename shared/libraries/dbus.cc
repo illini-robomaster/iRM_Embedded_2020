@@ -4,15 +4,8 @@
 #include <cmath>
 #include <cstring>
 
-/* switch id */
-#define RC_SWITCH_UP 1
-#define RC_SWITCH_MI 3
-#define RC_SWITCH_DN 2
-
 /* rocker range and deadzones */
-#define RC_ROCKER_MIN           364
 #define RC_ROCKER_MID           1024
-#define RC_ROCKER_MAX           1684
 #define RC_ROCKER_ZERO_DRIFT    10 // Range of possible drift around initial position
 // Range of possible drift around min or max position
 #define RC_ROCKER_MIN_MAX_DRIFT (RC_ROCKER_MAX - RC_ROCKER_MID + 10)   
@@ -57,8 +50,8 @@ void DBUS::RxCompleteCallback() {
   this->ch2 = abs(this->ch2) <= RC_ROCKER_ZERO_DRIFT ? 0 : this->ch2;
   this->ch3 = abs(this->ch3) <= RC_ROCKER_ZERO_DRIFT ? 0 : this->ch3;
 
-  this->swl = repr->swl;
-  this->swr = repr->swr;
+  this->swl = static_cast<switch_t>(repr->swl);
+  this->swr = static_cast<switch_t>(repr->swr);
 
   memcpy(&this->mouse, &repr->mouse, sizeof(mouse_t));
   memcpy(&this->keyboard, &repr->keyboard, sizeof(keyboard_t));
