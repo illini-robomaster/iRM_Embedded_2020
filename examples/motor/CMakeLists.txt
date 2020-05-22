@@ -31,3 +31,7 @@ irm_add_arm_executable(${PROJECT_NAME}_m6623
 irm_add_arm_executable(${PROJECT_NAME}_m3508_speed
     TARGET DJI_Board_TypeA
     SOURCES m3508_speed.cc)
+
+irm_add_arm_executable(${PROJECT_NAME}_mg90s
+    TARGET DJI_Board_TypeA
+    SOURCES mg90s.cc)
