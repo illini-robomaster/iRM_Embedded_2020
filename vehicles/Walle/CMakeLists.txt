@@ -18,6 +18,15 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-add_subdirectory(Infantry)
+project(Walle ASM C CXX)
 
-add_subdirectory(Walle)
+irm_add_board_specific_library(Walle-utils
+    TARGET DJI_Board_TypeA
+    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/walle_utils.cc
+    INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS DJI_Board_TypeA_irm)
+
+irm_add_arm_executable(test_servo
+    TARGET DJI_Board_TypeA
+    SOURCES test_servo.cc
+    DEPENDS Walle-utils)
