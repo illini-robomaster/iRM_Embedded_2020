@@ -34,6 +34,12 @@ typedef union {
   } __packed bit;
 } __packed keyboard_t;
 
+typedef enum {
+  UP = 1,
+  DOWN = 2,
+  MID = 3,
+} switch_t;
+
 class DBUS : public bsp::UART {
  public:
   // intialize DBUS the same way as a generic UART peripheral
@@ -48,14 +54,17 @@ class DBUS : public bsp::UART {
   int16_t ch2;    // C2-<   >+ -<   >+C0
   int16_t ch3;    //     +v       v+
   // left and right switch information
-  uint8_t swl;
-  uint8_t swr;
+  switch_t swl;
+  switch_t swr;
   // mouse movement and button information
   mouse_t mouse;
   // keyboard key information
   keyboard_t keyboard;
   // timestamp of the update interrupt
   uint32_t timestamp;
+
+  static const int16_t ROCKER_MIN=-660;
+  static const int16_t ROCKER_MAX=660;
 };
 
 } /* namespace remote */
