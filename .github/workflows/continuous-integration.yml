@@ -75,7 +75,7 @@ jobs:
     - name: download ARM toolchain
       if: steps.cache-arm.outputs.cache-hit != 'true'
       run: |
-        wget -O ~/gcc-arm-none-eabi.zip https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-win32.zip 
+        Invoke-WebRequest -Uri "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-win32.zip" -OutFile "~/gcc-arm-none-eabi.zip"
         unzip ~/gcc-arm-none-eabi.zip -d ~/afm-toolchain
     - name: build
       run: |
