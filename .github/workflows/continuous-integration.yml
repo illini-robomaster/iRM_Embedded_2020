@@ -76,7 +76,8 @@ jobs:
       if: steps.cache-arm.outputs.cache-hit != 'true'
       run: |
         Invoke-WebRequest -Uri "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-win32.zip" -OutFile "~/gcc-arm-none-eabi.zip"
-        unzip ~/gcc-arm-none-eabi.zip -d ~/afm-toolchain
+        mkdir ~/arm-toolchain
+        unzip ~/gcc-arm-none-eabi.zip -d ~/arm-toolchain
     - name: build
       run: |
         $env:Path += ";~/arm-toolchain/bin"
