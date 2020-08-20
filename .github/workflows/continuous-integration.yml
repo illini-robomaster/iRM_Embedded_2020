@@ -80,7 +80,7 @@ jobs:
         unzip ~/gcc-arm-none-eabi.zip -d ~/arm-toolchain
     - name: build
       run: |
-        $env:Path += ";%userprofile%\arm-toolchain\bin\"
+        $env:Path += ";$HOME\arm-toolchain\bin\"
         echo $env:Path
         mkdir build && cd build
         cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug ..
