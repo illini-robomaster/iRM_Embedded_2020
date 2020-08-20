@@ -82,5 +82,5 @@ jobs:
       run: |
         $Env:Path += ";%userprofile%\\arm-toolchain\\bin"
         mkdir build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug ..
+        cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug ..
         make -j
