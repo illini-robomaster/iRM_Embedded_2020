@@ -23,11 +23,10 @@ jobs:
     - name: download ARM toolchain
       if: steps.cache-arm.outputs.cache-hit != 'true'
       run: |
-        wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
-        mkdir arm-toolchain
-        tar -xjf gcc-arm-none-eabi-9-2020-q2-update-mac.tar.bz2 --directory arm-toolchain --strip-components=1
-        export PATH=~/arm-toolchain/bin:$PATH
-      working-directory: ~/
+        wget -O ~/gcc-arm-none-eabi.tar.bz2 https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
+        mkdir ~/arm-toolchain
+        tar -xjf gcc-arm-none-eabi-9-2020-q2-update-mac.tar.bz2 --directory ~/arm-toolchain --strip-components=1
+        export PATH=$HOME/arm-toolchain/bin:$PATH
     - name: build
       run: |
         mkdir build && cd build
