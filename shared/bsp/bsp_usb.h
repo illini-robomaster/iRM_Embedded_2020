@@ -30,7 +30,7 @@ typedef void (*usb_callback_t)(uint8_t *buf, uint32_t len);
 /**
  * @brief register an arbitrary function to handle usb rx callback
  *
- * @param callback  a funtion pointer of type usb_callback_t
+ * @param callback  a function pointer of type usb_callback_t
  */
 void usb_register_callback(const usb_callback_t callback);
 
@@ -45,6 +45,6 @@ void usb_unregister_callback(void);
  * @param buf buffer containing data
  * @param len length [in bytes] to transmit
  *
- * @return number of bytes succesfully transmitted, -1 if usb busy, -2 if failed
+ * @return number of bytes successfully transmitted, -1 if usb busy, -2 if failed
  */
 int32_t usb_transmit(uint8_t *buf, uint32_t len);

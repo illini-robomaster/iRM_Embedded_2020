@@ -30,7 +30,7 @@ static bsp::BuzzerNoteDelayed Mario[] = {
     {Note::Silent, 240}, {Note::Mi3M, 80},   {Note::Silent, 240},
     {Note::Do1M, 80},    {Note::Silent, 80}, {Note::Mi3M, 80},
     {Note::Silent, 240}, {Note::So5M, 80},   {Note::Silent, 560},
-    {Note::So5L, 80},
+    {Note::So5L, 80},    {Note::Silent, 0},  {Note::Finish, 0}
 };
 // uncomment to play the full song
 static bsp::BuzzerNoteDelayed War_Cant_of_Mars[] = {
@@ -62,7 +62,7 @@ static bsp::BuzzerNoteDelayed War_Cant_of_Mars[] = {
     //    {Note::Re2H, 200},   {Note::Mi3H, 1600},  {Note::Do1H, 800},
     //    {Note::Do1H, 800},   {Note::Re2H, 800},   {Note::Re2H, 800},
     //    {Note::Do1H, 800},   {Note::Si7M, 800},   {Note::Do1H, 1600},
-    //    {Note::Silent, 800}, {Note::Silent, 800}, {Note::Finish, 0},
+    {Note::Silent, 0}, {Note::Finish, 0},
 };
 
 void RM_RTOS_Init(void) {

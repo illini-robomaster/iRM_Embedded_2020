@@ -39,7 +39,7 @@ class UART {
   virtual ~UART();
 
   /**
-   * @brief set up uart reciever in the background optionally registering a callback
+   * @brief set up uart receiver in the background optionally registering a callback
    *
    * @param rx_buffer_size  receive buffer size (all data that has not been read 
    *                        out is queued into this buffer)
@@ -57,7 +57,7 @@ class UART {
   /**
    * @brief read out the pending received data
    *
-   * @param data  pointer to an array address that gets set to the recieve buffer address
+   * @param data  pointer to an array address that gets set to the receive buffer address
    *
    * @return number of bytes read, -1 if failure
    *
@@ -69,7 +69,7 @@ class UART {
   /**
    * @brief read out the pending received data inside IRQ Handler
    *
-   * @param data  pointer to an array address that gets set to the recieve buffer address
+   * @param data  pointer to an array address that gets set to the receive buffer address
    *
    * @return number of bytes read, -1 if failure
    *
@@ -89,7 +89,7 @@ class UART {
    *
    * @note multiple burst calls to this function can potentially cause tx buffer 
    *       to fill up, so remember to check return value for the actual number
-   *       of bytes succesfully transmitted
+   *       of bytes successfully transmitted
    */
   int32_t Write(const uint8_t *data, uint32_t length);
 

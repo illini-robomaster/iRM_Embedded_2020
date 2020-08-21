@@ -66,7 +66,7 @@ class Buzzer {
    * @brief constructor for a buzzer instance
    *
    * @param htim       hal timer handle
-   * @param channel    timer channle associated with the timer choose from [1,
+   * @param channel    timer channel associated with the timer choose from [1,
    * 2, 3, 4]
    * @param clock_freq clock frequency associated with the timer
    */
@@ -86,7 +86,6 @@ class Buzzer {
    * @param delay_func  a void function that can delay arbitrary number of
    * milliseconds,
    *                    defaults to HAL_Delay implementation
-   *
    */
   void SingSong(const BuzzerNoteDelayed *notes,
                 buzzer_delay_t delay_func = [](uint32_t milli) {
