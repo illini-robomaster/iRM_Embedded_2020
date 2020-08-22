@@ -66,6 +66,9 @@ void RM_RTOS_Default_Task(const void *argument);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define MPU6500_IT_Pin GPIO_PIN_8
+#define MPU6500_IT_GPIO_Port GPIOB
+#define MPU6500_IT_EXTI_IRQn EXTI9_5_IRQn
 #define LASER_Pin GPIO_PIN_13
 #define LASER_GPIO_Port GPIOG
 #define OLED_SCK_Pin GPIO_PIN_3
