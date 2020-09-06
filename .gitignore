@@ -137,6 +137,7 @@ JLinkLog.txt
 
 # build directory
 build/
+cmake-build-debug/
 html/
 data_history/
 
