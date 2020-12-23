@@ -26,6 +26,6 @@ uint8_t	BSP_PlatformIsDetected(void) {
     }
     /* USER CODE BEGIN 1 */
     /* user code can be inserted here */
-    /* USER CODE END 1 */ 
+    /* USER CODE END 1 */
     return status;
-}  
+}
