@@ -102,7 +102,7 @@ void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 83;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 0;
+  htim2.Init.Period = 4294967295;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -188,7 +188,7 @@ void MX_TIM5_Init(void)
   htim5.Instance = TIM5;
   htim5.Init.Prescaler = 0;
   htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 0;
+  htim5.Init.Period = 4294967295;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
@@ -348,9 +348,9 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
   /* USER CODE END TIM1_MspPostInit 0 */
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOE_CLK_ENABLE();
-    /**TIM1 GPIO Configuration    
+    /**TIM1 GPIO Configuration
     PA8     ------> TIM1_CH1
-    PE14     ------> TIM1_CH4 
+    PE14     ------> TIM1_CH4
     */
     GPIO_InitStruct.Pin = GPIO_PIN_8;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -375,13 +375,13 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
   /* USER CODE BEGIN TIM4_MspPostInit 0 */
 
   /* USER CODE END TIM4_MspPostInit 0 */
-  
+
     __HAL_RCC_GPIOD_CLK_ENABLE();
-    /**TIM4 GPIO Configuration    
+    /**TIM4 GPIO Configuration
     PD15     ------> TIM4_CH4
     PD14     ------> TIM4_CH3
     PD13     ------> TIM4_CH2
-    PD12     ------> TIM4_CH1 
+    PD12     ------> TIM4_CH1
     */
     GPIO_InitStruct.Pin = GPIO_PIN_15|GPIO_PIN_14|GPIO_PIN_13|GPIO_PIN_12;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -399,14 +399,14 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
   /* USER CODE BEGIN TIM5_MspPostInit 0 */
 
   /* USER CODE END TIM5_MspPostInit 0 */
-  
+
     __HAL_RCC_GPIOI_CLK_ENABLE();
     __HAL_RCC_GPIOH_CLK_ENABLE();
-    /**TIM5 GPIO Configuration    
+    /**TIM5 GPIO Configuration
     PI0     ------> TIM5_CH4
     PH12     ------> TIM5_CH3
     PH11     ------> TIM5_CH2
-    PH10     ------> TIM5_CH1 
+    PH10     ------> TIM5_CH1
     */
     GPIO_InitStruct.Pin = GPIO_PIN_0;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -431,11 +431,11 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
   /* USER CODE BEGIN TIM12_MspPostInit 0 */
 
   /* USER CODE END TIM12_MspPostInit 0 */
-  
+
     __HAL_RCC_GPIOH_CLK_ENABLE();
-    /**TIM12 GPIO Configuration    
+    /**TIM12 GPIO Configuration
     PH6     ------> TIM12_CH1
-    PH9     ------> TIM12_CH2 
+    PH9     ------> TIM12_CH2
     */
     GPIO_InitStruct.Pin = BEEP_Pin|GPIO_PIN_9;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -512,7 +512,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
   /* USER CODE END TIM12_MspDeInit 1 */
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 

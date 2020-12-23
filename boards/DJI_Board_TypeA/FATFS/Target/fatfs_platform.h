@@ -16,7 +16,7 @@
   ******************************************************************************
 */
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"           
+#include "stm32f4xx_hal.h"
 /* Defines ------------------------------------------------------------------*/
 #define SD_PRESENT               ((uint8_t)0x01)  /* also in bsp_driver_sd.h */
 #define SD_NOT_PRESENT           ((uint8_t)0x00)  /* also in bsp_driver_sd.h */
