@@ -20,27 +20,95 @@
 
 #include "bsp_usb.h"
 
-static usb_callback_t rm_usb_rx_callback = NULL;
+#include "usbd_cdc_if.h"
 
-void usb_register_callback(const usb_callback_t callback) {
-  rm_usb_rx_callback = callback;
+#include "cmsis_os.h"
+
+static bsp::USB *usb;
+
+namespace bsp {
+
+static inline USB* GetUsbInstance() {
+  return usb;
 }
 
-void usb_unregister_callback(void) {
-  rm_usb_rx_callback = NULL;
+USB::USB() : usb_rx_callback_(nullptr),
+    tx_size_(0), tx_pending_(0), tx_write_(nullptr), tx_read_(nullptr) {
+  hcdc = RM_USB_Device();
+  delete usb;
+  usb = this;
 }
 
-int32_t usb_transmit(uint8_t *buf, uint32_t len) {
-  uint8_t status = CDC_Transmit_FS(buf, (uint16_t)len);
-  if (status == USBD_OK)
-    return len;
-  else if (status == USBD_BUSY)
-    return -1;
-  else // status == USBD_FAIL (shouldn't get here)
-    return -2;
+USB::~USB() {
+    delete[] tx_write_;
+    delete[] tx_read_;
+}
+
+void USB::SetupTx(uint32_t tx_buffer_size) {
+  /* uart tx already setup */
+  if (tx_size_ || tx_write_ || tx_read_)
+    return;
+
+  tx_size_ = tx_buffer_size;
+  tx_pending_ = 0;
+  tx_write_ = new uint8_t[tx_buffer_size];
+  tx_read_ = new uint8_t[tx_buffer_size];
+}
+
+uint32_t USB::Write(uint8_t *data, uint32_t length) {
+  taskENTER_CRITICAL();
+  /* queue up new data */
+  if (hcdc->TxState == USBD_BUSY || tx_pending_) {
+    if (length + tx_pending_ > tx_size_)
+      length = tx_size_ - tx_pending_;
+    memcpy(tx_write_ + tx_pending_, data, length);
+    tx_pending_ += length;
+  } else {
+    if (length > tx_size_)
+      length = tx_size_;
+    /* directly write into the read buffer and start transmission */
+    memcpy(tx_read_, data, length);
+    CDC_Transmit_FS(tx_read_, length);
+  }
+  taskEXIT_CRITICAL();
+  return length;
+}
+
+void USB::TxCompleteCallback() {
+  uint8_t *tmp;
+  UBaseType_t isrflags = taskENTER_CRITICAL_FROM_ISR();
+  /* check if any data is waiting to be transmitted */
+  if (tx_pending_) {
+    /* swap read / write buffer */
+    tmp = tx_read_;
+    tx_read_ = tx_write_;
+    tx_write_ = tmp;
+    /* initiate new transmission call for pending data */
+    CDC_Transmit_FS(tx_read_, tx_pending_);
+    /* clear the number of pending bytes */
+    tx_pending_ = 0;
+  }
+  taskEXIT_CRITICAL_FROM_ISR(isrflags);
+}
+
+void USB::RegisterRxCompleteCallback(const usb_callback_t callback) {
+  usb_rx_callback_ = callback;
+}
+
+void USB::UnregisterRxCompleteCallback() {
+  usb_rx_callback_ = nullptr;
+}
+
+} /* namespace bsp */
+
+void RM_USB_TxCplt_Callback(uint8_t *Buf, uint32_t Len) {
+  if (usb)
+    usb->TxCompleteCallback();
+  UNUSED(Buf);
+  UNUSED(Len);
 }
 
 void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len) {
-  if (rm_usb_rx_callback)
-    rm_usb_rx_callback(Buf, Len);
+  if (usb->usb_rx_callback_)
+    usb->usb_rx_callback_(Buf, Len);
 }

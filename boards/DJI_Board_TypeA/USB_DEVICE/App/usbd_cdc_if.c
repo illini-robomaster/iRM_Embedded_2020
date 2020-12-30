@@ -314,14 +314,24 @@ static int8_t CDC_TransmitCplt_FS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 {
   uint8_t result = USBD_OK;
   /* USER CODE BEGIN 13 */
-  UNUSED(Buf);
-  UNUSED(Len);
+  RM_USB_TxCplt_Callback(Buf, *Len);
   UNUSED(epnum);
   /* USER CODE END 13 */
   return result;
 }
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
+
+USBD_CDC_HandleTypeDef* RM_USB_Device() {
+  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *) hUsbDeviceFS.pClassData;
+  return hcdc;
+}
+
+__weak void RM_USB_TxCplt_Callback(uint8_t *Buf, uint32_t Len) {
+  UNUSED(Buf);
+  UNUSED(Len);
+}
+
 __weak void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len) {
   UNUSED(Buf);
   UNUSED(Len);

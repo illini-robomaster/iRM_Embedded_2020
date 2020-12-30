@@ -27,24 +27,57 @@
 
 typedef void (*usb_callback_t)(uint8_t *buf, uint32_t len);
 
-/**
- * @brief register an arbitrary function to handle usb rx callback
- *
- * @param callback  a function pointer of type usb_callback_t
- */
-void usb_register_callback(const usb_callback_t callback);
+namespace bsp {
 
-/**
- * @brief un-register usb rx callback function
- */
-void usb_unregister_callback(void);
+class USB {
+  public:
+    explicit USB();
 
-/**
- * @brief transmit data via usb
- *
- * @param buf buffer containing data
- * @param len length [in bytes] to transmit
- *
- * @return number of bytes successfully transmitted, -1 if usb busy, -2 if failed
- */
-int32_t usb_transmit(uint8_t *buf, uint32_t len);
+    virtual ~USB();
+
+    void SetupTx(uint32_t tx_buffer_size);
+
+    uint32_t Write(uint8_t *data, uint32_t length);
+
+    void TxCompleteCallback();
+
+    void RegisterRxCompleteCallback(usb_callback_t callback);
+
+    void UnregisterRxCompleteCallback();
+
+    /* rx */
+    usb_callback_t usb_rx_callback_;
+
+  protected:
+    USBD_CDC_HandleTypeDef* hcdc;
+    /* tx */
+    uint32_t tx_size_;
+    uint32_t tx_pending_;
+    uint8_t *tx_write_;
+    uint8_t *tx_read_;
+
+};
+
+}
+
+///**
+// * @brief register an arbitrary function to handle usb rx callback
+// *
+// * @param callback  a function pointer of type usb_callback_t
+// */
+//void usb_register_callback(const usb_callback_t callback);
+//
+///**
+// * @brief un-register usb rx callback function
+// */
+//void usb_unregister_callback(void);
+//
+///**
+// * @brief transmit data via usb
+// *
+// * @param buf buffer containing data
+// * @param len length [in bytes] to transmit
+// *
+// * @return number of bytes successfully transmitted, -1 if usb busy, -2 if failed
+// */
+//int32_t usb_transmit(uint8_t *buf, uint32_t len);

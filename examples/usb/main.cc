@@ -22,10 +22,14 @@
 
 #include "bsp_usb.h"
 
+static bsp::USB* usb;
+
 static void example_usb_callback(uint8_t *buf, uint32_t len) {
-  usb_transmit(buf, len);
+  usb->Write(buf, len);
 }
 
 void RM_RTOS_Init(void) {
-  usb_register_callback(example_usb_callback);
+  usb = new bsp::USB();
+  usb->SetupTx(50);
+  usb->RegisterRxCompleteCallback(example_usb_callback);
 }
