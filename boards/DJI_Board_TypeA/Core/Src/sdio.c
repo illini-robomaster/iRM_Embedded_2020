@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : SDIO.c
-  * Description        : This file provides code for the configuration
-  *                      of the SDIO instances.
+  * @file    sdio.c
+  * @brief   This file provides code for the configuration
+  *          of the SDIO instances.
   ******************************************************************************
   * @attention
   *
