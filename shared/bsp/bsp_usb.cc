@@ -24,28 +24,26 @@
 
 #include "cmsis_os.h"
 
-static bsp::USB *usb;
+static bsp::USB *usb = nullptr;
 
 namespace bsp {
 
-static inline USB* GetUsbInstance() {
-  return usb;
-}
-
-USB::USB() : usb_rx_callback_(nullptr),
+USB::USB(bool use_callback) : hcdc(nullptr), use_callback(use_callback),
+    rx_size_(0), rx_pending_(0), rx_write_(nullptr), rx_read_(nullptr),
     tx_size_(0), tx_pending_(0), tx_write_(nullptr), tx_read_(nullptr) {
-  hcdc = RM_USB_Device();
   delete usb;
   usb = this;
 }
 
 USB::~USB() {
-    delete[] tx_write_;
-    delete[] tx_read_;
+  delete[] rx_write_;
+  delete[] rx_read_;
+  delete[] tx_write_;
+  delete[] tx_read_;
 }
 
 void USB::SetupTx(uint32_t tx_buffer_size) {
-  /* uart tx already setup */
+  /* usb tx already setup */
   if (tx_size_ || tx_write_ || tx_read_)
     return;
 
@@ -55,14 +53,45 @@ void USB::SetupTx(uint32_t tx_buffer_size) {
   tx_read_ = new uint8_t[tx_buffer_size];
 }
 
+void USB::SetupRx(uint32_t rx_buffer_size) {
+  /* use callback instead of receiver buffer */
+  if (use_callback)
+    return;
+
+  /* usb rx already setup */
+  if (rx_size_ || rx_write_ || rx_read_)
+    return;
+
+  rx_size_ = rx_buffer_size;
+  rx_pending_ = 0;
+  rx_write_ = new uint8_t[rx_buffer_size];
+  rx_read_ = new uint8_t[rx_buffer_size];
+}
+
+uint32_t USB::Read(uint8_t *&data) {
+  taskDISABLE_INTERRUPTS();
+  uint32_t length = rx_pending_;
+  data = rx_write_;
+  /* swap read / write buffer */
+  uint8_t* tmp = rx_write_;
+  rx_write_ = rx_read_;
+  rx_read_ = tmp;
+  rx_pending_ = 0;
+  taskENABLE_INTERRUPTS();
+  return length;
+}
+
 uint32_t USB::Write(uint8_t *data, uint32_t length) {
-  taskENTER_CRITICAL();
-  /* queue up new data */
+  taskDISABLE_INTERRUPTS();
+  if (!hcdc)
+    hcdc = RM_USB_Device();
   if (hcdc->TxState == USBD_BUSY || tx_pending_) {
-    if (length + tx_pending_ > tx_size_)
+    if (length + tx_pending_ > tx_size_) {
       length = tx_size_ - tx_pending_;
-    memcpy(tx_write_ + tx_pending_, data, length);
-    tx_pending_ += length;
+    } else {
+      memcpy(tx_write_ + tx_pending_, data, length);
+      tx_pending_ += length;
+    }
   } else {
     if (length > tx_size_)
       length = tx_size_;
@@ -70,7 +99,7 @@ uint32_t USB::Write(uint8_t *data, uint32_t length) {
     memcpy(tx_read_, data, length);
     CDC_Transmit_FS(tx_read_, length);
   }
-  taskEXIT_CRITICAL();
+  taskENABLE_INTERRUPTS();
   return length;
 }
 
@@ -91,24 +120,38 @@ void USB::TxCompleteCallback() {
   taskEXIT_CRITICAL_FROM_ISR(isrflags);
 }
 
-void USB::RegisterRxCompleteCallback(const usb_callback_t callback) {
-  usb_rx_callback_ = callback;
+void USB::RxCompleteCallback(uint8_t *data, uint32_t length) {
+  UNUSED(data);
+  UNUSED(length);
 }
 
-void USB::UnregisterRxCompleteCallback() {
-  usb_rx_callback_ = nullptr;
+uint32_t USB::QueueUpRxData(uint8_t* data, uint32_t length) {
+  if (length + rx_pending_ > rx_size_) {
+    length = rx_size_ - rx_pending_;
+  } else {
+    memcpy(rx_write_ + rx_pending_, data, length);
+    rx_pending_ += length;
+  }
+  return length;
+}
+
+bool USB::UseCallback() const {
+  return use_callback;
 }
 
 } /* namespace bsp */
 
-void RM_USB_TxCplt_Callback(uint8_t *Buf, uint32_t Len) {
+void RM_USB_TxCplt_Callback() {
   if (usb)
     usb->TxCompleteCallback();
-  UNUSED(Buf);
-  UNUSED(Len);
 }
 
-void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len) {
-  if (usb->usb_rx_callback_)
-    usb->usb_rx_callback_(Buf, Len);
+void RM_USB_RxCplt_Callback(uint8_t* Buf, uint32_t Len) {
+  if (usb->UseCallback()) {
+    /* have registered callback */
+    usb->RxCompleteCallback(Buf, Len);
+  } else {
+    /* does not have registered callback, queue up data */
+    usb->QueueUpRxData(Buf, Len);
+  }
 }

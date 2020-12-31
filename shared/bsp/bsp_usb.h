@@ -25,59 +25,118 @@
 #include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
 
-typedef void (*usb_callback_t)(uint8_t *buf, uint32_t len);
-
 namespace bsp {
 
 class USB {
   public:
-    explicit USB();
+    /**
+     * @brief constructor for usb instance
+     *
+     * @param true if use callback for receiving, otherwise manual read is required. The
+     *        default value is false
+     *
+     * @note should not be called, to get the USB device, use bsp::GetUSBDevice() instead
+     */
+    explicit USB(bool use_callback = false);
 
+    /**
+     * @brief destructor (potentially deallocate buffer memories associated with tx / rx)
+     */
     virtual ~USB();
 
+    /**
+     * @brief set up usb non blocking transmission
+     *
+     * @param tx_buffer_size  transmission buffer size (burst transmission calls will
+     *                        be queued into this buffer)
+     */
     void SetupTx(uint32_t tx_buffer_size);
 
+    /**
+     * @brief set up usb receiver
+     *
+     * @param rx_buffer_size  receive buffer size (all data that has not been read out is
+     *                        queued into this buffer if there is no callbacks registered)
+     */
+    void SetupRx(uint32_t rx_buffer_size);
+
+    /**
+     * @brief read out the pending received data
+     *
+     * @param data  reference to an array address that gets set to the receive buffer address
+     *
+     * @return number of bytes read
+     *
+     * @note memory is not copied for optimal performance, so second call to this
+     *       method will invalidate the buffer produced by the previous call
+     */
+    uint32_t Read(uint8_t *&data);
+
+    /**
+     * @brief write data to usb without blocking
+     *
+     * @param data    pointer to the data buffer to be transmitted
+     * @param length  length of the data to be transmitted
+     *
+     * @return number of bytes written
+     *
+     * @note multiple burst calls to this function can potentially cause tx buffer
+     *       to fill up, so remember to check return value for the actual number
+     *       of bytes successfully transmitted
+     */
     uint32_t Write(uint8_t *data, uint32_t length);
 
+    /**
+     * @brief Transmission complete call back
+     *
+     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
+     */
     void TxCompleteCallback();
 
-    void RegisterRxCompleteCallback(usb_callback_t callback);
+    /**
+     * @brief Transmission complete call back
+     *
+     * @param data    pointer to the data buffer received
+     * @param length  length of the data received
+     *
+     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
+     */
+    virtual void RxCompleteCallback(uint8_t* data, uint32_t length);
 
-    void UnregisterRxCompleteCallback();
+    /**
+     * @brief Queue up received data if callback is not used
+     *
+     * @param data    pointer to the data buffer received
+     * @param length  length of the data received
+     *
+     * @return number of bytes actually written to the buffer
+     *
+     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
+     */
+    uint32_t QueueUpRxData(uint8_t* data, uint32_t length);
 
-    /* rx */
-    usb_callback_t usb_rx_callback_;
+    /**
+     * @brief Returns if current USB is using callback to handle received data or not
+     *
+     * @return true if current USB is using callback, false otherwise
+     *
+     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
+     */
+    bool UseCallback() const;
 
   protected:
     USBD_CDC_HandleTypeDef* hcdc;
+    /* rx */
+    bool        use_callback;
+    uint32_t    rx_size_;
+    uint32_t    rx_pending_;
+    uint8_t     *rx_write_;
+    uint8_t     *rx_read_;
     /* tx */
-    uint32_t tx_size_;
-    uint32_t tx_pending_;
-    uint8_t *tx_write_;
-    uint8_t *tx_read_;
-
+    uint32_t    tx_size_;
+    uint32_t    tx_pending_;
+    uint8_t     *tx_write_;
+    uint8_t     *tx_read_;
 };
 
-}
-
-///**
-// * @brief register an arbitrary function to handle usb rx callback
-// *
-// * @param callback  a function pointer of type usb_callback_t
-// */
-//void usb_register_callback(const usb_callback_t callback);
-//
-///**
-// * @brief un-register usb rx callback function
-// */
-//void usb_unregister_callback(void);
-//
-///**
-// * @brief transmit data via usb
-// *
-// * @param buf buffer containing data
-// * @param len length [in bytes] to transmit
-// *
-// * @return number of bytes successfully transmitted, -1 if usb busy, -2 if failed
-// */
-//int32_t usb_transmit(uint8_t *buf, uint32_t len);
+} /* namespace bsp */

@@ -18,18 +18,47 @@
  *                                                                          *
  ****************************************************************************/
 
+/**
+ * sample client Python code to verify transmission correctness of this example program
+ *
+ * ```
+ * import serial
+ *
+ * ser = serial.Serial('/dev/ttyUSB0', baudrate=115200)
+ * some_str = 'this is my data!'
+ *
+ * for i in range(1000):
+ *     ser.write(some_str)
+ *     while ser.in_waiting < 3 * len(some_str):
+ *         continue
+ *     ret = ser.read_all()
+ *     assert ret == 3 * some_str
+ * ```
+ */
+
 #include "main.h"
 
 #include "bsp_usb.h"
+#include "bsp_gpio.h"
 
 static bsp::USB* usb;
 
-static void example_usb_callback(uint8_t *buf, uint32_t len) {
-  usb->Write(buf, len);
-}
+class CustomUSBCallback : public bsp::USB {
+  public:
+    CustomUSBCallback() : bsp::USB(true) {}
+
+    void RxCompleteCallback(uint8_t *data, uint32_t length) override final {
+      Write(data, length);
+    }
+};
+
+class CustomUSBManualRead : public bsp::USB {
+  public:
+    CustomUSBManualRead() : bsp::USB() {}
+};
 
 void RM_RTOS_Init(void) {
-  usb = new bsp::USB();
-  usb->SetupTx(50);
-  usb->RegisterRxCompleteCallback(example_usb_callback);
+  usb = new CustomUSBCallback();
+  usb->SetupTx(2048);
+  usb->SetupRx(2048);
 }
