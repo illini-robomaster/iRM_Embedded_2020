@@ -4,8 +4,9 @@
  *              main.h must be included before arm_math.h */
 // clang-format off
 #include "main.h"
-#include "arm_math.h"
 // clang-format on
+
+#include "arm_math.h"
 
 namespace control {
 
