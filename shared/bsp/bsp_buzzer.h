@@ -87,10 +87,9 @@ class Buzzer {
    * milliseconds,
    *                    defaults to HAL_Delay implementation
    */
-  void SingSong(const BuzzerNoteDelayed *notes,
-                buzzer_delay_t delay_func = [](uint32_t milli) {
-                  HAL_Delay(milli);
-                });
+  void SingSong(
+      const BuzzerNoteDelayed *notes,
+      buzzer_delay_t delay_func = [](uint32_t milli) { HAL_Delay(milli); });
 
  private:
   /* pwm instance associated with the buzzer */

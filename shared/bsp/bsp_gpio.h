@@ -32,10 +32,11 @@ class GPIO {
   void Low();
   void Toggle();
   uint8_t Read();
+
  private:
-  GPIO_TypeDef        *group_;
-  uint16_t            pin_;
-  uint8_t             state_;
+  GPIO_TypeDef *group_;
+  uint16_t pin_;
+  uint8_t state_;
 };
 
 } /* namespace bsp */

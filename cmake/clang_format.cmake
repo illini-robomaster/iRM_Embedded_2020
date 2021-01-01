@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------- #
 #                                                                        #
-#  Copyright (C) 2020                                                    #
+#  Copyright (C) 2021                                                    #
 #  Illini RoboMaster @ University of Illinois at Urbana-Champaign.       #
 #                                                                        #
 #  This program is free software: you can redistribute it and/or modify  #
@@ -18,18 +18,27 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-cmake_minimum_required(VERSION 3.8)
+# use clang-format to enforce coding styles
+find_program(CLANG_FORMAT_EXE clang-format)
 
-include(cmake/arm_toolchain.cmake)
-include(cmake/build_helper.cmake)
-include(cmake/clang_format.cmake)
+# gather all source code
+file(GLOB_RECURSE ALL_SOURCE_FILES 
+    ${CMAKE_SOURCE_DIR}/*.c
+    ${CMAKE_SOURCE_DIR}/*.cc
+    ${CMAKE_SOURCE_DIR}/*.cpp
+    ${CMAKE_SOURCE_DIR}/*.h
+    ${CMAKE_SOURCE_DIR}/*.hpp
+)
+# exclude build folder
+list(FILTER ALL_SOURCE_FILES EXCLUDE REGEX .*/.*build.*/.*)
 
-project(iRM_Embedded_2020)
+# create formatting helper targets
+if (CLANG_FORMAT_EXE)
+    # format all source codes
+    add_custom_target(format
+        COMMAND ${CLANG_FORMAT_EXE} -i -style=file ${ALL_SOURCE_FILES})
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-
-add_subdirectory(boards)
-add_subdirectory(shared)
-add_subdirectory(vehicles)
-add_subdirectory(examples)
-
+    # check for format violations
+    add_custom_target(check-format
+        COMMAND ${CLANG_FORMAT_EXE} -style=file -n -Werror ${ALL_SOURCE_FILES})
+endif ()

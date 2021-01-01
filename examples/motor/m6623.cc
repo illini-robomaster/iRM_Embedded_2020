@@ -18,15 +18,14 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "cmsis_os.h"
-#include "main.h"
-
 #include "bsp_gpio.h"
 #include "bsp_print.h"
+#include "cmsis_os.h"
+#include "main.h"
 #include "motor.h"
 
-#define KEY_GPIO_GROUP  GPIOB
-#define KEY_GPIO_PIN    GPIO_PIN_2
+#define KEY_GPIO_GROUP GPIOB
+#define KEY_GPIO_PIN GPIO_PIN_2
 
 bsp::CAN *can1 = NULL;
 control::MotorCANBase *motor = NULL;

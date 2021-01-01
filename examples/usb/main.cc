@@ -22,10 +22,6 @@
 
 #include "bsp_usb.h"
 
-static void example_usb_callback(uint8_t *buf, uint32_t len) {
-  usb_transmit(buf, len);
-}
+static void example_usb_callback(uint8_t *buf, uint32_t len) { usb_transmit(buf, len); }
 
-void RM_RTOS_Init(void) {
-  usb_register_callback(example_usb_callback);
-}
+void RM_RTOS_Init(void) { usb_register_callback(example_usb_callback); }

@@ -26,11 +26,11 @@ namespace bsp {
 
 class SDFileLogger {
  public:
-   /**
-    * @brief constructor of a sd card file logger
-    *
-    * @param filename filename of the log file to create
-    */
+  /**
+   * @brief constructor of a sd card file logger
+   *
+   * @param filename filename of the log file to create
+   */
   explicit SDFileLogger(const char *filename);
 
   /**

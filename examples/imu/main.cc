@@ -19,15 +19,15 @@
  ****************************************************************************/
 
 #include "main.h"
-#include "cmsis_os.h"
 
 #include "bsp_gpio.h"
 #include "bsp_imu.h"
+#include "cmsis_os.h"
 
-#define ONBOARD_IMU_SPI       hspi5
-#define ONBOARD_IMU_CS_GROUP  GPIOF
-#define ONBOARD_IMU_CS_PIN    GPIO_PIN_6
-#define PRING_UART            huart8
+#define ONBOARD_IMU_SPI hspi5
+#define ONBOARD_IMU_CS_GROUP GPIOF
+#define ONBOARD_IMU_CS_PIN GPIO_PIN_6
+#define PRING_UART huart8
 
 volatile uint32_t start, duration;
 

@@ -19,18 +19,16 @@
  ****************************************************************************/
 
 #include "bsp_pwm.h"
-#include "cmsis_os.h"
+
 #include "bsp_error_handler.h"
+#include "cmsis_os.h"
 
 namespace bsp {
 
-PWM::PWM(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq,
-    uint32_t output_freq, uint32_t pulse_width)
-      : htim_(htim), 
-        clock_freq_(clock_freq), 
-        output_freq_(output_freq), 
-        pulse_width_(pulse_width) {
-  switch(channel) {
+PWM::PWM(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq, uint32_t output_freq,
+         uint32_t pulse_width)
+    : htim_(htim), clock_freq_(clock_freq), output_freq_(output_freq), pulse_width_(pulse_width) {
+  switch (channel) {
     case 1:
       channel_ = TIM_CHANNEL_1;
       break;
@@ -50,13 +48,9 @@ PWM::PWM(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq,
   SetPulseWidth(pulse_width);
 }
 
-void PWM::Start() {
-  HAL_TIM_PWM_Start(htim_, channel_);
-}
+void PWM::Start() { HAL_TIM_PWM_Start(htim_, channel_); }
 
-void PWM::Stop() {
-  HAL_TIM_PWM_Stop(htim_, channel_);
-}
+void PWM::Stop() { HAL_TIM_PWM_Stop(htim_, channel_); }
 
 void PWM::SetFrequency(uint32_t output_freq) {
   this->output_freq_ = output_freq;

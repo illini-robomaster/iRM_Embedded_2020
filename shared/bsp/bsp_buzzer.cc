@@ -34,8 +34,7 @@ void Buzzer::SingTone(const BuzzerNote &note) {
   }
 }
 
-void Buzzer::SingSong(const BuzzerNoteDelayed *delayed_notes,
-                      buzzer_delay_t delay_func) {
+void Buzzer::SingSong(const BuzzerNoteDelayed *delayed_notes, buzzer_delay_t delay_func) {
   while (delayed_notes->note != BuzzerNote::Finish) {
     SingTone(delayed_notes->note);
     delay_func(delayed_notes->delay);

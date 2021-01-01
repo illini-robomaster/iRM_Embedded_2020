@@ -18,32 +18,32 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_error_handler.h"
 #include "bsp_imu.h"
+
+#include "bsp_error_handler.h"
 #include "bsp_mpu6500_reg.h"
 
-#define MPU6500_SIZEOF_DATA 14 // acc (6 bytes) + temp (2 bytes) + gyro (6 bytes)
-#define MPU6500_DELAY       55 // some arbitrary random stuff
+#define MPU6500_SIZEOF_DATA 14  // acc (6 bytes) + temp (2 bytes) + gyro (6 bytes)
+#define MPU6500_DELAY 55        // some arbitrary random stuff
 // configured with initialization sequences
-#define MPU6500_ACC_FACTOR  4096.0f
+#define MPU6500_ACC_FACTOR 4096.0f
 #define MPU6500_GYRO_FACTOR 32.768f
 
 namespace bsp {
 
-MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select) 
-      : hspi_(hspi), chip_select_(chip_select) {
+MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select)
+    : hspi_(hspi), chip_select_(chip_select) {
   uint8_t init_data[7][2] = {
-    { MPU6500_PWR_MGMT_1,     0x03 }, // auto select clock source
-    { MPU6500_PWR_MGMT_2,     0x00 }, // enable acc & gyro
-    { MPU6500_CONFIG,         0x02 }, // gyro LP bandwidth 92Hz
-    { MPU6500_GYRO_CONFIG,    0x10 }, // gyro range 1000 dps / 32.8
-    { MPU6500_ACCEL_CONFIG,   0x10 }, // acc range 8g / 4096
-    { MPU6500_ACCEL_CONFIG_2, 0x02 }, // acc LP bandwidth 92Hz
-    { MPU6500_USER_CTRL,      0x20 }, // enable I2C master
+      {MPU6500_PWR_MGMT_1, 0x03},      // auto select clock source
+      {MPU6500_PWR_MGMT_2, 0x00},      // enable acc & gyro
+      {MPU6500_CONFIG, 0x02},          // gyro LP bandwidth 92Hz
+      {MPU6500_GYRO_CONFIG, 0x10},     // gyro range 1000 dps / 32.8
+      {MPU6500_ACCEL_CONFIG, 0x10},    // acc range 8g / 4096
+      {MPU6500_ACCEL_CONFIG_2, 0x02},  // acc LP bandwidth 92Hz
+      {MPU6500_USER_CTRL, 0x20},       // enable I2C master
   };
-  Reset(); // reset all registers and signal paths
-  for (size_t i = 0; i < 7; ++i)
-    WriteReg(init_data[i][0], init_data[i][1]);
+  Reset();  // reset all registers and signal paths
+  for (size_t i = 0; i < 7; ++i) WriteReg(init_data[i][0], init_data[i][1]);
   // validate register values
   uint8_t tmp;
   for (size_t i = 0; i < 7; ++i) {
@@ -56,13 +56,13 @@ MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select)
 void MPU6500::UpdateData() {
   uint8_t buff[MPU6500_SIZEOF_DATA];
   // interpret as int16_t array
-  int16_t *array = reinterpret_cast<int16_t*>(buff);
+  int16_t *array = reinterpret_cast<int16_t *>(buff);
 
   ReadRegs(MPU6500_ACCEL_XOUT_H, buff, MPU6500_SIZEOF_DATA);
 
   // in-place swap endian
   for (size_t i = 0; i < MPU6500_SIZEOF_DATA; i += 2)
-    array[i/2] = (int16_t)(buff[i] << 8 | buff[i+1]);
+    array[i / 2] = (int16_t)(buff[i] << 8 | buff[i + 1]);
 
   acce.x = (float)array[0] / MPU6500_ACC_FACTOR;
   acce.y = (float)array[1] / MPU6500_ACC_FACTOR;
@@ -76,12 +76,10 @@ void MPU6500::UpdateData() {
 void MPU6500::Reset() {
   WriteReg(MPU6500_PWR_MGMT_1, 0x80);
   WriteReg(MPU6500_SIGNAL_PATH_RESET, 0x07);
-  HAL_Delay(1); // seems like signal path reset needs some time
+  HAL_Delay(1);  // seems like signal path reset needs some time
 }
 
-void MPU6500::WriteReg(uint8_t reg, uint8_t data) {
-  WriteRegs(reg, &data, 1);
-}
+void MPU6500::WriteReg(uint8_t reg, uint8_t data) { WriteRegs(reg, &data, 1); }
 
 void MPU6500::WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
   uint8_t tx = reg_start & 0x7f;
@@ -92,9 +90,7 @@ void MPU6500::WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
   chip_select_.High();
 }
 
-void MPU6500::ReadReg(uint8_t reg, uint8_t *data) {
-  ReadRegs(reg, data, 1);
-}
+void MPU6500::ReadReg(uint8_t reg, uint8_t *data) { ReadRegs(reg, data, 1); }
 
 void MPU6500::ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
   chip_select_.Low();

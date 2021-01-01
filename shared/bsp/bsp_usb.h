@@ -21,7 +21,6 @@
 #pragma once
 
 #include "main.h"
-
 #include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
 

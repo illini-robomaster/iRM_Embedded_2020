@@ -20,10 +20,9 @@
 
 #pragma once
 
+#include "bsp_gpio.h"
 #include "gpio.h"
 #include "spi.h"
-
-#include "bsp_gpio.h"
 
 namespace bsp {
 
@@ -58,7 +57,7 @@ class MPU6500 {
   // 3-axis gyroscope
   vec3f_t gyro;
   // sensor temperature
-  float   temp;
+  float temp;
 
  private:
   void WriteReg(uint8_t reg, uint8_t data);

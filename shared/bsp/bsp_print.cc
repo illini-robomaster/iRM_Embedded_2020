@@ -19,27 +19,25 @@
  ****************************************************************************/
 
 #include "bsp_print.h"
+
 #include "bsp_uart.h"
 #include "bsp_usb.h"
-
 #include "main.h"
-#include "printf.h" // third party tiny-printf implemnetations
+#include "printf.h"  // third party tiny-printf implemnetations
 
 #define MAX_PRINT_LEN 80
 
 static bsp::UART *print_uart = NULL;
 
 void print_use_uart(UART_HandleTypeDef *huart) {
-  if (print_uart)
-    delete print_uart;
+  if (print_uart) delete print_uart;
 
   print_uart = new bsp::UART(huart);
-  print_uart->SetupTx(MAX_PRINT_LEN * 2); // burst transfer size up to 2x max buffer size
+  print_uart->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
 }
 
 void print_use_usb() {
-  if (print_uart)
-    delete print_uart;
+  if (print_uart) delete print_uart;
 
   print_uart = NULL;
 }
@@ -48,18 +46,18 @@ int32_t print(const char *format, ...) {
 #ifdef NDEBUG
   UNUSED(format);
   return 0;
-#else // == #ifdef DEBUG
-  char    buffer[MAX_PRINT_LEN];
-  va_list args; 
-  int     length;
+#else  // == #ifdef DEBUG
+  char buffer[MAX_PRINT_LEN];
+  va_list args;
+  int length;
 
   va_start(args, format);
   length = vsnprintf(buffer, MAX_PRINT_LEN, format, args);
   va_end(args);
 
-  if (print_uart) 
-    return print_uart->Write((uint8_t*)buffer, length);  
+  if (print_uart)
+    return print_uart->Write((uint8_t *)buffer, length);
   else
-    return usb_transmit((uint8_t*)buffer, length);  
-#endif // #ifdef NDEBUG
+    return usb_transmit((uint8_t *)buffer, length);
+#endif  // #ifdef NDEBUG
 }

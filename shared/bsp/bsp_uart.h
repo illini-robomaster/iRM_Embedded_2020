@@ -41,7 +41,7 @@ class UART {
   /**
    * @brief set up uart receiver in the background optionally registering a callback
    *
-   * @param rx_buffer_size  receive buffer size (all data that has not been read 
+   * @param rx_buffer_size  receive buffer size (all data that has not been read
    *                        out is queued into this buffer)
    */
   void SetupRx(uint32_t rx_buffer_size);
@@ -61,7 +61,7 @@ class UART {
    *
    * @return number of bytes read, -1 if failure
    *
-   * @note memory is not copied for optimal performance, so second call to this 
+   * @note memory is not copied for optimal performance, so second call to this
    *       method will invalidate the buffer produced by the previous call
    */
   int32_t Read(uint8_t **data);
@@ -73,7 +73,7 @@ class UART {
    *
    * @return number of bytes read, -1 if failure
    *
-   * @note memory is not copied for optimal performance, so second call to this 
+   * @note memory is not copied for optimal performance, so second call to this
    *       method will invalidate the buffer produced by the previous call
    * @note the implementation is NOT thread safe!
    */
@@ -87,7 +87,7 @@ class UART {
    *
    * @return number of bytes written
    *
-   * @note multiple burst calls to this function can potentially cause tx buffer 
+   * @note multiple burst calls to this function can potentially cause tx buffer
    *       to fill up, so remember to check return value for the actual number
    *       of bytes successfully transmitted
    */
@@ -115,14 +115,14 @@ class UART {
  protected:
   UART_HandleTypeDef *huart_;
   /* rx */
-  uint32_t        rx_size_;
-  uint8_t         *rx_data0_;
-  uint8_t         *rx_data1_;
+  uint32_t rx_size_;
+  uint8_t *rx_data0_;
+  uint8_t *rx_data1_;
   /* tx */
-  uint32_t        tx_size_;
-  uint32_t        tx_pending_;
-  uint8_t         *tx_write_;
-  uint8_t         *tx_read_;
+  uint32_t tx_size_;
+  uint32_t tx_pending_;
+  uint8_t *tx_write_;
+  uint8_t *tx_read_;
 };
 
 } /* namespace bsp */

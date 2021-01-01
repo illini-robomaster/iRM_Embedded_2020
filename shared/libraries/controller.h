@@ -1,7 +1,7 @@
 #pragma once
 
-#include "main.h"
 #include "arm_math.h"
+#include "main.h"
 
 namespace control {
 
@@ -10,13 +10,13 @@ namespace control {
  */
 class PIDController {
  public:
-   /**
-    * @brief PID controller constructor
-    *
-    * @param kp proportional gain
-    * @param ki integral gain
-    * @param kd derivative gain
-    */
+  /**
+   * @brief PID controller constructor
+   *
+   * @param kp proportional gain
+   * @param ki integral gain
+   * @param kd derivative gain
+   */
   PIDController(float kp, float ki, float kd);
 
   /**

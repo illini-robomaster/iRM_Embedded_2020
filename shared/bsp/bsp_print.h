@@ -36,16 +36,16 @@ void print_use_uart(UART_HandleTypeDef *huart);
  */
 void print_use_usb();
 
-  /**
-   * @brief print debug message via USB-OTG-FS
-   *
-   * @param format  formatted string
-   * @param ...     same argument lists as in printf
-   *
-   * @return  number of bytes printed
-   *
-   * @note    this function requires sufficient stack allocation
-   * @note    maximum print length is 32
-   * @note    will perform no-op in NDEBUG mode
-   */
+/**
+ * @brief print debug message via USB-OTG-FS
+ *
+ * @param format  formatted string
+ * @param ...     same argument lists as in printf
+ *
+ * @return  number of bytes printed
+ *
+ * @note    this function requires sufficient stack allocation
+ * @note    maximum print length is 32
+ * @note    will perform no-op in NDEBUG mode
+ */
 int32_t print(const char *format, ...);
