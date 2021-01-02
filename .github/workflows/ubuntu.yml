@@ -18,7 +18,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/arm-toolchain
-        key: ${{ runner.os }}-arm-toolchain
+        key: ${{ runner.os }}-ARM-Toolchain
     # download ARM toolchain
     - name: download ARM toolchain
       if: steps.cache-arm.outputs.cache-hit != 'true'
