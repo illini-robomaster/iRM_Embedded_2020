@@ -106,10 +106,8 @@ extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
 uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
-
-USBD_CDC_HandleTypeDef* RM_USB_Device();
-void RM_USB_TxCplt_Callback();
 // NOTE(alvin): bsp library should overwrite this weak function
+void RM_USB_TxCplt_Callback();
 void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len);
 /* USER CODE END EXPORTED_FUNCTIONS */
 

@@ -18,6 +18,13 @@
  *                                                                          *
  ****************************************************************************/
 
+#include "cmsis_os.h"
+
+#include "main.h"
+
+#include "bsp_usb.h"
+#include "bsp_print.h"
+
 /**
  * sample client Python code to verify transmission correctness of this example program
  *
@@ -36,29 +43,45 @@
  * ```
  */
 
-#include "main.h"
+#define RX_SIGNAL (1 << 0)
 
-#include "bsp_usb.h"
-#include "bsp_gpio.h"
+extern osThreadId defaultTaskHandle;
 
 static bsp::USB* usb;
+static osEvent usbEvent;
 
 class CustomUSBCallback : public bsp::USB {
   public:
-    CustomUSBCallback() : bsp::USB(true) {}
+    CustomUSBCallback() : bsp::USB() {}
 
-    void RxCompleteCallback(uint8_t *data, uint32_t length) override final {
-      Write(data, length);
+    void RxCompleteCallback() override final {
+      osSignalSet(defaultTaskHandle, RX_SIGNAL);
     }
-};
-
-class CustomUSBManualRead : public bsp::USB {
-  public:
-    CustomUSBManualRead() : bsp::USB() {}
 };
 
 void RM_RTOS_Init(void) {
   usb = new CustomUSBCallback();
   usb->SetupTx(2048);
   usb->SetupRx(2048);
+}
+
+void RM_RTOS_Default_Task(const void *argument) {
+  uint32_t start, end;
+  uint32_t length;
+  uint8_t *data;
+
+  UNUSED(argument);
+
+  while (1) {
+    /* wait until rx data is available */
+    usbEvent = osSignalWait(RX_SIGNAL, osWaitForever);
+    if (usbEvent.value.signals & RX_SIGNAL) { // uncessary check
+      /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
+      start = osKernelSysTick();
+      length = usb->Read(data);
+      usb->Write(data, length);
+      end = osKernelSysTick();
+      print("non blocking tx rx loopback api used %u ms\r\n", end - start);
+    }
+  }
 }

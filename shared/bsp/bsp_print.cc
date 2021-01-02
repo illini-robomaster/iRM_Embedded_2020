@@ -36,14 +36,15 @@ void print_use_uart(UART_HandleTypeDef *huart) {
 
   print_uart = new bsp::UART(huart);
   print_uart->SetupTx(MAX_PRINT_LEN * 2); // burst transfer size up to 2x max buffer size
+  print_usb = NULL;
 }
 
 void print_use_usb() {
-  if (print_usb)
-    delete print_usb;
+  if (!print_usb)
+    print_usb = new bsp::USB();
 
-  print_usb = new bsp::USB();
   print_usb->SetupTx(MAX_PRINT_LEN * 2); // burst transfer size up to 2x max buffer size
+  print_uart = NULL;
 }
 
 int32_t print(const char *format, ...) {

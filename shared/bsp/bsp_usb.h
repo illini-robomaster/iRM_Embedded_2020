@@ -34,10 +34,8 @@ class USB {
      *
      * @param true if use callback for receiving, otherwise manual read is required. The
      *        default value is false
-     *
-     * @note should not be called, to get the USB device, use bsp::GetUSBDevice() instead
      */
-    explicit USB(bool use_callback = false);
+    explicit USB();
 
     /**
      * @brief destructor (potentially deallocate buffer memories associated with tx / rx)
@@ -57,6 +55,8 @@ class USB {
      *
      * @param rx_buffer_size  receive buffer size (all data that has not been read out is
      *                        queued into this buffer if there is no callbacks registered)
+     *
+     * @note if the USB
      */
     void SetupRx(uint32_t rx_buffer_size);
 
@@ -70,7 +70,7 @@ class USB {
      * @note memory is not copied for optimal performance, so second call to this
      *       method will invalidate the buffer produced by the previous call
      */
-    uint32_t Read(uint8_t *&data);
+    uint32_t Read(uint8_t*& data);
 
     /**
      * @brief write data to usb without blocking
@@ -84,7 +84,7 @@ class USB {
      *       to fill up, so remember to check return value for the actual number
      *       of bytes successfully transmitted
      */
-    uint32_t Write(uint8_t *data, uint32_t length);
+    uint32_t Write(uint8_t* data, uint32_t length);
 
     /**
      * @brief Transmission complete call back
@@ -101,7 +101,7 @@ class USB {
      *
      * @note SHOULD NOT BE CALLED FROM OTHER PLACES
      */
-    virtual void RxCompleteCallback(uint8_t* data, uint32_t length);
+    virtual void RxCompleteCallback();
 
     /**
      * @brief Queue up received data if callback is not used
@@ -115,19 +115,8 @@ class USB {
      */
     uint32_t QueueUpRxData(uint8_t* data, uint32_t length);
 
-    /**
-     * @brief Returns if current USB is using callback to handle received data or not
-     *
-     * @return true if current USB is using callback, false otherwise
-     *
-     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
-     */
-    bool UseCallback() const;
-
   protected:
-    USBD_CDC_HandleTypeDef* hcdc;
     /* rx */
-    bool        use_callback;
     uint32_t    rx_size_;
     uint32_t    rx_pending_;
     uint8_t     *rx_write_;
