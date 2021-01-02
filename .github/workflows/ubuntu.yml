@@ -26,7 +26,7 @@ jobs:
         wget -O ~/gcc-arm-none-eabi.tar.bz2 https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
         mkdir ~/arm-toolchain
         tar -xjf ~/gcc-arm-none-eabi.tar.bz2 --directory ~/arm-toolchain --strip-components=1
-        echo "$HOME/arm-toolchain/bin" >> $GITHUB_PATH  # set envrionment variable
+        echo "~/arm-toolchain/bin" >> $GITHUB_PATH  # set envrionment variable
     - name: cmake
       run: |
         mkdir build && cd build
