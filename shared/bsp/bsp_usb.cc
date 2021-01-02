@@ -64,10 +64,10 @@ void USB::SetupRx(uint32_t rx_buffer_size) {
   rx_read_ = new uint8_t[rx_buffer_size];
 }
 
-uint32_t USB::Read(uint8_t*& data) {
+uint32_t USB::Read(uint8_t** data) {
   taskENTER_CRITICAL();
   uint32_t length = rx_pending_;
-  data = rx_write_;
+  *data = rx_write_;
   /* swap read / write buffer */
   uint8_t* tmp = rx_write_;
   rx_write_ = rx_read_;

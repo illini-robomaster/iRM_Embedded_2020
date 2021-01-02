@@ -70,7 +70,7 @@ class USB {
      * @note memory is not copied for optimal performance, so second call to this
      *       method will invalidate the buffer produced by the previous call
      */
-    uint32_t Read(uint8_t*& data);
+    uint32_t Read(uint8_t** data);
 
     /**
      * @brief write data to usb without blocking
