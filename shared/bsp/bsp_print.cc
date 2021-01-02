@@ -46,7 +46,7 @@ int32_t print(const char *format, ...) {
 #ifdef NDEBUG
   UNUSED(format);
   return 0;
-#else  // == #ifdef DEBUG
+#else   // == #ifdef DEBUG
   char buffer[MAX_PRINT_LEN];
   va_list args;
   int length;
