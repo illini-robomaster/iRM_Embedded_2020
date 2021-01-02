@@ -33,9 +33,8 @@ jobs:
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Debug ..
     - name: format check
-      run: make check-format
+      run: echo "$PATH"; make check-format
       working-directory: build
     - name: build
-      run: |
-        make -j
+      run: echo "$PATH"; make -j
       working-directory: build
