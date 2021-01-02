@@ -29,6 +29,7 @@ jobs:
         echo "~/arm-toolchain/bin" >> $GITHUB_PATH  # set envrionment variable
     - name: cmake
       run: |
+        echo "$PATH"
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Debug ..
     - name: format check
