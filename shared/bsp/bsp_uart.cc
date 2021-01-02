@@ -92,12 +92,30 @@ static HAL_StatusTypeDef uart_receive_dma_double_buffer(
 }
 
 /* tx dma complete -> check for pending message to keep transmitting */
-static void uart_tx_complete_callback(UART_HandleTypeDef *huart) {
+void TxCompleteCallbackWrapper(UART_HandleTypeDef *huart) {
   UART *uart = find_uart_instance(huart);
   if (!uart)
     return;
   uart->TxCompleteCallback();
 }
+
+/* rx idle line detected -> trigger rx callback */
+void RxCompleteCallbackWrapper(UART_HandleTypeDef *huart) {
+  bsp::UART *uart = bsp::find_uart_instance(huart);
+  if (!uart)
+    return;
+
+  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
+    uart->RxCompleteCallback();
+    __HAL_UART_CLEAR_IDLEFLAG(huart);
+  }
+
+  // TODO(alvin): add actual error handler in the future, ignore it for now
+  if (__HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR)) {
+    __HAL_UART_CLEAR_PEFLAG(huart);
+  }
+}
+
 
 UART::UART(UART_HandleTypeDef *huart) : huart_(huart),
     rx_size_(0), rx_data0_(NULL), rx_data1_(NULL),
@@ -144,7 +162,7 @@ void UART::SetupTx(uint32_t tx_buffer_size) {
   tx_write_ = new uint8_t[tx_buffer_size];
   tx_read_ = new uint8_t[tx_buffer_size];
 
-  HAL_UART_RegisterCallback(huart_, HAL_UART_TX_COMPLETE_CB_ID, uart_tx_complete_callback);
+  HAL_UART_RegisterCallback(huart_, HAL_UART_TX_COMPLETE_CB_ID, TxCompleteCallbackWrapper);
 }
 
 int32_t UART::Read(uint8_t **data) {
@@ -239,19 +257,6 @@ void UART::RxCompleteCallback() {}
 
 /* overwrite the weak function defined in board specific usart.c to handle IRQ requests */
 void RM_UART_IRQHandler(UART_HandleTypeDef *huart) {
-  bsp::UART *uart = bsp::find_uart_instance(huart);
-  if (!uart)
-    return;
-
-  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
-    uart->RxCompleteCallback();
-    __HAL_UART_CLEAR_IDLEFLAG(huart);
-  }
-
-  // TODO(alvin): add actual error handler in the future, ignore it for now
-  if (__HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR)) {
-    __HAL_UART_CLEAR_PEFLAG(huart);
-  }
+  bsp::RxCompleteCallbackWrapper(huart);
 }
-
 
