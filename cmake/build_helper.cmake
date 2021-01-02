@@ -50,6 +50,7 @@ function(irm_add_arm_executable name)
         COMMAND arm-none-eabi-size ${name}.elf
         COMMAND arm-none-eabi-objcopy -Oihex $<TARGET_FILE:${name}.elf> ${HEX_FILE}
         COMMAND arm-none-eabi-objcopy -Obinary $<TARGET_FILE:${name}.elf> ${BIN_FILE}
+        USES_TERMINAL
         COMMENT "Building ${HEX_FILE}\nBuilding ${BIN_FILE}")
 
     add_custom_target(flash-${name}

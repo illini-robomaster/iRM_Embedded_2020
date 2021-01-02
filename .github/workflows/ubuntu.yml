@@ -33,8 +33,8 @@ jobs:
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Debug ..
     - name: format check
-      run: echo "$PATH"; make check-format
+      run: make check-format
       working-directory: build
     - name: build
-      run: echo "$PATH"; ls ~/arm-toolchain/bin; make -j
+      run: make -j
       working-directory: build
