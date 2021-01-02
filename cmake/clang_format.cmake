@@ -19,7 +19,10 @@
 # ---------------------------------------------------------------------- #
 
 # use clang-format to enforce coding styles
-find_program(CLANG_FORMAT_EXE clang-format)
+find_program(CLANG_FORMAT_EXE NAMES 
+    clang-format-11
+    clang-format-10
+    clang-format)
 
 # gather all source code
 file(GLOB_RECURSE ALL_SOURCE_FILES
