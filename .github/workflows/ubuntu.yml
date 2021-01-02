@@ -36,5 +36,5 @@ jobs:
       run: echo "$PATH"; make check-format
       working-directory: build
     - name: build
-      run: echo "$PATH"; make -j
+      run: echo "$PATH"; ls ~/arm-toolchain/bin; make -j
       working-directory: build
