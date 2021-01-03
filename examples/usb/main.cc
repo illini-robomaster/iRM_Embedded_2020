@@ -80,6 +80,8 @@ void RM_RTOS_Default_Task(const void *argument) {
       start = osKernelSysTick();
       length = usb->Read(&data);
       usb->Write(data, length);
+      usb->Write(data, length);
+      usb->Write(data, length);
       end = osKernelSysTick();
       print("non blocking tx rx loopback api used %u ms\r\n", end - start);
     }
