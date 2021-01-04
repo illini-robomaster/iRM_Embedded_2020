@@ -37,9 +37,9 @@ namespace bsp {
 
 MPU6500* MPU6500::mpu6500 = NULL;
 
-MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select, uint16_t int_pin) 
+MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select, uint16_t int_pin)
       : GPIT(int_pin), hspi_(hspi), chip_select_(chip_select) {
-  const uint8_t init_len = 8;
+  const uint8_t init_len = 7;
   const uint8_t init_data[init_len][2] = {
     { MPU6500_PWR_MGMT_1,     0x03 }, // auto select clock source
     { MPU6500_PWR_MGMT_2,     0x00 }, // enable acc & gyro
@@ -94,7 +94,7 @@ void MPU6500::Reset() {
   WriteReg(MPU6500_PWR_MGMT_1, 0x80);
   WriteReg(MPU6500_SIGNAL_PATH_RESET, 0x07);
   WriteReg(MPU6500_USER_CTRL, 0x03);
-  
+
   HAL_Delay(1); // seems like signal path reset needs some time
 }
 
@@ -125,6 +125,8 @@ void MPU6500::ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
 
 void MPU6500::SPITxRxCpltCallback() {
   chip_select_.High();
+  // NOTE(alvin): per MPU6500 documentation, the first byte of the rx / tx buffer
+  //              contains the address of the SPI device
   uint8_t *buff = io_buff_ + 1;
   int16_t *array = reinterpret_cast<int16_t*>(buff);
   // in-place swap endian

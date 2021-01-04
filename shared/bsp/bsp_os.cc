@@ -31,10 +31,6 @@ void configureTimerForRunTimeStats(void) {
   __HAL_TIM_ENABLE(htim_os);
 }
 
-unsigned long getRunTimeCounterValue(void) {
-  return bsp::get_highres_tick_us();
-}
-
 void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName) {
   (void)xTask;
   (void)pcTaskName;
