@@ -18,7 +18,7 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.8)
 
 include(cmake/arm_toolchain.cmake)
 include(cmake/build_helper.cmake)

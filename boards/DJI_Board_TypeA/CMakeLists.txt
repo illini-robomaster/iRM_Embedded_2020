@@ -33,11 +33,7 @@ set(MCU_LINKER_SCRIPT STM32F427IIHx_FLASH.ld)
 add_library(${PROJECT_NAME}_interface INTERFACE)
 target_compile_definitions(${PROJECT_NAME}_interface INTERFACE
     ${MCU_LINE} ARM_MATH_CM4
-    USE_HAL_DRIVER
-    USE_HAL_CAN_REGISTER_CALLBACKS
-    USE_HAL_SPI_REGISTER_CALLBACKS
-    USE_HAL_TIM_REGISTER_CALLBACKS
-    USE_HAL_UART_REGISTER_CALLBACKS)
+    USE_HAL_DRIVER)
 target_compile_options(${PROJECT_NAME}_interface INTERFACE
     $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp>
     -mcpu=${MCU_ARCH} -mthumb -mthumb-interwork -mfpu=${MCU_FPU} -mfloat-abi=${MCU_FLOAT_ABI}
