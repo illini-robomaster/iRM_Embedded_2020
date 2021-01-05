@@ -86,20 +86,17 @@ class USB {
      */
     uint32_t Write(uint8_t* data, uint32_t length);
 
+  protected:
     /**
-     * @brief Transmission complete call back
-     *
-     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
+     * @brief Transmission complete callback function
      */
     void TxCompleteCallback();
 
     /**
-     * @brief Transmission complete call back
+     * @brief Reception complete call back
      *
      * @param data    pointer to the data buffer received
      * @param length  length of the data received
-     *
-     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
      */
     virtual void RxCompleteCallback();
 
@@ -110,10 +107,25 @@ class USB {
      * @param length  length of the data received
      *
      * @return number of bytes actually written to the buffer
-     *
-     * @note SHOULD NOT BE CALLED FROM OTHER PLACES
      */
-    uint32_t QueueUpRxData(uint8_t* data, uint32_t length);
+    uint32_t QueueUpRxData(const uint8_t* data, uint32_t length);
+
+  public:
+    /**
+     * @brief Wrapper function of transmission complete callback
+     *
+     * @param data    pointer to the data buffer received
+     * @param length  length of the data received
+     */
+    friend void TxCompleteCallbackWrapper();
+
+    /**
+     * @brief Wrapper function of reception complete callback
+     *
+     * @param data    pointer to the data buffer received
+     * @param length  length of the data received
+     */
+    friend void RxCompleteCallbackWrapper(uint8_t* data, uint32_t length);
 
   protected:
     /* rx */

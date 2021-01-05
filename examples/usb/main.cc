@@ -66,7 +66,7 @@ void RM_RTOS_Init(void) {
 }
 
 void RM_RTOS_Default_Task(const void *argument) {
-  uint32_t start, end;
+  // uint32_t start, end;
   uint32_t length;
   uint8_t *data;
 
@@ -77,11 +77,13 @@ void RM_RTOS_Default_Task(const void *argument) {
     usbEvent = osSignalWait(RX_SIGNAL, osWaitForever);
     if (usbEvent.value.signals & RX_SIGNAL) { // uncessary check
       /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
-      start = osKernelSysTick();
+      // start = osKernelSysTick();
       length = usb->Read(&data);
       usb->Write(data, length);
-      end = osKernelSysTick();
-      print("non blocking tx rx loopback api used %u ms\r\n", end - start);
+      usb->Write(data, length);
+      usb->Write(data, length);
+      // end = osKernelSysTick();
+      // print("non blocking tx rx loopback api used %u ms\r\n", end - start);
     }
   }
 }
