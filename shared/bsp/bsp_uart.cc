@@ -35,8 +35,7 @@ static size_t num_uarts = 0;
 /* check if huart is associated with any initialized uart_t structs */
 static inline bool uart_handle_exists(UART_HandleTypeDef* huart) {
   for (size_t i = 0; i < num_uarts; ++i)
-    if (uarts[i]->Uses(huart))
-      return true;
+    if (uarts[i]->Uses(huart)) return true;
 
   return false;
 }
@@ -44,8 +43,7 @@ static inline bool uart_handle_exists(UART_HandleTypeDef* huart) {
 /* get initialized uart_t instance given its huart handle struct */
 static inline UART* find_uart_instance(UART_HandleTypeDef* huart) {
   for (size_t i = 0; i < num_uarts; ++i)
-    if (uarts[i]->Uses(huart))
-      return uarts[i];
+    if (uarts[i]->Uses(huart)) return uarts[i];
 
   return NULL;
 }
@@ -55,8 +53,7 @@ static HAL_StatusTypeDef uart_receive_dma_double_buffer(UART_HandleTypeDef* huar
                                                         uint8_t* data1, uint16_t size) {
   /* Check that a Rx process is not already ongoing */
   if (huart->RxState == HAL_UART_STATE_READY) {
-    if ((data0 == NULL) || (data1 == NULL) || (size == 0U))
-      return HAL_ERROR;
+    if ((data0 == NULL) || (data1 == NULL) || (size == 0U)) return HAL_ERROR;
 
     /* Process Locked */
     __HAL_LOCK(huart);
@@ -93,8 +90,7 @@ static HAL_StatusTypeDef uart_receive_dma_double_buffer(UART_HandleTypeDef* huar
 /* tx dma complete -> check for pending message to keep transmitting */
 static void uart_tx_complete_callback(UART_HandleTypeDef* huart) {
   UART* uart = find_uart_instance(huart);
-  if (!uart)
-    return;
+  if (!uart) return;
   uart->TxCompleteCallback();
 }
 
@@ -112,20 +108,15 @@ UART::UART(UART_HandleTypeDef* huart)
 }
 
 UART::~UART() {
-  if (rx_data0_)
-    delete[] rx_data0_;
-  if (rx_data1_)
-    delete[] rx_data1_;
-  if (tx_write_)
-    delete[] tx_write_;
-  if (tx_read_)
-    delete[] tx_read_;
+  if (rx_data0_) delete[] rx_data0_;
+  if (rx_data1_) delete[] rx_data1_;
+  if (tx_write_) delete[] tx_write_;
+  if (tx_read_) delete[] tx_read_;
 }
 
 void UART::SetupRx(uint32_t rx_buffer_size) {
   /* uart rx already setup */
-  if (rx_size_ || rx_data0_ || rx_data1_)
-    return;
+  if (rx_size_ || rx_data0_ || rx_data1_) return;
 
   rx_size_ = rx_buffer_size;
   rx_data0_ = new uint8_t[rx_buffer_size];
@@ -141,8 +132,7 @@ void UART::SetupRx(uint32_t rx_buffer_size) {
 
 void UART::SetupTx(uint32_t tx_buffer_size) {
   /* uart tx already setup */
-  if (tx_size_ || tx_write_ || tx_read_)
-    return;
+  if (tx_size_ || tx_write_ || tx_read_) return;
 
   tx_size_ = tx_buffer_size;
   tx_pending_ = 0;
@@ -153,8 +143,7 @@ void UART::SetupTx(uint32_t tx_buffer_size) {
 }
 
 int32_t UART::Read(uint8_t** data) {
-  if (!data)
-    return -1;
+  if (!data) return -1;
   /* capture pending bytes and perform hardware buffer switch */
   int32_t length;
   taskENTER_CRITICAL();
@@ -175,8 +164,7 @@ int32_t UART::Read(uint8_t** data) {
 }
 
 int32_t UART::ReadFromISR(uint8_t** data) {
-  if (!data)
-    return -1;
+  if (!data) return -1;
   /* capture pending bytes and perform hardware buffer switch */
   int32_t length;
   UBaseType_t isrflags = taskENTER_CRITICAL_FROM_ISR();
@@ -200,13 +188,11 @@ int32_t UART::Write(const uint8_t* data, uint32_t length) {
   taskENTER_CRITICAL();
   if (huart_->gState == HAL_UART_STATE_BUSY_TX || tx_pending_) {
     /* uart tx currently transmitting -> atomically queue up new data */
-    if (length + tx_pending_ > tx_size_)
-      length = tx_size_ - tx_pending_;
+    if (length + tx_pending_ > tx_size_) length = tx_size_ - tx_pending_;
     memcpy(tx_write_ + tx_pending_, data, length);
     tx_pending_ += length;
   } else {
-    if (length > tx_size_)
-      length = tx_size_;
+    if (length > tx_size_) length = tx_size_;
     /* directly write into the read buffer and start transmission */
     memcpy(tx_read_, data, length);
     HAL_UART_Transmit_DMA(huart_, tx_read_, length);
@@ -216,9 +202,7 @@ int32_t UART::Write(const uint8_t* data, uint32_t length) {
   return length;
 }
 
-bool UART::Uses(UART_HandleTypeDef* huart) {
-  return huart == huart_;
-}
+bool UART::Uses(UART_HandleTypeDef* huart) { return huart == huart_; }
 
 void UART::TxCompleteCallback() {
   uint8_t* tmp;
@@ -244,8 +228,7 @@ void UART::RxCompleteCallback() {}
 /* overwrite the weak function defined in board specific usart.c to handle IRQ requests */
 void RM_UART_IRQHandler(UART_HandleTypeDef* huart) {
   bsp::UART* uart = bsp::find_uart_instance(huart);
-  if (!uart)
-    return;
+  if (!uart) return;
 
   if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
     uart->RxCompleteCallback();

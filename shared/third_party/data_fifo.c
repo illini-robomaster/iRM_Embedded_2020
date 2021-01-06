@@ -100,8 +100,7 @@ int32_t fifo_s_puts(fifo_s_t* pfifo, uint8_t* psource, uint32_t number) {
   //! Check input parameters.
   ASSERT(NULL != pfifo);
   //! Check element source validity
-  if (psource == NULL)
-    return -1;
+  if (psource == NULL) return -1;
   //! Update FIFO structure
   MUTEX_WAIT();
   //! If FIFO is full during copy, abort. But try our best to fit data into FIFO. That's why we

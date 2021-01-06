@@ -70,21 +70,15 @@ void MotorCANBase::TransmitOutput(MotorCANBase* motors[], uint8_t num_motors) {
   motors[0]->can_->Transmit(motors[0]->tx_id_, data, 8);
 }
 
-float MotorCANBase::GetTheta() const {
-  return theta_;
-}
+float MotorCANBase::GetTheta() const { return theta_; }
 
 float MotorCANBase::GetThetaDelta(float target) const {
   return wrap<float>(target - theta_, -PI, PI);
 }
 
-float MotorCANBase::GetOmega() const {
-  return omega_;
-}
+float MotorCANBase::GetOmega() const { return omega_; }
 
-float MotorCANBase::GetOmegaDelta(float target) const {
-  return target - omega_;
-}
+float MotorCANBase::GetOmegaDelta(float target) const { return target - omega_; }
 
 Motor3508::Motor3508(CAN* can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
   can->RegisterRxCallback(rx_id, can_motor_callback, this);

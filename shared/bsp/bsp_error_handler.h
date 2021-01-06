@@ -24,10 +24,9 @@
 
 #define BSP_DEBUG print("[DEBUG] %s:%d ", __FUNCTION__, __LINE__)
 // non-fatal assertions (does not hang)
-#define RM_EXPECT_TRUE(cond, msg)                     \
-  do {                                                \
-    if (!(cond))                                      \
-      bsp_error_handler(__FUNCTION__, __LINE__, msg); \
+#define RM_EXPECT_TRUE(cond, msg)                                \
+  do {                                                           \
+    if (!(cond)) bsp_error_handler(__FUNCTION__, __LINE__, msg); \
   } while (0)
 #define RM_EXPECT_FALSE(cond, msg) RM_EXPECT_TRUE(!(cond), msg)
 #define RM_EXPECT_EQ(expr, ref, msg) RM_EXPECT_TRUE((expr) == (ref), msg)

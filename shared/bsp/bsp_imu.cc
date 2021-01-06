@@ -43,8 +43,7 @@ MPU6500::MPU6500(SPI_HandleTypeDef* hspi, const GPIO& chip_select)
       {MPU6500_USER_CTRL, 0x20},       // enable I2C master
   };
   Reset();  // reset all registers and signal paths
-  for (size_t i = 0; i < 7; ++i)
-    WriteReg(init_data[i][0], init_data[i][1]);
+  for (size_t i = 0; i < 7; ++i) WriteReg(init_data[i][0], init_data[i][1]);
   // validate register values
   uint8_t tmp;
   for (size_t i = 0; i < 7; ++i) {
@@ -80,9 +79,7 @@ void MPU6500::Reset() {
   HAL_Delay(1);  // seems like signal path reset needs some time
 }
 
-void MPU6500::WriteReg(uint8_t reg, uint8_t data) {
-  WriteRegs(reg, &data, 1);
-}
+void MPU6500::WriteReg(uint8_t reg, uint8_t data) { WriteRegs(reg, &data, 1); }
 
 void MPU6500::WriteRegs(uint8_t reg_start, uint8_t* data, uint8_t len) {
   uint8_t tx = reg_start & 0x7f;
@@ -93,9 +90,7 @@ void MPU6500::WriteRegs(uint8_t reg_start, uint8_t* data, uint8_t len) {
   chip_select_.High();
 }
 
-void MPU6500::ReadReg(uint8_t reg, uint8_t* data) {
-  ReadRegs(reg, data, 1);
-}
+void MPU6500::ReadReg(uint8_t reg, uint8_t* data) { ReadRegs(reg, data, 1); }
 
 void MPU6500::ReadRegs(uint8_t reg_start, uint8_t* data, uint8_t len) {
   chip_select_.Low();
