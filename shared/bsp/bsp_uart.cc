@@ -101,7 +101,7 @@ void TxCompleteCallbackWrapper(UART_HandleTypeDef *huart) {
 
 /* rx idle line detected -> trigger rx callback */
 void RxCompleteCallbackWrapper(UART_HandleTypeDef *huart) {
-  bsp::UART *uart = bsp::find_uart_instance(huart);
+  UART *uart = find_uart_instance(huart);
   if (!uart)
     return;
 
