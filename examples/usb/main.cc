@@ -18,12 +18,11 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "cmsis_os.h"
-
 #include "main.h"
 
-#include "bsp_usb.h"
 #include "bsp_print.h"
+#include "bsp_usb.h"
+#include "cmsis_os.h"
 
 /**
  * sample client Python code to verify transmission correctness of this example program
@@ -47,16 +46,14 @@
 
 extern osThreadId defaultTaskHandle;
 
-static bsp::USB* usb;
+static bsp::USB *usb;
 static osEvent usbEvent;
 
 class CustomUSBCallback : public bsp::USB {
-  public:
-    CustomUSBCallback() : bsp::USB() {}
+ public:
+  CustomUSBCallback() : bsp::USB() {}
 
-    void RxCompleteCallback() override final {
-      osSignalSet(defaultTaskHandle, RX_SIGNAL);
-    }
+  void RxCompleteCallback() override final { osSignalSet(defaultTaskHandle, RX_SIGNAL); }
 };
 
 void RM_RTOS_Init(void) {
@@ -75,7 +72,7 @@ void RM_RTOS_Default_Task(const void *argument) {
   while (1) {
     /* wait until rx data is available */
     usbEvent = osSignalWait(RX_SIGNAL, osWaitForever);
-    if (usbEvent.value.signals & RX_SIGNAL) { // unnecessary check
+    if (usbEvent.value.signals & RX_SIGNAL) {  // unnecessary check
       length = usb->Read(&data);
       usb->Write(data, length);
       usb->Write(data, length);
