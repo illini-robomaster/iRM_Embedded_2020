@@ -18,10 +18,68 @@
  *                                                                          *
  ****************************************************************************/
 
+#include "cmsis_os.h"
+
 #include "main.h"
 
 #include "bsp_usb.h"
+#include "bsp_print.h"
 
-static void example_usb_callback(uint8_t *buf, uint32_t len) { usb_transmit(buf, len); }
+/**
+ * sample client Python code to verify transmission correctness of this example program
+ *
+ * ```
+ * import serial
+ *
+ * ser = serial.Serial('/dev/ttyUSB0', baudrate=115200)
+ * some_str = 'this is my data!'
+ *
+ * for i in range(1000):
+ *     ser.write(some_str)
+ *     while ser.in_waiting < 3 * len(some_str):
+ *         continue
+ *     ret = ser.read_all()
+ *     assert ret == 3 * some_str
+ * ```
+ */
 
-void RM_RTOS_Init(void) { usb_register_callback(example_usb_callback); }
+#define RX_SIGNAL (1 << 0)
+
+extern osThreadId defaultTaskHandle;
+
+static bsp::USB* usb;
+static osEvent usbEvent;
+
+class CustomUSBCallback : public bsp::USB {
+  public:
+    CustomUSBCallback() : bsp::USB() {}
+
+    void RxCompleteCallback() override final {
+      osSignalSet(defaultTaskHandle, RX_SIGNAL);
+    }
+};
+
+void RM_RTOS_Init(void) {
+  usb = new CustomUSBCallback();
+  usb->SetupTx(2048);
+  usb->SetupRx(2048);
+}
+
+void RM_RTOS_Default_Task(const void *argument) {
+  // uint32_t start, end;
+  uint32_t length;
+  uint8_t *data;
+
+  UNUSED(argument);
+
+  while (1) {
+    /* wait until rx data is available */
+    usbEvent = osSignalWait(RX_SIGNAL, osWaitForever);
+    if (usbEvent.value.signals & RX_SIGNAL) { // unnecessary check
+      length = usb->Read(&data);
+      usb->Write(data, length);
+      usb->Write(data, length);
+      usb->Write(data, length);
+    }
+  }
+}

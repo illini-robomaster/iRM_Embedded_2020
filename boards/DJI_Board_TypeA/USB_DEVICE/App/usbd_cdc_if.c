@@ -185,6 +185,7 @@ static int8_t CDC_DeInit_FS(void)
 static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 {
   /* USER CODE BEGIN 5 */
+  static uint8_t tempbuf[7] = {0,0,0,0,0,0,0};
   switch(cmd)
   {
     case CDC_SEND_ENCAPSULATED_COMMAND:
@@ -206,7 +207,6 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
     case CDC_CLEAR_COMM_FEATURE:
 
     break;
-
   /*******************************************************************************/
   /* Line Coding Structure                                                       */
   /*-----------------------------------------------------------------------------*/
@@ -225,11 +225,23 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
   /*******************************************************************************/
     case CDC_SET_LINE_CODING:
-
+    tempbuf[0] = pbuf[0];
+    tempbuf[1] = pbuf[1];
+    tempbuf[2] = pbuf[2];
+    tempbuf[3] = pbuf[3];
+    tempbuf[4] = pbuf[4];
+    tempbuf[5] = pbuf[5];
+    tempbuf[6] = pbuf[6];
     break;
 
     case CDC_GET_LINE_CODING:
-
+    pbuf[0] = tempbuf[0];
+    pbuf[1] = tempbuf[1];
+    pbuf[2] = tempbuf[2];
+    pbuf[3] = tempbuf[3];
+    pbuf[4] = tempbuf[4];
+    pbuf[5] = tempbuf[5];
+    pbuf[6] = tempbuf[6];
     break;
 
     case CDC_SET_CONTROL_LINE_STATE:
@@ -314,6 +326,7 @@ static int8_t CDC_TransmitCplt_FS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 {
   uint8_t result = USBD_OK;
   /* USER CODE BEGIN 13 */
+  RM_USB_TxCplt_Callback();
   UNUSED(Buf);
   UNUSED(Len);
   UNUSED(epnum);
@@ -322,6 +335,9 @@ static int8_t CDC_TransmitCplt_FS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 }
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
+__weak void RM_USB_TxCplt_Callback() {
+}
+
 __weak void RM_USB_RxCplt_Callback(uint8_t *Buf, uint32_t Len) {
   UNUSED(Buf);
   UNUSED(Len);
