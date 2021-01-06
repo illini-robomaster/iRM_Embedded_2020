@@ -21,7 +21,7 @@
 #include "bsp_print.h"
 #include "main.h"
 
-void RM_RTOS_Default_Task(const void *argument) {
+void RM_RTOS_Default_Task(const void* argument) {
   UNUSED(argument);
   print("Default Task Started\r\n");
 

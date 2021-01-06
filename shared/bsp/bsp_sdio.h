@@ -31,7 +31,7 @@ class SDFileLogger {
    *
    * @param filename filename of the log file to create
    */
-  explicit SDFileLogger(const char *filename);
+  explicit SDFileLogger(const char* filename);
 
   /**
    * @brief destructor (deallocate associated memories)
@@ -46,12 +46,12 @@ class SDFileLogger {
    *
    * @return number of bytes actually written, -1 if error
    */
-  int32_t Log(const uint8_t *data, uint32_t length);
+  int32_t Log(const uint8_t* data, uint32_t length);
 
  private:
   static bool mounted_;
 
-  char *filename_;
+  char* filename_;
   FIL fobj_;
 };
 

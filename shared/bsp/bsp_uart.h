@@ -31,7 +31,7 @@ class UART {
    *
    * @param huart pointer to a HAL uart handle
    */
-  explicit UART(UART_HandleTypeDef *huart);
+  explicit UART(UART_HandleTypeDef* huart);
 
   /**
    * @brief destructor (potentially deallocate buffer memories associated with tx / rx)
@@ -64,7 +64,7 @@ class UART {
    * @note memory is not copied for optimal performance, so second call to this
    *       method will invalidate the buffer produced by the previous call
    */
-  int32_t Read(uint8_t **data);
+  int32_t Read(uint8_t** data);
 
   /**
    * @brief read out the pending received data inside IRQ Handler
@@ -77,7 +77,7 @@ class UART {
    *       method will invalidate the buffer produced by the previous call
    * @note the implementation is NOT thread safe!
    */
-  int32_t ReadFromISR(uint8_t **data);
+  int32_t ReadFromISR(uint8_t** data);
 
   /**
    * @brief write data to uart without blocking
@@ -91,7 +91,7 @@ class UART {
    *       to fill up, so remember to check return value for the actual number
    *       of bytes successfully transmitted
    */
-  int32_t Write(const uint8_t *data, uint32_t length);
+  int32_t Write(const uint8_t* data, uint32_t length);
 
   /**
    * @brief check if the uart instance is associated with a particular HAL uart handle
@@ -100,7 +100,7 @@ class UART {
    *
    * @return true / false
    */
-  bool Uses(UART_HandleTypeDef *huart);
+  bool Uses(UART_HandleTypeDef* huart);
 
   /**
    * @brief Transmission complete call back. SHOULD NOT BE CALLED FROM OTHER PLACES
@@ -113,16 +113,16 @@ class UART {
   virtual void RxCompleteCallback();
 
  protected:
-  UART_HandleTypeDef *huart_;
+  UART_HandleTypeDef* huart_;
   /* rx */
   uint32_t rx_size_;
-  uint8_t *rx_data0_;
-  uint8_t *rx_data1_;
+  uint8_t* rx_data0_;
+  uint8_t* rx_data1_;
   /* tx */
   uint32_t tx_size_;
   uint32_t tx_pending_;
-  uint8_t *tx_write_;
-  uint8_t *tx_read_;
+  uint8_t* tx_write_;
+  uint8_t* tx_read_;
 };
 
 } /* namespace bsp */

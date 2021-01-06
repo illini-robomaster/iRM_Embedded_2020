@@ -30,11 +30,11 @@ static uint8_t tx2[] = "second message\n";
 
 static osThreadId sd_task_handle;
 
-void sd_task(void const *argu) {
+void sd_task(void const* argu) {
   UNUSED(argu);
   bsp::SDFileLogger logger("log.txt");
-  logger.Log(tx1, strlen((char *)tx1));
-  logger.Log(tx2, strlen((char *)tx2));
+  logger.Log(tx1, strlen((char*)tx1));
+  logger.Log(tx2, strlen((char*)tx2));
   while (true)
     ;
 }

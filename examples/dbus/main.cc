@@ -24,9 +24,9 @@
 #include "cmsis_os.h"
 #include "dbus.h"
 
-remote::DBUS *dbus;
+remote::DBUS* dbus;
 
-void RM_RTOS_Default_Task(const void *arguments) {
+void RM_RTOS_Default_Task(const void* arguments) {
   UNUSED(arguments);
 
   print_use_uart(&huart8);

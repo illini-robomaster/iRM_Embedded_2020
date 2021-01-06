@@ -27,8 +27,8 @@
 #define KEY_GPIO_GROUP GPIOB
 #define KEY_GPIO_PIN GPIO_PIN_2
 
-bsp::CAN *can1 = NULL;
-control::MotorCANBase *motor = NULL;
+bsp::CAN* can1 = NULL;
+control::MotorCANBase* motor = NULL;
 
 void RM_RTOS_Init() {
   print_use_uart(&huart8);
@@ -37,9 +37,9 @@ void RM_RTOS_Init() {
   motor = new control::Motor3508(can1, 0x201);
 }
 
-void RM_RTOS_Default_Task(const void *args) {
+void RM_RTOS_Default_Task(const void* args) {
   UNUSED(args);
-  control::MotorCANBase *motors[] = {motor};
+  control::MotorCANBase* motors[] = {motor};
 
   bsp::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);
   while (1) {

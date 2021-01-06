@@ -1,5 +1,15 @@
 ---
-Language: Cpp
 BasedOnStyle: Google
 ColumnLimit: 100
+---
+Language: Cpp
+
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Inline
+AllowShortLoopsOnASingleLine: false
+DerivePointerAlignment: false
+FixNamespaceComments: true
 ---

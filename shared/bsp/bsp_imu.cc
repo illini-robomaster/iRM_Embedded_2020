@@ -31,7 +31,7 @@
 
 namespace bsp {
 
-MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select)
+MPU6500::MPU6500(SPI_HandleTypeDef* hspi, const GPIO& chip_select)
     : hspi_(hspi), chip_select_(chip_select) {
   uint8_t init_data[7][2] = {
       {MPU6500_PWR_MGMT_1, 0x03},      // auto select clock source
@@ -43,7 +43,8 @@ MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select)
       {MPU6500_USER_CTRL, 0x20},       // enable I2C master
   };
   Reset();  // reset all registers and signal paths
-  for (size_t i = 0; i < 7; ++i) WriteReg(init_data[i][0], init_data[i][1]);
+  for (size_t i = 0; i < 7; ++i)
+    WriteReg(init_data[i][0], init_data[i][1]);
   // validate register values
   uint8_t tmp;
   for (size_t i = 0; i < 7; ++i) {
@@ -56,7 +57,7 @@ MPU6500::MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select)
 void MPU6500::UpdateData() {
   uint8_t buff[MPU6500_SIZEOF_DATA];
   // interpret as int16_t array
-  int16_t *array = reinterpret_cast<int16_t *>(buff);
+  int16_t* array = reinterpret_cast<int16_t*>(buff);
 
   ReadRegs(MPU6500_ACCEL_XOUT_H, buff, MPU6500_SIZEOF_DATA);
 
@@ -79,9 +80,11 @@ void MPU6500::Reset() {
   HAL_Delay(1);  // seems like signal path reset needs some time
 }
 
-void MPU6500::WriteReg(uint8_t reg, uint8_t data) { WriteRegs(reg, &data, 1); }
+void MPU6500::WriteReg(uint8_t reg, uint8_t data) {
+  WriteRegs(reg, &data, 1);
+}
 
-void MPU6500::WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
+void MPU6500::WriteRegs(uint8_t reg_start, uint8_t* data, uint8_t len) {
   uint8_t tx = reg_start & 0x7f;
 
   chip_select_.Low();
@@ -90,9 +93,11 @@ void MPU6500::WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
   chip_select_.High();
 }
 
-void MPU6500::ReadReg(uint8_t reg, uint8_t *data) { ReadRegs(reg, data, 1); }
+void MPU6500::ReadReg(uint8_t reg, uint8_t* data) {
+  ReadRegs(reg, data, 1);
+}
 
-void MPU6500::ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len) {
+void MPU6500::ReadRegs(uint8_t reg_start, uint8_t* data, uint8_t len) {
   chip_select_.Low();
   *data = static_cast<uint8_t>(reg_start | 0x80);
   HAL_SPI_Transmit(hspi_, data, 1, MPU6500_DELAY);

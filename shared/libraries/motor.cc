@@ -28,12 +28,12 @@ using namespace bsp;
 
 namespace control {
 
-static void can_motor_callback(const uint8_t data[], void *args) {
-  MotorCANBase *motor = reinterpret_cast<MotorCANBase *>(args);
+static void can_motor_callback(const uint8_t data[], void* args) {
+  MotorCANBase* motor = reinterpret_cast<MotorCANBase*>(args);
   motor->UpdateData(data);
 }
 
-MotorCANBase::MotorCANBase(bsp::CAN *can, uint16_t rx_id)
+MotorCANBase::MotorCANBase(bsp::CAN* can, uint16_t rx_id)
     : theta_(0), omega_(0), can_(can), rx_id_(rx_id) {
   constexpr uint16_t GROUP_SIZE = 4;
   constexpr uint16_t RX1_ID_START = 0x201;
@@ -53,7 +53,7 @@ MotorCANBase::MotorCANBase(bsp::CAN *can, uint16_t rx_id)
     tx_id_ = TX1_ID;
 }
 
-void MotorCANBase::TransmitOutput(MotorCANBase *motors[], uint8_t num_motors) {
+void MotorCANBase::TransmitOutput(MotorCANBase* motors[], uint8_t num_motors) {
   uint8_t data[8] = {0};
 
   RM_ASSERT_GT(num_motors, 0, "Meaningless empty can motor transmission");
@@ -70,17 +70,23 @@ void MotorCANBase::TransmitOutput(MotorCANBase *motors[], uint8_t num_motors) {
   motors[0]->can_->Transmit(motors[0]->tx_id_, data, 8);
 }
 
-float MotorCANBase::GetTheta() const { return theta_; }
+float MotorCANBase::GetTheta() const {
+  return theta_;
+}
 
 float MotorCANBase::GetThetaDelta(float target) const {
   return wrap<float>(target - theta_, -PI, PI);
 }
 
-float MotorCANBase::GetOmega() const { return omega_; }
+float MotorCANBase::GetOmega() const {
+  return omega_;
+}
 
-float MotorCANBase::GetOmegaDelta(float target) const { return target - omega_; }
+float MotorCANBase::GetOmegaDelta(float target) const {
+  return target - omega_;
+}
 
-Motor3508::Motor3508(CAN *can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
+Motor3508::Motor3508(CAN* can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
   can->RegisterRxCallback(rx_id, can_motor_callback, this);
 }
 
@@ -108,7 +114,7 @@ void Motor3508::SetOutput(int16_t val) {
   output_ = clip<int16_t>(val, -MAX_ABS_CURRENT, MAX_ABS_CURRENT);
 }
 
-Motor6623::Motor6623(CAN *can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
+Motor6623::Motor6623(CAN* can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
   can->RegisterRxCallback(rx_id, can_motor_callback, this);
 }
 
@@ -143,7 +149,7 @@ float Motor6623::GetOmegaDelta(const float target) const {
   return 0;
 }
 
-Motor2006::Motor2006(CAN *can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
+Motor2006::Motor2006(CAN* can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
   can->RegisterRxCallback(rx_id, can_motor_callback, this);
 }
 
@@ -169,7 +175,7 @@ void Motor2006::SetOutput(int16_t val) {
   output_ = clip<int16_t>(val, -MAX_ABS_CURRENT, MAX_ABS_CURRENT);
 }
 
-MotorPWMBase::MotorPWMBase(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq,
+MotorPWMBase::MotorPWMBase(TIM_HandleTypeDef* htim, uint8_t channel, uint32_t clock_freq,
                            uint32_t output_freq, uint32_t idle_throttle)
     : pwm_(htim, channel, clock_freq, output_freq, idle_throttle), idle_throttle_(idle_throttle) {
   pwm_.Start();

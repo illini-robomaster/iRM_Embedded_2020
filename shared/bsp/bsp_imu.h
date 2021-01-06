@@ -40,7 +40,7 @@ class MPU6500 {
    * @param hspi         HAL SPI handle associated with the sensor
    * @param chip_select  chip select gpio pin
    */
-  MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select);
+  MPU6500(SPI_HandleTypeDef* hspi, const GPIO& chip_select);
 
   /**
    * @brief sample latest sensor data
@@ -61,11 +61,11 @@ class MPU6500 {
 
  private:
   void WriteReg(uint8_t reg, uint8_t data);
-  void WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len);
-  void ReadReg(uint8_t reg, uint8_t *data);
-  void ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len);
+  void WriteRegs(uint8_t reg_start, uint8_t* data, uint8_t len);
+  void ReadReg(uint8_t reg, uint8_t* data);
+  void ReadRegs(uint8_t reg_start, uint8_t* data, uint8_t len);
 
-  SPI_HandleTypeDef *hspi_;
+  SPI_HandleTypeDef* hspi_;
   GPIO chip_select_;
 };
 

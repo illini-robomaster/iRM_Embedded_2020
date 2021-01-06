@@ -50,7 +50,7 @@ class MotorCANBase : public MotorBase {
    * @param can    CAN instance
    * @param rx_id  CAN rx id
    */
-  MotorCANBase(bsp::CAN *can, uint16_t rx_id);
+  MotorCANBase(bsp::CAN* can, uint16_t rx_id);
 
   /**
    * @brief update motor feedback data
@@ -102,14 +102,14 @@ class MotorCANBase : public MotorBase {
    * @param motors[]    array of CAN motor pointers
    * @param num_motors  number of motors to transmit
    */
-  static void TransmitOutput(MotorCANBase *motors[], uint8_t num_motors);
+  static void TransmitOutput(MotorCANBase* motors[], uint8_t num_motors);
 
  protected:
   volatile float theta_;
   volatile float omega_;
 
  private:
-  bsp::CAN *can_;
+  bsp::CAN* can_;
   uint16_t rx_id_;
   uint16_t tx_id_;
 };
@@ -120,7 +120,7 @@ class MotorCANBase : public MotorBase {
 class Motor3508 : public MotorCANBase {
  public:
   /* constructor wrapper over MotorCANBase */
-  Motor3508(bsp::CAN *can, uint16_t rx_id);
+  Motor3508(bsp::CAN* can, uint16_t rx_id);
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
@@ -139,7 +139,7 @@ class Motor3508 : public MotorCANBase {
 class Motor6623 : public MotorCANBase {
  public:
   /* constructor wrapper over MotorCANBase */
-  Motor6623(bsp::CAN *can, uint16_t rx_id);
+  Motor6623(bsp::CAN* can, uint16_t rx_id);
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
@@ -163,7 +163,7 @@ class Motor6623 : public MotorCANBase {
 class Motor2006 : public MotorCANBase {
  public:
   /* constructor wrapper over MotorCANBase */
-  Motor2006(bsp::CAN *can, uint16_t rx_id);
+  Motor2006(bsp::CAN* can, uint16_t rx_id);
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
@@ -189,7 +189,7 @@ class MotorPWMBase : public MotorBase {
    * @param output_freq    desired output frequency, in [Hz]
    * @param idle_throttle  idling pulse width, in [us]
    */
-  MotorPWMBase(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq, uint32_t output_freq,
+  MotorPWMBase(TIM_HandleTypeDef* htim, uint8_t channel, uint32_t clock_freq, uint32_t output_freq,
                uint32_t idle_throttle);
 
   /**

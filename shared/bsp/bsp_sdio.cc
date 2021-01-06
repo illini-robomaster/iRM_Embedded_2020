@@ -26,7 +26,7 @@ namespace bsp {
 
 bool SDFileLogger::mounted_ = false;
 
-SDFileLogger::SDFileLogger(const char *filename) {
+SDFileLogger::SDFileLogger(const char* filename) {
   // lazy initial mounting
   if (!mounted_) {
     osDelay(100);  // wait for default thread to finish initializing FatFS
@@ -41,13 +41,16 @@ SDFileLogger::SDFileLogger(const char *filename) {
   f_close(&fobj_);
 }
 
-SDFileLogger::~SDFileLogger() { delete[] filename_; }
+SDFileLogger::~SDFileLogger() {
+  delete[] filename_;
+}
 
-int32_t SDFileLogger::Log(const uint8_t *data, uint32_t length) {
+int32_t SDFileLogger::Log(const uint8_t* data, uint32_t length) {
   int32_t ret;
   UINT bytes_written;
 
-  if (f_open(&fobj_, filename_, FA_OPEN_APPEND | FA_WRITE) != FR_OK) return -1;
+  if (f_open(&fobj_, filename_, FA_OPEN_APPEND | FA_WRITE) != FR_OK)
+    return -1;
 
   if (f_write(&fobj_, data, length, &bytes_written) != FR_OK)
     ret = -1;

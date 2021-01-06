@@ -24,7 +24,7 @@
 
 namespace bsp {
 
-GPIO::GPIO(GPIO_TypeDef *group, uint16_t pin) : group_(group), pin_(pin), state_(0) {}
+GPIO::GPIO(GPIO_TypeDef* group, uint16_t pin) : group_(group), pin_(pin), state_(0) {}
 
 void GPIO::High() {
   HAL_GPIO_WritePin(group_, pin_, GPIO_PIN_SET);

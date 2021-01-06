@@ -46,7 +46,7 @@
 
 extern osThreadId defaultTaskHandle;
 
-static bsp::USB *usb;
+static bsp::USB* usb;
 static osEvent usbEvent;
 
 class CustomUSBCallback : public bsp::USB {
@@ -62,10 +62,10 @@ void RM_RTOS_Init(void) {
   usb->SetupRx(2048);
 }
 
-void RM_RTOS_Default_Task(const void *argument) {
+void RM_RTOS_Default_Task(const void* argument) {
   // uint32_t start, end;
   uint32_t length;
-  uint8_t *data;
+  uint8_t* data;
 
   UNUSED(argument);
 

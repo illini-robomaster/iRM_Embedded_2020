@@ -30,15 +30,18 @@ typedef struct {
 
 namespace remote {
 
-DBUS::DBUS(UART_HandleTypeDef *huart) : bsp::UART(huart) { SetupRx(sizeof(dbus_t) + 1); }
+DBUS::DBUS(UART_HandleTypeDef* huart) : bsp::UART(huart) {
+  SetupRx(sizeof(dbus_t) + 1);
+}
 
 void DBUS::RxCompleteCallback() {
-  uint8_t *data;
+  uint8_t* data;
   // data frame misalignment
-  if (this->ReadFromISR(&data) != sizeof(dbus_t)) return;
+  if (this->ReadFromISR(&data) != sizeof(dbus_t))
+    return;
 
   // re-interpret the data buffer and decode into class properties
-  dbus_t *repr = reinterpret_cast<dbus_t *>(data);
+  dbus_t* repr = reinterpret_cast<dbus_t*>(data);
   this->ch0 = repr->ch0 - RC_ROCKER_MID;
   this->ch1 = repr->ch1 - RC_ROCKER_MID;
   this->ch2 = repr->ch2 - RC_ROCKER_MID;

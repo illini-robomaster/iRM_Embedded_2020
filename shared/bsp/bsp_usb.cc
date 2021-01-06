@@ -42,16 +42,21 @@ USB::USB()
 }
 
 USB::~USB() {
-  if (rx_write_) delete[] rx_write_;
-  if (rx_read_) delete[] rx_read_;
-  if (tx_write_) delete[] tx_write_;
-  if (tx_read_) delete[] tx_read_;
+  if (rx_write_)
+    delete[] rx_write_;
+  if (rx_read_)
+    delete[] rx_read_;
+  if (tx_write_)
+    delete[] tx_write_;
+  if (tx_read_)
+    delete[] tx_read_;
   usb = nullptr;
 }
 
 void USB::SetupTx(uint32_t tx_buffer_size) {
   /* usb tx already setup */
-  if (tx_size_ || tx_write_ || tx_read_) return;
+  if (tx_size_ || tx_write_ || tx_read_)
+    return;
 
   tx_size_ = tx_buffer_size;
   tx_pending_ = 0;
@@ -61,7 +66,8 @@ void USB::SetupTx(uint32_t tx_buffer_size) {
 
 void USB::SetupRx(uint32_t rx_buffer_size) {
   /* usb rx already setup */
-  if (rx_size_ || rx_write_ || rx_read_) return;
+  if (rx_size_ || rx_write_ || rx_read_)
+    return;
 
   rx_size_ = rx_buffer_size;
   rx_pending_ = 0;
@@ -84,7 +90,8 @@ uint32_t USB::Read(uint8_t** data) {
 
 uint32_t USB::Write(uint8_t* data, uint32_t length) {
   taskENTER_CRITICAL();
-  if (length > tx_size_) length = tx_size_;
+  if (length > tx_size_)
+    length = tx_size_;
   /* try to transmit the data */
   uint8_t status = CDC_Transmit_FS(data, length);
   if (status == USBD_BUSY || tx_pending_) {
@@ -130,7 +137,8 @@ uint32_t USB::QueueUpRxData(const uint8_t* data, uint32_t length) {
 }
 
 void TxCompleteCallbackWrapper() {
-  if (usb) usb->TxCompleteCallback();
+  if (usb)
+    usb->TxCompleteCallback();
 }
 
 void RxCompleteCallbackWrapper(uint8_t* data, uint32_t length) {
@@ -140,7 +148,9 @@ void RxCompleteCallbackWrapper(uint8_t* data, uint32_t length) {
 
 } /* namespace bsp */
 
-void RM_USB_TxCplt_Callback() { bsp::TxCompleteCallbackWrapper(); }
+void RM_USB_TxCplt_Callback() {
+  bsp::TxCompleteCallbackWrapper();
+}
 
 void RM_USB_RxCplt_Callback(uint8_t* data, uint32_t length) {
   bsp::RxCompleteCallbackWrapper(data, length);

@@ -43,7 +43,7 @@ typedef enum {
 class DBUS : public bsp::UART {
  public:
   // intialize DBUS the same way as a generic UART peripheral
-  DBUS(UART_HandleTypeDef *huart);
+  DBUS(UART_HandleTypeDef* huart);
 
   // Add custom rx data handler
   void RxCompleteCallback() override final;

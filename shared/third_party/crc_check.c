@@ -77,14 +77,16 @@ static uint8_t get_crc8_check_sum(uint8_t* pchMessage, uint16_t dwLength, uint8_
 
 uint8_t verify_crc8_check_sum(uint8_t* pchMessage, uint16_t dwLength) {
   uint8_t ucExpected = 0;
-  if ((pchMessage == 0) || (dwLength <= 2)) return 0;
+  if ((pchMessage == 0) || (dwLength <= 2))
+    return 0;
   ucExpected = get_crc8_check_sum(pchMessage, dwLength - 1, CRC8_INIT);
   return (ucExpected == pchMessage[dwLength - 1]);
 }
 
 void append_crc8_check_sum(uint8_t* pchMessage, uint16_t dwLength) {
   uint8_t ucCRC = 0;
-  if ((pchMessage == 0) || (dwLength <= 2)) return;
+  if ((pchMessage == 0) || (dwLength <= 2))
+    return;
   ucCRC = get_crc8_check_sum((uint8_t*)pchMessage, dwLength - 1, CRC8_INIT);
   pchMessage[dwLength - 1] = ucCRC;
 }
