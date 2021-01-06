@@ -326,7 +326,9 @@ static int8_t CDC_TransmitCplt_FS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 {
   uint8_t result = USBD_OK;
   /* USER CODE BEGIN 13 */
-  RM_USB_TxCplt_Callback(Buf, *Len);
+  RM_USB_TxCplt_Callback(Buf, Len);
+  UNUSED(Buf);
+  UNUSED(Len);
   UNUSED(epnum);
   /* USER CODE END 13 */
   return result;
