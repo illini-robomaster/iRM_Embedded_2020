@@ -75,15 +75,11 @@ void RM_RTOS_Default_Task(const void *argument) {
   while (1) {
     /* wait until rx data is available */
     usbEvent = osSignalWait(RX_SIGNAL, osWaitForever);
-    if (usbEvent.value.signals & RX_SIGNAL) { // uncessary check
-      /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
-      // start = osKernelSysTick();
+    if (usbEvent.value.signals & RX_SIGNAL) { // unnecessary check
       length = usb->Read(&data);
       usb->Write(data, length);
       usb->Write(data, length);
       usb->Write(data, length);
-      // end = osKernelSysTick();
-      // print("non blocking tx rx loopback api used %u ms\r\n", end - start);
     }
   }
 }
