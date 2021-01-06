@@ -21,6 +21,7 @@
 #include "bsp_usb.h"
 
 #include "usbd_cdc_if.h"
+#include "bsp_error_handler.h"
 
 #include "cmsis_os.h"
 
@@ -31,8 +32,7 @@ namespace bsp {
 USB::USB() :
     rx_size_(0), rx_pending_(0), rx_write_(nullptr), rx_read_(nullptr),
     tx_size_(0), tx_pending_(0), tx_write_(nullptr), tx_read_(nullptr) {
-  if (usb)
-    delete usb;
+  RM_ASSERT_FALSE(usb, "usb initialized twice");
   usb = this;
 }
 
@@ -45,6 +45,7 @@ USB::~USB() {
     delete[] tx_write_;
   if (tx_read_)
     delete[] tx_read_;
+  usb = nullptr;
 }
 
 void USB::SetupTx(uint32_t tx_buffer_size) {
@@ -90,8 +91,10 @@ uint32_t USB::Write(uint8_t* data, uint32_t length) {
   uint8_t status = CDC_Transmit_FS(data, length);
   if (status == USBD_BUSY || tx_pending_) {
     /* usb not available, queuing up data */
-    if (length + tx_pending_ > tx_size_)
+    if (length + tx_pending_ > tx_size_) {
       length = tx_size_ - tx_pending_;
+      RM_EXPECT_TRUE(1, "usb data transmission truncated");
+    }
     memcpy(tx_write_ + tx_pending_, data, length);
     tx_pending_ += length;
   }
@@ -121,6 +124,7 @@ void USB::RxCompleteCallback() {}
 uint32_t USB::QueueUpRxData(const uint8_t* data, uint32_t length) {
   if (length + rx_pending_ > rx_size_) {
     length = rx_size_ - rx_pending_;
+    RM_EXPECT_TRUE(1, "usb data reception truncated");
   }
   memcpy(rx_write_ + rx_pending_, data, length);
   rx_pending_ += length;
