@@ -53,7 +53,7 @@ function(irm_add_arm_executable name)
         COMMENT "Building ${HEX_FILE}\nBuilding ${BIN_FILE}")
 
     add_custom_target(flash-${name}
-        COMMAND st-flash write ${BIN_FILE} 0x8000000
+        COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
         DEPENDS ${name}.elf)
 
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
