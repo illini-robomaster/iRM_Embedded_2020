@@ -26,6 +26,16 @@
 namespace control {
 
 /**
+ * @brief data structure from motor message communication
+ */
+typedef struct {
+  uint32_t  id;
+  float     theta;
+  float     omega;
+  uint32_t  timestamp;
+} __attribute__((packed)) motor_msg_t;
+
+/**
  * @brief base class for motor representation
  */
 class MotorBase {
@@ -53,9 +63,27 @@ class MotorCANBase : public MotorBase {
   MotorCANBase(bsp::CAN *can, uint16_t rx_id);
 
   /**
+   * @brief populate motor status into a message struct
+   *
+   * @param msg pointer to the message struct to be populated
+   */
+  void PopulateMotorMsg(motor_msg_t *msg);
+
+  /**
+   * @brief callback when new data is available
+   *
+   * @param data[]  raw data bytes from CAN bus
+   *
+   * @note should not be called by user
+   */
+  void DataCallback(const uint8_t data[]);
+
+  /**
    * @brief update motor feedback data
    *
    * @param data[]  raw data bytes
+   *  
+   * @note should not be called directly by user
    */
   virtual void  UpdateData(const uint8_t data[]) = 0;
 
@@ -105,8 +133,9 @@ class MotorCANBase : public MotorBase {
   static void TransmitOutput(MotorCANBase *motors[], uint8_t num_motors);
 
  protected:
-  volatile float theta_;
-  volatile float omega_;
+  volatile uint32_t  timestamp_;
+  volatile float     theta_;
+  volatile float     omega_;
 
  private:
   bsp::CAN  *can_;
