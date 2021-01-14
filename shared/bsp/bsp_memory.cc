@@ -35,6 +35,14 @@ void operator delete(void *ptr) {
   vPortFree(ptr);
 }
 
+void operator delete(void *ptr, unsigned int) {
+  vPortFree(ptr);
+}
+
 void operator delete[](void *ptr) {
+  vPortFree(ptr);
+}
+
+void operator delete[](void *ptr, unsigned int) {
   vPortFree(ptr);
 }
