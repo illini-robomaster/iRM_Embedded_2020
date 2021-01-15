@@ -25,21 +25,29 @@
 
 #include "bsp_print.h"
 
-void RM_RTOS_Default_Task(const void* arguments) {
+static osThreadId eigen_task_handle;
+
+void eigen_task(const void* arguments) {
   UNUSED(arguments);
 
   print_use_usb();
 
   Eigen::Matrix2f mat;
+  Eigen::Matrix2f mat_acc = Eigen::Matrix2f::Identity();
   mat << 1, 1, 1, 0;
 
   for (int i = 0; ; ++i) {
-    osDelay(2000);
+    osDelay(300);
 
-    print("[Iter %d]:\n", i);
-    print_object(mat);
-    print("\n");
+    print("\r\n[Iter %d]: \r\n%f %f\r\n%f %f\r\n", i,
+        mat_acc(0, 0), mat_acc(0, 1), mat_acc(1, 0), mat_acc(1, 1));
 
-    //mat = (mat * mat).eval();
+    mat_acc = (mat_acc * mat).eval();
   }
 }
+
+extern "C" void RM_RTOS_Threads_Init() {
+  osThreadDef(eigenTask, eigen_task, osPriorityNormal, 0, 1024);
+  eigen_task_handle = osThreadCreate(osThread(eigenTask), NULL);
+}
+

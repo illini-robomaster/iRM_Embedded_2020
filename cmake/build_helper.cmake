@@ -25,12 +25,12 @@
 #                         [INCLUDES <inc1> ...])
 #
 #   helper function for generating arm executables <name>.elf, <name>.bin, <name>.hex
-#   `flash-<name>` (and optionally `debug-<name>` in debug build) will be created as 
-#   shortcuts command to flash via stlink-utils and launching gdb 
-#   
+#   `flash-<name>` (and optionally `debug-<name>` in debug build) will be created as
+#   shortcuts command to flash via stlink-utils and launching gdb
+#
 #   e.g. irm_add_arm_executable(hero TARGET DJI_Board_TypeA ...) creates shortcuts
 #   target named `flash-hero` and `debug-hero`. Running the targets in command line
-#   is as easy as 
+#   is as easy as
 #
 #   `make flash-hero` and / or `make debug-hero`
 #
@@ -41,7 +41,7 @@ function(irm_add_arm_executable name)
     set(MAP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.map)
 
     add_executable(${name}.elf ${ARG_SOURCES})
-    target_link_libraries(${name}.elf 
+    target_link_libraries(${name}.elf
         PRIVATE ${ARG_DEPENDS} ${ARG_TARGET} ${ARG_TARGET}_irm)
     target_include_directories(${name}.elf PRIVATE ${ARG_INCLUDES})
     target_link_options(${name}.elf PRIVATE -Wl,-Map=${MAP_FILE})
@@ -58,7 +58,7 @@ function(irm_add_arm_executable name)
         COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
         DEPENDS ${name}.elf)
 
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
         find_program(ARM_GDB arm-none-eabi-gdb REQUIRED)
         add_custom_target(debug-${name}
             COMMAND ${ARM_GDB} $<TARGET_FILE:${name}.elf>
@@ -77,7 +77,7 @@ endfunction(irm_add_arm_executable)
 function(irm_add_board_specific_library name)
     cmake_parse_arguments(ARG "" "TARGET" "SOURCES;INCLUDES;DEPENDS" ${ARGN})
     add_library(${name} ${ARG_SOURCES})
-    target_link_libraries(${name} 
+    target_link_libraries(${name}
         PUBLIC ${ARG_TARGET}_interface
         PRIVATE ${ARG_DEPENDS})
     target_include_directories(${name} PUBLIC ${ARG_INCLUDES})

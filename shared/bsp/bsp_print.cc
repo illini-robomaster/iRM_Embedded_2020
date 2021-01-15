@@ -25,7 +25,7 @@
 #include "main.h"
 #include "printf.h"  // third party tiny-printf implemnetations
 
-#define MAX_PRINT_LEN 80
+#define MAX_PRINT_LEN 128
 
 static bsp::UART* print_uart = NULL;
 static bsp::USB* print_usb = NULL;
