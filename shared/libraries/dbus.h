@@ -15,22 +15,22 @@ typedef struct {
 typedef union {
   uint16_t code;
   struct {
-    uint16_t W:1;
-    uint16_t S:1;
-    uint16_t A:1;
-    uint16_t D:1;
-    uint16_t SHIFT:1;
-    uint16_t CTRL:1;
-    uint16_t Q:1;
-    uint16_t E:1;
-    uint16_t R:1;
-    uint16_t F:1;
-    uint16_t G:1;
-    uint16_t Z:1;
-    uint16_t X:1;
-    uint16_t C:1;
-    uint16_t V:1;
-    uint16_t B:1;
+    uint16_t W : 1;
+    uint16_t S : 1;
+    uint16_t A : 1;
+    uint16_t D : 1;
+    uint16_t SHIFT : 1;
+    uint16_t CTRL : 1;
+    uint16_t Q : 1;
+    uint16_t E : 1;
+    uint16_t R : 1;
+    uint16_t F : 1;
+    uint16_t G : 1;
+    uint16_t Z : 1;
+    uint16_t X : 1;
+    uint16_t C : 1;
+    uint16_t V : 1;
+    uint16_t B : 1;
   } __packed bit;
 } __packed keyboard_t;
 
@@ -43,16 +43,16 @@ typedef enum {
 class DBUS : public bsp::UART {
  public:
   // intialize DBUS the same way as a generic UART peripheral
-  DBUS(UART_HandleTypeDef *huart);
+  DBUS(UART_HandleTypeDef* huart);
 
   // Add custom rx data handler
   void RxCompleteCallback() override final;
 
   // rocker channel information
-  int16_t ch0;    // S1*             *S2
-  int16_t ch1;    //   C3-^       ^-C1
-  int16_t ch2;    // C2-<   >+ -<   >+C0
-  int16_t ch3;    //     +v       v+
+  int16_t ch0;  // S1*             *S2
+  int16_t ch1;  //   C3-^       ^-C1
+  int16_t ch2;  // C2-<   >+ -<   >+C0
+  int16_t ch3;  //     +v       v+
   // left and right switch information
   switch_t swl;
   switch_t swr;
@@ -63,8 +63,8 @@ class DBUS : public bsp::UART {
   // timestamp of the update interrupt
   uint32_t timestamp;
 
-  static const int16_t ROCKER_MIN=-660;
-  static const int16_t ROCKER_MAX=660;
+  static const int16_t ROCKER_MIN = -660;
+  static const int16_t ROCKER_MAX = 660;
 };
 
 } /* namespace remote */
