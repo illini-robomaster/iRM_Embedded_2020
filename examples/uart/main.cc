@@ -18,13 +18,12 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "cmsis_os.h"
-
 #include "main.h"
-#include "tim.h"
 
-#include "bsp_uart.h"
 #include "bsp_print.h"
+#include "bsp_uart.h"
+#include "cmsis_os.h"
+#include "tim.h"
 
 /**
  * sample client Python code to verify transmission correctness of this example program
@@ -48,7 +47,7 @@
 
 extern osThreadId defaultTaskHandle;
 
-static bsp::UART *uart8;
+static bsp::UART* uart8;
 static osEvent uart_event;
 
 class CustomUART : public bsp::UART {
@@ -57,9 +56,7 @@ class CustomUART : public bsp::UART {
 
  protected:
   /* notify application when rx data is pending read */
-  void RxCompleteCallback() override final {
-    osSignalSet(defaultTaskHandle, RX_SIGNAL);
-  }
+  void RxCompleteCallback() override final { osSignalSet(defaultTaskHandle, RX_SIGNAL); }
 };
 
 void RM_RTOS_Init(void) {
@@ -68,17 +65,17 @@ void RM_RTOS_Init(void) {
   uart8->SetupTx(50);
 }
 
-void RM_RTOS_Default_Task(const void *argument) {
+void RM_RTOS_Default_Task(const void* argument) {
   uint32_t start, end;
   uint32_t length;
-  uint8_t *data;
+  uint8_t* data;
 
   UNUSED(argument);
 
   while (1) {
     /* wait until rx data is available */
     uart_event = osSignalWait(RX_SIGNAL, osWaitForever);
-    if (uart_event.value.signals & RX_SIGNAL) { // uncessary check
+    if (uart_event.value.signals & RX_SIGNAL) {  // uncessary check
       /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
       start = osKernelSysTick();
       length = uart8->Read(&data);
