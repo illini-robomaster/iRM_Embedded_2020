@@ -40,9 +40,7 @@ list(FILTER ALL_SOURCE_FILES EXCLUDE REGEX .*/boards/.*)
 # create formatting helper targets
 if (CLANG_FORMAT_EXE)
     # download a third party clang format python wrapper
-    set(RUN_CLANG_FORMAT ${CMAKE_BINARY_DIR}/run-clang-format.py)
-    file(DOWNLOAD https://raw.githubusercontent.com/Sarcasm/run-clang-format/master/run-clang-format.py
-         ${RUN_CLANG_FORMAT})
+    set(RUN_CLANG_FORMAT run-clang-format.py)
 
     # format code in place
     add_custom_target(format
