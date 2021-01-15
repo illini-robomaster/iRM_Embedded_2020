@@ -53,8 +53,9 @@ static osEvent uart_event;
 
 class CustomUART : public bsp::UART {
  public:
-  CustomUART(UART_HandleTypeDef *huart) : bsp::UART(huart) {}
+  using bsp::UART::UART;
 
+ protected:
   /* notify application when rx data is pending read */
   void RxCompleteCallback() override final {
     osSignalSet(defaultTaskHandle, RX_SIGNAL);
