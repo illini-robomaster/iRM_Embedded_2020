@@ -35,8 +35,8 @@ class PWM {
    * @param output_freq  desired pwm output frequency, in [Hz]
    * @param pulse_width  desired pwm output pulse width, is [us]
    */
-  PWM(TIM_HandleTypeDef *htim, uint8_t channel, uint32_t clock_freq,
-      uint32_t output_freq, uint32_t pulse_width);
+  PWM(TIM_HandleTypeDef* htim, uint8_t channel, uint32_t clock_freq, uint32_t output_freq,
+      uint32_t pulse_width);
 
   /**
    * @brief start pwm output signal generation
@@ -61,12 +61,13 @@ class PWM {
    * @param pulse_width   desired pwm output pulse width, in [us]
    */
   void SetPulseWidth(uint32_t pulse_width);
+
  private:
-  TIM_HandleTypeDef *htim_;
-  uint32_t          channel_;
-  uint32_t          clock_freq_;
-  uint32_t          output_freq_;
-  uint32_t          pulse_width_;
+  TIM_HandleTypeDef* htim_;
+  uint32_t channel_;
+  uint32_t clock_freq_;
+  uint32_t output_freq_;
+  uint32_t pulse_width_;
 };
 
 } /* namespace bsp */
