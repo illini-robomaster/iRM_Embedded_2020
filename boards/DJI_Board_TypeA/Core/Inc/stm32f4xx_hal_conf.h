@@ -153,7 +153,7 @@
 #define  DATA_CACHE_ENABLE            1U
 
 #define  USE_HAL_ADC_REGISTER_CALLBACKS         0U /* ADC register callback disabled       */
-#define  USE_HAL_CAN_REGISTER_CALLBACKS         1U /* CAN register callback disabled       */
+#define  USE_HAL_CAN_REGISTER_CALLBACKS         1U /* CAN register callback enabled       */
 #define  USE_HAL_CEC_REGISTER_CALLBACKS         0U /* CEC register callback disabled       */
 #define  USE_HAL_CRYP_REGISTER_CALLBACKS        0U /* CRYP register callback disabled      */
 #define  USE_HAL_DAC_REGISTER_CALLBACKS         0U /* DAC register callback disabled       */
@@ -185,10 +185,10 @@
 #define  USE_HAL_SRAM_REGISTER_CALLBACKS        0U /* SRAM register callback disabled      */
 #define  USE_HAL_SPDIFRX_REGISTER_CALLBACKS     0U /* SPDIFRX register callback disabled   */
 #define  USE_HAL_SMBUS_REGISTER_CALLBACKS       0U /* SMBUS register callback disabled     */
-#define  USE_HAL_SPI_REGISTER_CALLBACKS         1U /* SPI register callback disabled       */
-#define  USE_HAL_TIM_REGISTER_CALLBACKS         1U /* TIM register callback disabled       */
-#define  USE_HAL_UART_REGISTER_CALLBACKS        1U /* UART register callback disabled      */
-#define  USE_HAL_USART_REGISTER_CALLBACKS       1U /* USART register callback disabled     */
+#define  USE_HAL_SPI_REGISTER_CALLBACKS         1U /* SPI register callback enabled       */
+#define  USE_HAL_TIM_REGISTER_CALLBACKS         1U /* TIM register callback enabled       */
+#define  USE_HAL_UART_REGISTER_CALLBACKS        1U /* UART register callback enabled      */
+#define  USE_HAL_USART_REGISTER_CALLBACKS       1U /* USART register callback enabled     */
 #define  USE_HAL_WWDG_REGISTER_CALLBACKS        0U /* WWDG register callback disabled      */
 
 /* ########################## Assert Selection ############################## */

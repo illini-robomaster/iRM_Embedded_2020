@@ -45,17 +45,16 @@
 
 #define RX_SIGNAL (1 << 0)
 
-extern osThreadId defaultTaskHandle;
+extern osThreadId_t defaultTaskHandle;
 
 static bsp::USB* usb;
-static osEvent usbEvent;
 
 class CustomUSBCallback : public bsp::USB {
   public:
     CustomUSBCallback() : bsp::USB() {}
 
     void RxCompleteCallback() override final {
-      osSignalSet(defaultTaskHandle, RX_SIGNAL);
+      osThreadFlagsSet(defaultTaskHandle, RX_SIGNAL);
     }
 };
 
@@ -74,8 +73,8 @@ void RM_RTOS_Default_Task(const void *argument) {
 
   while (1) {
     /* wait until rx data is available */
-    usbEvent = osSignalWait(RX_SIGNAL, osWaitForever);
-    if (usbEvent.value.signals & RX_SIGNAL) { // unnecessary check
+    uint32_t flags = osThreadFlagsWait(RX_SIGNAL, osFlagsWaitAll, osWaitForever);
+    if (flags & RX_SIGNAL) { // unnecessary check
       length = usb->Read(&data);
       usb->Write(data, length);
       usb->Write(data, length);
