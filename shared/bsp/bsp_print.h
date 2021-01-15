@@ -49,4 +49,3 @@ void print_use_usb();
  * @note    will perform no-op in NDEBUG mode
  */
 int32_t print(const char* format, ...);
-

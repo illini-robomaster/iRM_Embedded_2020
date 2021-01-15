@@ -58,12 +58,9 @@ int32_t print(const char* format, ...) {
   length = vsnprintf(buffer, MAX_PRINT_LEN, format, args);
   va_end(args);
 
-  if (print_uart)
-    return print_uart->Write((uint8_t*)buffer, length);
-  if (print_usb)
-    return print_usb->Write((uint8_t*)buffer, length);
+  if (print_uart) return print_uart->Write((uint8_t*)buffer, length);
+  if (print_usb) return print_usb->Write((uint8_t*)buffer, length);
 
   return 0;
 #endif  // #ifdef NDEBUG
 }
-

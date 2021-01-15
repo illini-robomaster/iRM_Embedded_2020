@@ -18,12 +18,12 @@
  *                                                                          *
  ****************************************************************************/
 
-#include <Eigen/Dense>
-
-#include "cmsis_os.h"
 #include "main.h"
 
+#include <Eigen/Dense>
+
 #include "bsp_print.h"
+#include "cmsis_os.h"
 
 static osThreadId eigen_task_handle;
 
@@ -36,11 +36,11 @@ void eigen_task(const void* arguments) {
   Eigen::Matrix2f mat_acc = Eigen::Matrix2f::Identity();
   mat << 1, 1, 1, 0;
 
-  for (int i = 0; ; ++i) {
+  for (int i = 0;; ++i) {
     osDelay(300);
 
-    print("\r\n[Iter %d]: \r\n%f %f\r\n%f %f\r\n", i,
-        mat_acc(0, 0), mat_acc(0, 1), mat_acc(1, 0), mat_acc(1, 1));
+    print("\r\n[Iter %d]: \r\n%f %f\r\n%f %f\r\n", i, mat_acc(0, 0), mat_acc(0, 1), mat_acc(1, 0),
+          mat_acc(1, 1));
 
     mat_acc = (mat_acc * mat).eval();
   }
@@ -50,4 +50,3 @@ extern "C" void RM_RTOS_Threads_Init() {
   osThreadDef(eigenTask, eigen_task, osPriorityNormal, 0, 1024);
   eigen_task_handle = osThreadCreate(osThread(eigenTask), NULL);
 }
-
