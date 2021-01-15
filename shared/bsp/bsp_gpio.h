@@ -23,7 +23,7 @@
 #include "bsp_error_handler.h"
 #include "main.h"
 
-#define NUM_GPITS   16
+#define NUM_GPITS 16
 
 namespace bsp {
 
@@ -35,7 +35,7 @@ class GPIO {
    * @param group GPIO group
    * @param pin   GPIO pin number
    */
-  GPIO(GPIO_TypeDef *group, uint16_t pin);
+  GPIO(GPIO_TypeDef* group, uint16_t pin);
 
   /**
    * @brief Set high output
@@ -60,9 +60,9 @@ class GPIO {
   uint8_t Read();
 
  private:
-  GPIO_TypeDef        *group_;
-  uint16_t            pin_;
-  uint8_t             state_;
+  GPIO_TypeDef* group_;
+  uint16_t pin_;
+  uint8_t state_;
 };
 
 class GPIT {
@@ -91,7 +91,7 @@ class GPIT {
 
   static GPIT* gpits[NUM_GPITS];
 
-  uint16_t  pin_;
+  uint16_t pin_;
 };
 
 } /* namespace bsp */

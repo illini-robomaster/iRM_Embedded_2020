@@ -20,12 +20,11 @@
 
 #pragma once
 
+#include "bsp_gpio.h"
 #include "spi.h"
 
-#include "bsp_gpio.h"
-
 // acc (6 bytes) + temp (2 bytes) + gyro (6 bytes) + mag (6 bytes)
-#define MPU6500_SIZEOF_DATA 20 
+#define MPU6500_SIZEOF_DATA 20
 
 namespace bsp {
 
@@ -44,7 +43,7 @@ class MPU6500 : public GPIT {
    * @param chip_select  chip select gpio pin
    * @param int_pin      interrupt pin number
    */
-  MPU6500(SPI_HandleTypeDef *hspi, const GPIO &chip_select, uint16_t int_pin);
+  MPU6500(SPI_HandleTypeDef* hspi, const GPIO& chip_select, uint16_t int_pin);
 
   /**
    * @brief reset sensor registers
@@ -58,7 +57,7 @@ class MPU6500 : public GPIT {
   // 3-axis magnetometer
   vec3f_t mag;
   // sensor temperature
-  float   temp;
+  float temp;
   // sensor timestamp
   uint32_t timestamp = 0;
 
@@ -70,22 +69,22 @@ class MPU6500 : public GPIT {
 
   void IST8310Init();
   void WriteReg(uint8_t reg, uint8_t data);
-  void WriteRegs(uint8_t reg_start, uint8_t *data, uint8_t len);
-  void ReadReg(uint8_t reg, uint8_t *data);
-  void ReadRegs(uint8_t reg_start, uint8_t *data, uint8_t len);
+  void WriteRegs(uint8_t reg_start, uint8_t* data, uint8_t len);
+  void ReadReg(uint8_t reg, uint8_t* data);
+  void ReadRegs(uint8_t reg_start, uint8_t* data, uint8_t len);
 
   void SPITxRxCpltCallback();
   void IntCallback() override final;
 
-  SPI_HandleTypeDef *hspi_;
+  SPI_HandleTypeDef* hspi_;
   GPIO chip_select_;
 
-  uint8_t io_buff_[MPU6500_SIZEOF_DATA+1]; // spi tx+rx buffer
+  uint8_t io_buff_[MPU6500_SIZEOF_DATA + 1];  // spi tx+rx buffer
 
   // global interrupt wrapper
   // TODO(alvin): try to support multiple instances in the future
-  static void SPITxRxCpltCallback(SPI_HandleTypeDef *hspi);
-  static MPU6500 *mpu6500;
+  static void SPITxRxCpltCallback(SPI_HandleTypeDef* hspi);
+  static MPU6500* mpu6500;
 };
 
 } /* namespace bsp */

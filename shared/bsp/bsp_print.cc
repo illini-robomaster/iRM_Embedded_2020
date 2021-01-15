@@ -65,10 +65,6 @@ int32_t print(const char* format, ...) {
 #endif  // #ifdef NDEBUG
 }
 
-void set_cursor(int row, int col) {
-  print("\033[%d;%dH", row, col);
-}
+void set_cursor(int row, int col) { print("\033[%d;%dH", row, col); }
 
-void clear_screen(void) {
-  print("\033[2J");
-}
+void clear_screen(void) { print("\033[2J"); }

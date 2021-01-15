@@ -31,7 +31,7 @@ namespace bsp {
  *
  * @note this has to be called before starting rtos scheduler
  */
-void set_highres_clock_timer(TIM_HandleTypeDef *htim);
+void set_highres_clock_timer(TIM_HandleTypeDef* htim);
 
 /**
  * @brief get the current counter value of the highres timer in [us]

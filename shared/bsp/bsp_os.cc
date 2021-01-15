@@ -18,35 +18,33 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "cmsis_os.h"
 #include "bsp_os.h"
 
-static TIM_HandleTypeDef *htim_os = NULL;
+#include "cmsis_os.h"
+
+static TIM_HandleTypeDef* htim_os = NULL;
 
 void configureTimerForRunTimeStats(void) {
-  if (!htim_os)
-    return ;
+  if (!htim_os) return;
   __HAL_TIM_SET_AUTORELOAD(htim_os, 0xffffffff);
   __HAL_TIM_SET_COUNTER(htim_os, 0);
   __HAL_TIM_ENABLE(htim_os);
 }
 
-void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName) {
+void vApplicationStackOverflowHook(xTaskHandle xTask, char* pcTaskName) {
   (void)xTask;
   (void)pcTaskName;
 
-  while (1);
+  while (1)
+    ;
 }
 
 namespace bsp {
 
-void set_highres_clock_timer(TIM_HandleTypeDef *htim) {
-  htim_os = htim;
-}
+void set_highres_clock_timer(TIM_HandleTypeDef* htim) { htim_os = htim; }
 
 uint32_t get_highres_tick_us(void) {
-  if (!htim_os)
-    return 0;
+  if (!htim_os) return 0;
   return htim_os->Instance->CNT;
 }
 
