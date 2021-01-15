@@ -70,14 +70,14 @@ class Buzzer {
    * 2, 3, 4]
    * @param clock_freq clock frequency associated with the timer
    */
-  Buzzer(TIM_HandleTypeDef *htim, uint32_t channel, uint32_t clock_freq);
+  Buzzer(TIM_HandleTypeDef* htim, uint32_t channel, uint32_t clock_freq);
 
   /**
    * @brief sing a single tone indefinitely long
    *
    * @param note  note frequency to sing
    */
-  void SingTone(const BuzzerNote &note);
+  void SingTone(const BuzzerNote& note);
 
   /**
    * @brief sing a sequence of delayed notes
@@ -87,10 +87,9 @@ class Buzzer {
    * milliseconds,
    *                    defaults to HAL_Delay implementation
    */
-  void SingSong(const BuzzerNoteDelayed *notes,
-                buzzer_delay_t delay_func = [](uint32_t milli) {
-                  HAL_Delay(milli);
-                });
+  void SingSong(
+      const BuzzerNoteDelayed* notes,
+      buzzer_delay_t delay_func = [](uint32_t milli) { HAL_Delay(milli); });
 
  private:
   /* pwm instance associated with the buzzer */

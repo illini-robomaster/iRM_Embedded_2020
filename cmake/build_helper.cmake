@@ -46,10 +46,12 @@ function(irm_add_arm_executable name)
     target_include_directories(${name}.elf PRIVATE ${ARG_INCLUDES})
     target_link_options(${name}.elf PRIVATE -Wl,-Map=${MAP_FILE})
 
+    find_program(ARM_SIZE arm-none-eabi-size REQUIRED)
+    find_program(ARM_OBJCOPY arm-none-eabi-objcopy REQUIRED)
     add_custom_command(TARGET ${name}.elf POST_BUILD
-        COMMAND arm-none-eabi-size ${name}.elf
-        COMMAND arm-none-eabi-objcopy -Oihex $<TARGET_FILE:${name}.elf> ${HEX_FILE}
-        COMMAND arm-none-eabi-objcopy -Obinary $<TARGET_FILE:${name}.elf> ${BIN_FILE}
+        COMMAND ${ARM_SIZE} ${name}.elf
+        COMMAND ${ARM_OBJCOPY} -Oihex $<TARGET_FILE:${name}.elf> ${HEX_FILE}
+        COMMAND ${ARM_OBJCOPY} -Obinary $<TARGET_FILE:${name}.elf> ${BIN_FILE}
         COMMENT "Building ${HEX_FILE}\nBuilding ${BIN_FILE}")
 
     add_custom_target(flash-${name}
@@ -57,8 +59,9 @@ function(irm_add_arm_executable name)
         DEPENDS ${name}.elf)
 
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        find_program(ARM_GDB arm-none-eabi-gdb REQUIRED)
         add_custom_target(debug-${name}
-            COMMAND arm-none-eabi-gdb $<TARGET_FILE:${name}.elf>
+            COMMAND ${ARM_GDB} $<TARGET_FILE:${name}.elf>
             DEPENDS ${name}.elf)
     endif()
 endfunction(irm_add_arm_executable)

@@ -23,22 +23,22 @@
 #include "can.h"
 
 #define MAX_CAN_DATA_SIZE 8
-#define MAX_CAN_DEVICES   12
+#define MAX_CAN_DEVICES 12
 
 namespace bsp {
 
 /* can callback function pointer */
-typedef void (*can_rx_callback_t)(const uint8_t data[], void *args);
+typedef void (*can_rx_callback_t)(const uint8_t data[], void* args);
 
 class CAN {
  public:
-   /**
-    * @brief constructor for bsp CAN instance
-    *
-    * @param hcan     HAL can handle
-    * @param start_id lowest possible stdid for rx
-    */
-  CAN(CAN_HandleTypeDef *hcan, uint32_t start_id);
+  /**
+   * @brief constructor for bsp CAN instance
+   *
+   * @param hcan     HAL can handle
+   * @param start_id lowest possible stdid for rx
+   */
+  CAN(CAN_HandleTypeDef* hcan, uint32_t start_id);
 
   /**
    * @brief check if it is associated with a given CAN handle
@@ -47,7 +47,7 @@ class CAN {
    *
    * @return true if associated, otherwise false
    */
-  bool Uses(CAN_HandleTypeDef *hcan) { return hcan_ == hcan; }
+  bool Uses(CAN_HandleTypeDef* hcan) { return hcan_ == hcan; }
 
   /**
    * @brief register callback function for a specific ID on this CAN line
@@ -58,7 +58,7 @@ class CAN {
    *
    * @return return 0 if success, -1 if invalid std_id
    */
-  int RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback, void *args = NULL);
+  int RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback, void* args = NULL);
 
   /**
    * @brief transmit can messages
@@ -79,12 +79,12 @@ class CAN {
   void RxCallback();
 
  private:
-  void ConfigureFilter(CAN_HandleTypeDef *hcan);
+  void ConfigureFilter(CAN_HandleTypeDef* hcan);
 
-  CAN_HandleTypeDef   *hcan_;
-  uint32_t            start_id_;
-  can_rx_callback_t   rx_callbacks_[MAX_CAN_DEVICES] = { 0 };
-  void                *rx_args_[MAX_CAN_DEVICES] = { NULL };
+  CAN_HandleTypeDef* hcan_;
+  uint32_t start_id_;
+  can_rx_callback_t rx_callbacks_[MAX_CAN_DEVICES] = {0};
+  void* rx_args_[MAX_CAN_DEVICES] = {NULL};
 };
 
 } /* namespace bsp */
