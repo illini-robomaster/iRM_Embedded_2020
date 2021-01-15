@@ -46,4 +46,6 @@ set(CMAKE_CXX_FLAGS "${COMMON_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG "-Og -g -DDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g -DDEBUG -fno-exceptions")
 
-# Relase flags defaults to -O3 -DNDEBUG
+# Relase flags
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -fno-exceptions")

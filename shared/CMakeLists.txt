@@ -26,10 +26,12 @@ set(IRM_SOURCES ${BSP_SOURCES} ${LIB_SOURCES} ${THIRD_PARTY_SOURCES})
 set(IRM_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/bsp
     ${CMAKE_CURRENT_SOURCE_DIR}/libraries
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen-3.3.9)
 
 irm_add_board_specific_library(DJI_Board_TypeA_irm
     TARGET DJI_Board_TypeA
     SOURCES ${IRM_SOURCES}
     INCLUDES ${IRM_INCLUDES})
-
+# suppress Eigen warnings
+target_compile_options(DJI_Board_TypeA_irm INTERFACE -Wno-unused-result)

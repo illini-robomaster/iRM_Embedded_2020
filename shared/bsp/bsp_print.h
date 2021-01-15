@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include <inttypes.h>
+#include <cinttypes>
+#include <sstream>
 
 #include "usart.h"
 
@@ -49,3 +50,10 @@ void print_use_usb();
  * @note    will perform no-op in NDEBUG mode
  */
 int32_t print(const char* format, ...);
+
+template <typename T>
+int32_t print_object(const T& obj) {
+  std::stringstream ss;
+  ss << obj;
+  return print("%s", ss.str().c_str());
+}
