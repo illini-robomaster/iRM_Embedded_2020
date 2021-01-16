@@ -18,13 +18,12 @@
  *                                                                          *
  ****************************************************************************/
 
+#include "bsp_print.h"
 #include "main.h"
 
-#include "bsp_print.h"
-
-void RM_RTOS_Default_Task(const void *argument) {
+void RM_RTOS_Default_Task(const void* argument) {
   UNUSED(argument);
-  print("Default Task Started\r\n"); 
+  print("Default Task Started\r\n");
 
   uint32_t i = 0;
   while (1) {

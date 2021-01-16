@@ -25,31 +25,35 @@
 extern "C" {
 #endif
 
-#include "main.h"
 #include "cmsis_os.h"
+#include "main.h"
 
-#define ASSERT(x) do {                          \
-    while(!(x));                                \
-} while(0)                                      \
+#define ASSERT(x) \
+  do {            \
+    while (!(x))  \
+      ;           \
+  } while (0)
 
-#define MUTEX_WAIT() do {                       \
-    osMutexWait(pfifo->mutex, osWaitForever);   \
-} while(0)                                      \
+#define MUTEX_WAIT()                          \
+  do {                                        \
+    osMutexWait(pfifo->mutex, osWaitForever); \
+  } while (0)
 
-#define MUTEX_RELEASE() do {                    \
-    osMutexRelease(pfifo->mutex);               \
-} while(0)                                      \
+#define MUTEX_RELEASE()           \
+  do {                            \
+    osMutexRelease(pfifo->mutex); \
+  } while (0)
 
 //! FIFO Memory Model (Single Byte Mode)
 typedef struct {
-    uint8_t   *start_addr;      // Start Address
-    uint8_t   *end_addr;        // End Address
-    uint32_t  free;             // The capacity of FIFO
-    uint32_t  buf_size;         // Buffer size
-    uint32_t  used;             // The number of elements in FIFO
-    uint8_t   read_index;       // Read Index Pointer
-    uint8_t   write_index;      // Write Index Pointer
-    osMutexId mutex;
+  uint8_t* start_addr;  // Start Address
+  uint8_t* end_addr;    // End Address
+  uint32_t free;        // The capacity of FIFO
+  uint32_t buf_size;    // Buffer size
+  uint32_t used;        // The number of elements in FIFO
+  uint8_t read_index;   // Read Index Pointer
+  uint8_t write_index;  // Write Index Pointer
+  osMutexId mutex;
 } fifo_s_t;
 
 /**
@@ -94,9 +98,10 @@ int32_t fifo_s_put(fifo_s_t* pfifo, uint8_t element);
  * @param  pfifo      Pointer of valid FIFO
  * @param  psource    Data elements you want to put
  * @param  number     Number of data elements
- * @return            -1 if something wrong, other num indicate how many elements successfully put into FIFO
+ * @return            -1 if something wrong, other num indicate how many elements successfully put
+ * into FIFO
  */
-int32_t fifo_s_puts(fifo_s_t *pfifo, uint8_t *psource, uint32_t number);
+int32_t fifo_s_puts(fifo_s_t* pfifo, uint8_t* psource, uint32_t number);
 
 /**
  * Get an element from FIFO

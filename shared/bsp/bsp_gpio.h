@@ -27,15 +27,16 @@ namespace bsp {
 
 class GPIO {
  public:
-  GPIO(GPIO_TypeDef *group, uint16_t pin);
+  GPIO(GPIO_TypeDef* group, uint16_t pin);
   void High();
   void Low();
   void Toggle();
   uint8_t Read();
+
  private:
-  GPIO_TypeDef        *group_;
-  uint16_t            pin_;
-  uint8_t             state_;
+  GPIO_TypeDef* group_;
+  uint16_t pin_;
+  uint8_t state_;
 };
 
 } /* namespace bsp */

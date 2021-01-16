@@ -18,10 +18,10 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "cmsis_os.h"
 #include "main.h"
 
 #include "bsp_gpio.h"
+#include "cmsis_os.h"
 
 #define LED_RED_Pin GPIO_PIN_11
 #define LED_RED_GPIO_Port GPIOE
@@ -38,7 +38,7 @@ void RM_RTOS_Init(void) {
   gpio_green->Low();
 }
 
-void RM_RTOS_Default_Task(const void *args) {
+void RM_RTOS_Default_Task(const void* args) {
   UNUSED(args);
   while (1) {
     gpio_red->Toggle();

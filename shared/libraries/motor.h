@@ -50,19 +50,19 @@ class MotorCANBase : public MotorBase {
    * @param can    CAN instance
    * @param rx_id  CAN rx id
    */
-  MotorCANBase(bsp::CAN *can, uint16_t rx_id);
+  MotorCANBase(bsp::CAN* can, uint16_t rx_id);
 
   /**
    * @brief update motor feedback data
    *
    * @param data[]  raw data bytes
    */
-  virtual void  UpdateData(const uint8_t data[]) = 0;
+  virtual void UpdateData(const uint8_t data[]) = 0;
 
   /**
    * @brief print out motor data
    */
-  virtual void  PrintData() const = 0;
+  virtual void PrintData() const = 0;
 
   /**
    * @brief get motor angle, in [rad]
@@ -102,16 +102,16 @@ class MotorCANBase : public MotorBase {
    * @param motors[]    array of CAN motor pointers
    * @param num_motors  number of motors to transmit
    */
-  static void TransmitOutput(MotorCANBase *motors[], uint8_t num_motors);
+  static void TransmitOutput(MotorCANBase* motors[], uint8_t num_motors);
 
  protected:
   volatile float theta_;
   volatile float omega_;
 
  private:
-  bsp::CAN  *can_;
-  uint16_t  rx_id_;
-  uint16_t  tx_id_;
+  bsp::CAN* can_;
+  uint16_t rx_id_;
+  uint16_t tx_id_;
 };
 
 /**
@@ -120,13 +120,13 @@ class MotorCANBase : public MotorBase {
 class Motor3508 : public MotorCANBase {
  public:
   /* constructor wrapper over MotorCANBase */
-  Motor3508(bsp::CAN *can, uint16_t rx_id);
+  Motor3508(bsp::CAN* can, uint16_t rx_id);
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
   void PrintData() const override final;
   /* override base implementation with max current protection */
-  void SetOutput(int16_t val) override final; 
+  void SetOutput(int16_t val) override final;
 
  private:
   volatile int16_t raw_current_get_ = 0;
@@ -139,7 +139,7 @@ class Motor3508 : public MotorCANBase {
 class Motor6623 : public MotorCANBase {
  public:
   /* constructor wrapper over MotorCANBase */
-  Motor6623(bsp::CAN *can, uint16_t rx_id);
+  Motor6623(bsp::CAN* can, uint16_t rx_id);
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
@@ -154,7 +154,7 @@ class Motor6623 : public MotorCANBase {
   volatile int16_t raw_current_get_ = 0;
   volatile int16_t raw_current_set_ = 0;
 
-  static const int16_t CURRENT_CORRECTION = -1; // current direction is reversed
+  static const int16_t CURRENT_CORRECTION = -1;  // current direction is reversed
 };
 
 /**
@@ -163,7 +163,7 @@ class Motor6623 : public MotorCANBase {
 class Motor2006 : public MotorCANBase {
  public:
   /* constructor wrapper over MotorCANBase */
-  Motor2006(bsp::CAN *can, uint16_t rx_id);
+  Motor2006(bsp::CAN* can, uint16_t rx_id);
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
@@ -180,17 +180,17 @@ class Motor2006 : public MotorCANBase {
  */
 class MotorPWMBase : public MotorBase {
  public:
-   /**
-    * @brief constructor
-    *
-    * @param htim           HAL timer handle
-    * @param channel        HAL timer channel, from [0, 4)
-    * @param clock_freq     clock frequency associated with the timer, in [Hz]
-    * @param output_freq    desired output frequency, in [Hz]
-    * @param idle_throttle  idling pulse width, in [us]
-    */
-  MotorPWMBase(TIM_HandleTypeDef *htim, uint8_t channel, 
-      uint32_t clock_freq, uint32_t output_freq, uint32_t idle_throttle);
+  /**
+   * @brief constructor
+   *
+   * @param htim           HAL timer handle
+   * @param channel        HAL timer channel, from [0, 4)
+   * @param clock_freq     clock frequency associated with the timer, in [Hz]
+   * @param output_freq    desired output frequency, in [Hz]
+   * @param idle_throttle  idling pulse width, in [us]
+   */
+  MotorPWMBase(TIM_HandleTypeDef* htim, uint8_t channel, uint32_t clock_freq, uint32_t output_freq,
+               uint32_t idle_throttle);
 
   /**
    * @brief set and transmit output
@@ -210,7 +210,7 @@ class MotorPWMBase : public MotorBase {
 class Motor2305 : public MotorPWMBase {
  public:
   /* override base implementation with max current protection */
-  virtual void SetOutput(int16_t val) override final; 
+  virtual void SetOutput(int16_t val) override final;
 };
 
 } /* namespace control */
