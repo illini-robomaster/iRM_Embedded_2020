@@ -20,23 +20,20 @@
 
 #pragma once
 
+#include <string>
+
 #include "fatfs.h"
 
 namespace bsp {
 
 class SDFileLogger {
  public:
-   /**
-    * @brief constructor of a sd card file logger
-    *
-    * @param filename filename of the log file to create
-    */
-  explicit SDFileLogger(const char *filename);
-
   /**
-   * @brief destructor (deallocate associated memories)
+   * @brief constructor of a sd card file logger
+   *
+   * @param filename filename of the log file to create
    */
-  ~SDFileLogger();
+  explicit SDFileLogger(const std::string& filename);
 
   /**
    * @brief log certain amount of data on the the sd card
@@ -46,12 +43,12 @@ class SDFileLogger {
    *
    * @return number of bytes actually written, -1 if error
    */
-  int32_t Log(const uint8_t *data, uint32_t length);
+  int32_t Log(const uint8_t* data, uint32_t length);
 
  private:
   static bool mounted_;
 
-  char *filename_;
+  const std::string filename_;
   FIL fobj_;
 };
 

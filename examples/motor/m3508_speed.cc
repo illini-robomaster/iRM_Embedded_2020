@@ -18,22 +18,20 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "cmsis_os.h"
-#include "main.h"
-
 #include "bsp_gpio.h"
 #include "bsp_print.h"
-
+#include "cmsis_os.h"
 #include "controller.h"
+#include "main.h"
 #include "motor.h"
 
-#define KEY_GPIO_GROUP  GPIOB
-#define KEY_GPIO_PIN    GPIO_PIN_2
+#define KEY_GPIO_GROUP GPIOB
+#define KEY_GPIO_PIN GPIO_PIN_2
 
-#define TARGET_SPEED    80
+#define TARGET_SPEED 80
 
-bsp::CAN *can1 = NULL;
-control::MotorCANBase *motor = NULL;
+bsp::CAN* can1 = NULL;
+control::MotorCANBase* motor = NULL;
 
 void RM_RTOS_Init() {
   print_use_uart(&huart8);
@@ -42,9 +40,9 @@ void RM_RTOS_Init() {
   motor = new control::Motor3508(can1, 0x201);
 }
 
-void RM_RTOS_Default_Task(const void *args) {
+void RM_RTOS_Default_Task(const void* args) {
   UNUSED(args);
-  control::MotorCANBase *motors[] = {motor};
+  control::MotorCANBase* motors[] = {motor};
   control::PIDController pid(20, 8, 0);
 
   bsp::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);

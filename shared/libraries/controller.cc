@@ -9,8 +9,6 @@ PIDController::PIDController(float kp, float ki, float kd) {
   arm_pid_init_f32(&pid_f32_, 1);
 }
 
-float PIDController::ComputeOutput(float error) {
-  return arm_pid_f32(&pid_f32_, error);
-}
+float PIDController::ComputeOutput(float error) { return arm_pid_f32(&pid_f32_, error); }
 
 } /* namespace control */

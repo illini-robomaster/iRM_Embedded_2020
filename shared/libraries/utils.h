@@ -32,7 +32,7 @@
  *
  * @note undefined behavior if min > max
  */
-template<typename T>
+template <typename T>
 T clip(T value, T min, T max) {
   return value < min ? min : (value > max ? max : value);
 }
@@ -49,7 +49,7 @@ T clip(T value, T min, T max) {
  *
  * @note undefined behavior if value is more than one cycle away from min or max
  */
-template<typename T>
+template <typename T>
 T wrap(T value, T min, T max) {
   const T range = max - min;
   return value < min ? value + range : (value > max ? value - range : value);

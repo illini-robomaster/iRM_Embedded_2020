@@ -22,6 +22,7 @@ cmake_minimum_required(VERSION 3.8)
 
 include(cmake/arm_toolchain.cmake)
 include(cmake/build_helper.cmake)
+include(cmake/clang_format.cmake)
 
 project(iRM_Embedded_2020)
 

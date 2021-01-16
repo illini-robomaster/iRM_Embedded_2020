@@ -26,39 +26,36 @@ set(MCU_ARCH cortex-m4)
 set(MCU_FLOAT_ABI hard)
 set(MCU_FPU fpv4-sp-d16)
 set(MCU_LINKER_SCRIPT STM32F427IIHx_FLASH.ld)
+set(MCU_OPTIONS -mcpu=${MCU_ARCH} -mthumb -mthumb-interwork 
+                -mfpu=${MCU_FPU} -mfloat-abi=${MCU_FLOAT_ABI})
 
 ######################################################
 # ----- create board specific interface library -----#
 ######################################################
 add_library(${PROJECT_NAME}_interface INTERFACE)
-target_compile_definitions(${PROJECT_NAME}_interface INTERFACE
-    ${MCU_LINE} ARM_MATH_CM4
-    USE_HAL_DRIVER)
-target_compile_options(${PROJECT_NAME}_interface INTERFACE
-    $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp>
-    -mcpu=${MCU_ARCH} -mthumb -mthumb-interwork -mfpu=${MCU_FPU} -mfloat-abi=${MCU_FLOAT_ABI}
-    -ffunction-sections -fdata-sections -fmessage-length=0 -specs=nano.specs -specs=nosys.specs)
+target_compile_definitions(${PROJECT_NAME}_interface INTERFACE ${MCU_LINE} ARM_MATH_CM4)
+target_compile_options(${PROJECT_NAME}_interface INTERFACE ${MCU_OPTIONS})
 target_link_options(${PROJECT_NAME}_interface INTERFACE
-    -mcpu=${MCU_ARCH} -mthumb -mfpu=${MCU_FPU} -mfloat-abi=${MCU_FLOAT_ABI}
-    -ffunction-sections -fdata-sections -fmessage-length=0 -specs=nano.specs -specs=nosys.specs
-    -T${CMAKE_CURRENT_SOURCE_DIR}/${MCU_LINKER_SCRIPT} -Wl,--gc-sections)
+    ${MCU_OPTIONS} -T${CMAKE_CURRENT_SOURCE_DIR}/${MCU_LINKER_SCRIPT})
+
+target_link_libraries(${PROJECT_NAME}_interface INTERFACE board_interface)
 target_include_directories(${PROJECT_NAME}_interface INTERFACE
-    Core/Inc
-    FATFS/Target
-    FATFS/App
-    USB_DEVICE/App
-    USB_DEVICE/Target
-    Drivers/STM32F4xx_HAL_Driver/Inc
-    Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
-    Drivers/CMSIS/Include
-    Drivers/CMSIS/Device/ST/STM32F4xx/Include
-    DSP/Include
-    Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc
-    Middlewares/ST/STM32_USB_Device_Library/Core/Inc
-    Middlewares/Third_Party/FatFs/src
-    Middlewares/Third_Party/FreeRTOS/Source/include
-    Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
-    Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/FATFS/Target
+    ${CMAKE_CURRENT_SOURCE_DIR}/FATFS/App
+    ${CMAKE_CURRENT_SOURCE_DIR}/USB_DEVICE/App
+    ${CMAKE_CURRENT_SOURCE_DIR}/USB_DEVICE/Target
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F4xx_HAL_Driver/Inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/DSP/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FatFs/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FreeRTOS/Source/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
 
 #####################################################
 # ----- create board specific arm dsp library ----- #
