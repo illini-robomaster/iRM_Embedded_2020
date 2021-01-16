@@ -18,12 +18,11 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "cmsis_os.h"
-
 #include "main.h"
 
-#include "bsp_usb.h"
 #include "bsp_print.h"
+#include "bsp_usb.h"
+#include "cmsis_os.h"
 
 /**
  * sample client Python code to verify transmission correctness of this example program
@@ -50,12 +49,8 @@ extern osThreadId_t defaultTaskHandle;
 static bsp::USB* usb;
 
 class CustomUSBCallback : public bsp::USB {
-  public:
-    CustomUSBCallback() : bsp::USB() {}
-
-    void RxCompleteCallback() override final {
-      osThreadFlagsSet(defaultTaskHandle, RX_SIGNAL);
-    }
+ protected:
+  void RxCompleteCallback() override final { osThreadFlagsSet(defaultTaskHandle, RX_SIGNAL); }
 };
 
 void RM_RTOS_Init(void) {
@@ -64,17 +59,16 @@ void RM_RTOS_Init(void) {
   usb->SetupRx(2048);
 }
 
-void RM_RTOS_Default_Task(const void *argument) {
-  // uint32_t start, end;
+void RM_RTOS_Default_Task(const void* argument) {
   uint32_t length;
-  uint8_t *data;
+  uint8_t* data;
 
   UNUSED(argument);
 
   while (1) {
     /* wait until rx data is available */
     uint32_t flags = osThreadFlagsWait(RX_SIGNAL, osFlagsWaitAll, osWaitForever);
-    if (flags & RX_SIGNAL) { // unnecessary check
+    if (flags & RX_SIGNAL) {  // unnecessary check
       length = usb->Read(&data);
       usb->Write(data, length);
       usb->Write(data, length);
