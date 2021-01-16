@@ -58,7 +58,7 @@ building the source code and flashing the embedded chips.
 
 ## User Guide (Windows + CLion)
 
-#### TODO - waiting for the brave soul
+#### TODO - waiting for the true master of Windows
 
 ## Developer Guide
 
