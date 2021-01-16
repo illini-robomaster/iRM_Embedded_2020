@@ -20,7 +20,7 @@
 
 #include "bsp_uart.h"
 
-#include <string.h>
+#include <cstring>
 
 #include "bsp_error_handler.h"
 #include "cmsis_os.h"
@@ -29,7 +29,7 @@
 
 namespace bsp {
 
-static UART* uarts[MAX_NUM_UARTS] = {0};
+static UART* uarts[MAX_NUM_UARTS]{};
 static size_t num_uarts = 0;
 
 /* check if huart is associated with any initialized uart_t structs */
@@ -45,7 +45,7 @@ static inline UART* find_uart_instance(UART_HandleTypeDef* huart) {
   for (size_t i = 0; i < num_uarts; ++i)
     if (uarts[i]->Uses(huart)) return uarts[i];
 
-  return NULL;
+  return nullptr;
 }
 
 /* modified version of HAL_UART_Receive_DMA that utilize double buffer mode */
@@ -113,12 +113,12 @@ void RxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
 UART::UART(UART_HandleTypeDef* huart)
     : huart_(huart),
       rx_size_(0),
-      rx_data0_(NULL),
-      rx_data1_(NULL),
+      rx_data0_(nullptr),
+      rx_data1_(nullptr),
       tx_size_(0),
       tx_pending_(0),
-      tx_write_(NULL),
-      tx_read_(NULL) {
+      tx_write_(nullptr),
+      tx_read_(nullptr) {
   RM_ASSERT_FALSE(uart_handle_exists(huart), "Uart repeated initialization");
   uarts[num_uarts++] = this;
 }
