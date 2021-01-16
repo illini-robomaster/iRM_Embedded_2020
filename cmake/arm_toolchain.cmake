@@ -40,7 +40,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 set(CMAKE_C_FLAGS "${COMMON_FLAGS}")
-set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -fno-exceptions -fno-rtti")
 
 # Debug flags
 set(CMAKE_C_FLAGS_DEBUG "-Og -g -DDEBUG")

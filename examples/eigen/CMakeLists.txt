@@ -22,5 +22,6 @@ project(example_eigen ASM C CXX)
 
 irm_add_arm_executable(${PROJECT_NAME}
     TARGET DJI_Board_TypeA
-    SOURCES main.cc)
+    SOURCES main.cc
+    DEPENDS eigen3)
 
