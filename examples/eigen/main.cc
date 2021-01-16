@@ -20,6 +20,7 @@
 
 #include "main.h"
 
+#include <sstream>
 #include <Eigen/Dense>
 
 #include "bsp_print.h"
@@ -39,10 +40,13 @@ void eigen_task(const void* arguments) {
   for (int i = 0;; ++i) {
     osDelay(300);
 
-    print("\r\n[Iter %d]: \r\n%f %f\r\n%f %f\r\n", i, mat_acc(0, 0), mat_acc(0, 1), mat_acc(1, 0),
-          mat_acc(1, 1));
+    std::stringstream ss;
+    ss << mat_acc;
+    print("%s\n", ss.str().c_str());
+    //print("\r\n[Iter %d]: \r\n%f %f\r\n%f %f\r\n", i, mat_acc(0, 0), mat_acc(0, 1), mat_acc(1, 0),
+    //      mat_acc(1, 1));
 
-    mat_acc = (mat_acc * mat).eval();
+    mat_acc *= mat;
   }
 }
 
