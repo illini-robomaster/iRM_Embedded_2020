@@ -2,7 +2,7 @@
 
 namespace control {
 
-PIDController::PIDController(float kp, float ki, float kd, float dt, float N)
+PIDController::PIDController(float kp, float ki, float kd, float N, float dt)
   : a0_(1 + N * dt),
     uc1_((2 + N * dt) / a0_),
     uc2_(-1 / a0_),

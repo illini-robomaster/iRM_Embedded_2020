@@ -5,7 +5,7 @@
 namespace control {
 
 /**
- * @brief simple PID controller
+ * @brief simple PID controller with lowpass filtered derivitive estimates
  */
 class PIDController {
  public:
@@ -15,10 +15,10 @@ class PIDController {
    * @param kp proportional gain
    * @param ki integral gain
    * @param kd derivative gain
-   * @param dt sampling time for the control loop in [s]
    * @param N  derivative lowpass filter bandwidth in [rad / s]
+   * @param dt sampling time for the control loop in [s]
    */
-  PIDController(float kp, float ki, float kd, float dt, float N);
+  PIDController(float kp, float ki, float kd, float N, float dt);
 
   /**
    * @brief compute output base on current error
