@@ -33,7 +33,7 @@ static void can_motor_callback(const uint8_t data[], void* args) {
   motor->UpdateData(data);
 }
 
-MotorCANBase::MotorCANBase(bsp::CAN* can, uint16_t rx_id)
+MotorCANBase::MotorCANBase(const std::shared_ptr<bsp::CAN>& can, uint16_t rx_id)
     : theta_(0), omega_(0), can_(can), rx_id_(rx_id) {
   constexpr uint16_t GROUP_SIZE = 4;
   constexpr uint16_t RX1_ID_START = 0x201;
@@ -51,14 +51,16 @@ MotorCANBase::MotorCANBase(bsp::CAN* can, uint16_t rx_id)
     tx_id_ = TX2_ID;
   else
     tx_id_ = TX1_ID;
+
+  can->RegisterRxCallback(rx_id, can_motor_callback, this);
 }
 
-void MotorCANBase::TransmitOutput(MotorCANBase* motors[], uint8_t num_motors) {
+void MotorCANBase::TransmitOutput(const std::vector<MotorCANBase*>& motors) {
   uint8_t data[8] = {0};
 
-  RM_ASSERT_GT(num_motors, 0, "Meaningless empty can motor transmission");
-  RM_ASSERT_LT(num_motors, 4, "Exceeding maximum of 4 motor commands per CAN message");
-  for (uint8_t i = 0; i < num_motors; ++i) {
+  RM_ASSERT_GT(motors.size(), 0, "Meaningless empty can motor transmission");
+  RM_ASSERT_LT(motors.size(), 4, "Exceeding maximum of 4 motor commands per CAN message");
+  for (uint8_t i = 0; i < motors.size(); ++i) {
     RM_ASSERT_EQ(motors[i]->tx_id_, motors[0]->tx_id_, "tx id mismatch");
     RM_ASSERT_EQ(motors[i]->can_, motors[0]->can_, "can line mismatch");
     const uint8_t motor_idx = (motors[i]->rx_id_ - 1) % 4;
@@ -79,10 +81,6 @@ float MotorCANBase::GetThetaDelta(float target) const {
 float MotorCANBase::GetOmega() const { return omega_; }
 
 float MotorCANBase::GetOmegaDelta(float target) const { return target - omega_; }
-
-Motor3508::Motor3508(CAN* can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
-  can->RegisterRxCallback(rx_id, can_motor_callback, this);
-}
 
 void Motor3508::UpdateData(const uint8_t data[]) {
   const int16_t raw_theta = data[0] << 8 | data[1];
@@ -106,10 +104,6 @@ void Motor3508::PrintData() const {
 void Motor3508::SetOutput(int16_t val) {
   constexpr int16_t MAX_ABS_CURRENT = 12288;  // ~20A
   output_ = clip<int16_t>(val, -MAX_ABS_CURRENT, MAX_ABS_CURRENT);
-}
-
-Motor6623::Motor6623(CAN* can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
-  can->RegisterRxCallback(rx_id, can_motor_callback, this);
 }
 
 void Motor6623::UpdateData(const uint8_t data[]) {
@@ -141,10 +135,6 @@ float Motor6623::GetOmegaDelta(const float target) const {
   UNUSED(target);
   RM_EXPECT_TRUE(false, "6623 does not support omega messurement");
   return 0;
-}
-
-Motor2006::Motor2006(CAN* can, uint16_t rx_id) : MotorCANBase(can, rx_id) {
-  can->RegisterRxCallback(rx_id, can_motor_callback, this);
 }
 
 void Motor2006::UpdateData(const uint8_t data[]) {
