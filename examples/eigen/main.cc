@@ -20,7 +20,6 @@
 
 #include "main.h"
 
-#include <sstream>
 #include <Eigen/Dense>
 
 #include "bsp_print.h"
@@ -32,19 +31,17 @@ void eigen_task(const void* arguments) {
   UNUSED(arguments);
 
   print_use_usb();
+  osDelay(5000);  // wait for USB connection
 
   Eigen::Matrix2f mat;
   Eigen::Matrix2f mat_acc = Eigen::Matrix2f::Identity();
-  mat << 1, 1, 1, 0;
+  mat << 1, 1, 1, 0;  // accumulative multiplication of this yields Fibonacci Sequence
 
-  for (int i = 0;; ++i) {
-    osDelay(300);
+  for (int i = 0; i < 30; ++i) {
+    osDelay(1000);
 
-    std::stringstream ss;
-    ss << mat_acc;
-    print("%s\n", ss.str().c_str());
-    //print("\r\n[Iter %d]: \r\n%f %f\r\n%f %f\r\n", i, mat_acc(0, 0), mat_acc(0, 1), mat_acc(1, 0),
-    //      mat_acc(1, 1));
+    print("\r\n[Iter %d]: \r\n[%.4f %.4f]\r\n[%.4f %.4f]\r\n", i, mat_acc(0, 0), mat_acc(0, 1),
+          mat_acc(1, 0), mat_acc(1, 1));
 
     mat_acc *= mat;
   }
