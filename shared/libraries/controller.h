@@ -1,12 +1,6 @@
 #pragma once
 
-/* NOTE(alvin): DSP libraries depends on macro definitions on FPU computability, so the
- *              main.h must be included before arm_math.h */
-// clang-format off
 #include "main.h"
-// clang-format on
-
-#include "arm_math.h"
 
 namespace control {
 
@@ -21,8 +15,10 @@ class PIDController {
    * @param kp proportional gain
    * @param ki integral gain
    * @param kd derivative gain
+   * @param dt sampling time for the control loop in [s]
+   * @param N  derivative lowpass filter bandwidth in [rad / s]
    */
-  PIDController(float kp, float ki, float kd);
+  PIDController(float kp, float ki, float kd, float dt, float N);
 
   /**
    * @brief compute output base on current error
@@ -34,7 +30,19 @@ class PIDController {
   float ComputeOutput(float error);
 
  private:
-  arm_pid_instance_f32 pid_f32_;
+  // states
+  float u1_ = 0;
+  float u2_ = 0;
+  float e1_ = 0;
+  float e2_ = 0;
+
+  // coefficients
+  const float a0_;
+  const float uc1_;
+  const float uc2_;
+  const float ec0_;
+  const float ec1_;
+  const float ec2_;
 };
 
 } /* namespace control */

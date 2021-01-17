@@ -29,6 +29,7 @@
 #define KEY_GPIO_PIN GPIO_PIN_2
 
 #define TARGET_SPEED 80
+#define CONTROL_DT   10
 
 bsp::CAN* can1 = NULL;
 control::MotorCANBase* motor = NULL;
@@ -43,7 +44,7 @@ void RM_RTOS_Init() {
 void RM_RTOS_Default_Task(const void* args) {
   UNUSED(args);
   control::MotorCANBase* motors[] = {motor};
-  control::PIDController pid(20, 8, 0);
+  control::PIDController pid(20, 1, 0, CONTROL_DT / 1e3, 40);
 
   bsp::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);
 
@@ -58,6 +59,6 @@ void RM_RTOS_Default_Task(const void* args) {
     motor->SetOutput(pid.ComputeOutput(motor->GetOmegaDelta(target)));
     control::MotorCANBase::TransmitOutput(motors, 1);
     motor->PrintData();
-    osDelay(10);
+    osDelay(CONTROL_DT);
   }
 }
