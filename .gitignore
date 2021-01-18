@@ -150,3 +150,6 @@ compile_commands.json
 
 # Build result
 *.bin
+
+# Vim
+*.swp
