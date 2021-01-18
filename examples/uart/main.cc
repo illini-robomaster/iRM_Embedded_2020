@@ -18,6 +18,8 @@
  *                                                                          *
  ****************************************************************************/
 
+#include <memory>
+
 #include "main.h"
 
 #include "bsp_print.h"
@@ -47,8 +49,6 @@
 
 extern osThreadId_t defaultTaskHandle;
 
-static bsp::UART* uart8;
-
 class CustomUART : public bsp::UART {
  public:
   using bsp::UART::UART;
@@ -58,31 +58,25 @@ class CustomUART : public bsp::UART {
   void RxCompleteCallback() override final { osThreadFlagsSet(defaultTaskHandle, RX_SIGNAL); }
 };
 
-void RM_RTOS_Init(void) {
-  uart8 = new CustomUART(&huart8);
-  uart8->SetupRx(50);
-  uart8->SetupTx(50);
-}
-
 void RM_RTOS_Default_Task(const void* argument) {
-  uint32_t start, end;
+  UNUSED(argument);
+
   uint32_t length;
   uint8_t* data;
 
-  UNUSED(argument);
+  auto uart = std::make_unique<CustomUART>(&UART_HANDLE);  // see cmake for which uart
+  uart->SetupRx(50);
+  uart->SetupTx(50);
 
   while (1) {
     /* wait until rx data is available */
     uint32_t flags = osThreadFlagsWait(RX_SIGNAL, osFlagsWaitAll, osWaitForever);
     if (flags & RX_SIGNAL) {  // uncessary check
       /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
-      start = osKernelSysTick();
-      length = uart8->Read(&data);
-      uart8->Write(data, length);
-      uart8->Write(data, length);
-      uart8->Write(data, length);
-      end = osKernelSysTick();
-      print("non blocking tx rx loopback api used %u ms\r\n", end - start);
+      length = uart->Read(&data);
+      uart->Write(data, length);
+      uart->Write(data, length);
+      uart->Write(data, length);
     }
   }
 }

@@ -23,12 +23,13 @@
 #include "bsp_error_handler.h"
 #include "cmsis_os.h"
 #include "usbd_cdc_if.h"
+#include "task.h"
 
-static bsp::USB* usb = nullptr;
+static bsp::VirtualUSB* usb = nullptr;
 
 namespace bsp {
 
-USB::USB()
+VirtualUSB::VirtualUSB()
     : rx_size_(0),
       rx_pending_(0),
       rx_write_(nullptr),
@@ -41,7 +42,7 @@ USB::USB()
   usb = this;
 }
 
-USB::~USB() {
+VirtualUSB::~VirtualUSB() {
   if (rx_write_) delete[] rx_write_;
   if (rx_read_) delete[] rx_read_;
   if (tx_write_) delete[] tx_write_;
@@ -49,7 +50,7 @@ USB::~USB() {
   usb = nullptr;
 }
 
-void USB::SetupTx(uint32_t tx_buffer_size) {
+void VirtualUSB::SetupTx(uint32_t tx_buffer_size) {
   /* usb tx already setup */
   if (tx_size_ || tx_write_ || tx_read_) return;
 
@@ -59,7 +60,7 @@ void USB::SetupTx(uint32_t tx_buffer_size) {
   tx_read_ = new uint8_t[tx_buffer_size];
 }
 
-void USB::SetupRx(uint32_t rx_buffer_size) {
+void VirtualUSB::SetupRx(uint32_t rx_buffer_size) {
   /* usb rx already setup */
   if (rx_size_ || rx_write_ || rx_read_) return;
 
@@ -69,7 +70,7 @@ void USB::SetupRx(uint32_t rx_buffer_size) {
   rx_read_ = new uint8_t[rx_buffer_size];
 }
 
-uint32_t USB::Read(uint8_t** data) {
+uint32_t VirtualUSB::Read(uint8_t** data) {
   taskENTER_CRITICAL();
   uint32_t length = rx_pending_;
   *data = rx_write_;
@@ -82,7 +83,7 @@ uint32_t USB::Read(uint8_t** data) {
   return length;
 }
 
-uint32_t USB::Write(uint8_t* data, uint32_t length) {
+uint32_t VirtualUSB::Write(uint8_t* data, uint32_t length) {
   taskENTER_CRITICAL();
   if (length > tx_size_) length = tx_size_;
   /* try to transmit the data */
@@ -100,7 +101,7 @@ uint32_t USB::Write(uint8_t* data, uint32_t length) {
   return length;
 }
 
-void USB::TxCompleteCallback() {
+void VirtualUSB::TxCompleteCallback() {
   uint8_t* tmp;
   UBaseType_t isrflags = taskENTER_CRITICAL_FROM_ISR();
   /* check if any data is waiting to be transmitted */
@@ -117,9 +118,9 @@ void USB::TxCompleteCallback() {
   taskEXIT_CRITICAL_FROM_ISR(isrflags);
 }
 
-void USB::RxCompleteCallback() {}
+void VirtualUSB::RxCompleteCallback() {}
 
-uint32_t USB::QueueUpRxData(const uint8_t* data, uint32_t length) {
+uint32_t VirtualUSB::QueueUpRxData(const uint8_t* data, uint32_t length) {
   if (length + rx_pending_ > rx_size_) {
     length = rx_size_ - rx_pending_;
     RM_EXPECT_TRUE(1, "usb data reception truncated");

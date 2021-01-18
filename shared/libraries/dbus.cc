@@ -35,7 +35,7 @@ DBUS::DBUS(UART_HandleTypeDef* huart) : bsp::UART(huart) { SetupRx(sizeof(dbus_t
 void DBUS::RxCompleteCallback() {
   uint8_t* data;
   // data frame misalignment
-  if (this->ReadFromISR(&data) != sizeof(dbus_t)) return;
+  if (this->Read<true>(&data) != sizeof(dbus_t)) return;
 
   // re-interpret the data buffer and decode into class properties
   dbus_t* repr = reinterpret_cast<dbus_t*>(data);

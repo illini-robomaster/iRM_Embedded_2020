@@ -20,7 +20,11 @@
 
 #pragma once
 
+#include <map>
+
 #include "can.h"
+
+#include "bsp_error_handler.h"
 
 #define MAX_CAN_DATA_SIZE 8
 #define MAX_CAN_DEVICES 12
@@ -38,8 +42,7 @@ class CAN {
    * @param hcan     HAL can handle
    * @param start_id lowest possible stdid for rx
    */
-  CAN(CAN_HandleTypeDef* hcan, uint32_t start_id);
-
+  CAN(CAN_HandleTypeDef* hcan, uint32_t start_id, bool is_master = true);
   /**
    * @brief check if it is associated with a given CAN handle
    *
@@ -79,12 +82,18 @@ class CAN {
   void RxCallback();
 
  private:
-  void ConfigureFilter(CAN_HandleTypeDef* hcan);
+  void ConfigureFilter(bool is_master);
 
   CAN_HandleTypeDef* hcan_;
-  uint32_t start_id_;
+  const uint32_t start_id_;
+
   can_rx_callback_t rx_callbacks_[MAX_CAN_DEVICES] = {0};
   void* rx_args_[MAX_CAN_DEVICES] = {NULL};
+
+  static std::map<CAN_HandleTypeDef*, CAN*> ptr_map;
+  static CAN* FindInstance(CAN_HandleTypeDef* hcan);
+  static bool HandleExists(CAN_HandleTypeDef* hcan);
+  static void RxFIFO0MessagePendingCallback(CAN_HandleTypeDef* hcan);
 };
 
 } /* namespace bsp */

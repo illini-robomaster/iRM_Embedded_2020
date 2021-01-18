@@ -21,36 +21,31 @@
 #include "bsp_uart.h"
 
 #include <cstring>
+#include <map>
 
 #include "bsp_error_handler.h"
 #include "cmsis_os.h"
+#include "task.h"
 
 #define MAX_NUM_UARTS 5
 
 namespace bsp {
 
-static UART* uarts[MAX_NUM_UARTS]{};
-static size_t num_uarts = 0;
-
-/* check if huart is associated with any initialized uart_t structs */
-static inline bool uart_handle_exists(UART_HandleTypeDef* huart) {
-  for (size_t i = 0; i < num_uarts; ++i)
-    if (uarts[i]->Uses(huart)) return true;
-
-  return false;
-}
+static std::map<UART_HandleTypeDef*, UART*> ptr_map;
 
 /* get initialized uart_t instance given its huart handle struct */
-static inline UART* find_uart_instance(UART_HandleTypeDef* huart) {
-  for (size_t i = 0; i < num_uarts; ++i)
-    if (uarts[i]->Uses(huart)) return uarts[i];
+static inline UART* FindInstance(UART_HandleTypeDef* huart) {
+  const auto it = ptr_map.find(huart);
+  if (it == ptr_map.end()) {
+    return nullptr;
+  }
 
-  return nullptr;
+  return it->second;
 }
 
-/* modified version of HAL_UART_Receive_DMA that utilize double buffer mode */
-static HAL_StatusTypeDef uart_receive_dma_double_buffer(UART_HandleTypeDef* huart, uint8_t* data0,
-                                                        uint8_t* data1, uint16_t size) {
+/* modified version of HAL_UART_Receive_DMA */
+static HAL_StatusTypeDef UartStartDmaNoInt(UART_HandleTypeDef* huart, uint8_t* data0,
+                                           uint8_t* data1, uint16_t size) {
   /* Check that a Rx process is not already ongoing */
   if (huart->RxState == HAL_UART_STATE_READY) {
     if ((data0 == NULL) || (data1 == NULL) || (size == 0U)) return HAL_ERROR;
@@ -62,8 +57,12 @@ static HAL_StatusTypeDef uart_receive_dma_double_buffer(UART_HandleTypeDef* huar
     huart->ErrorCode = HAL_UART_ERROR_NONE;
 
     /* Enable the DMA stream */
+#ifdef BOARD_HAS_UART_DMA_DOUBLE_BUFFER
     HAL_DMAEx_MultiBufferStart(huart->hdmarx, (uint32_t)&huart->Instance->DR, (uint32_t)data0,
                                (uint32_t)data1, size);
+#else
+    HAL_DMA_Start(huart->hdmarx, (uint32_t)&huart->Instance->DR, (uint32_t)data0, size);
+#endif
 
     /* Clear the Overrun flag just before enabling the DMA Rx request */
     __HAL_UART_CLEAR_OREFLAG(huart);
@@ -89,14 +88,14 @@ static HAL_StatusTypeDef uart_receive_dma_double_buffer(UART_HandleTypeDef* huar
 
 /* tx dma complete -> check for pending message to keep transmitting */
 void TxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
-  UART* uart = find_uart_instance(huart);
+  UART* uart = FindInstance(huart);
   if (!uart) return;
   uart->TxCompleteCallback();
 }
 
 /* rx idle line detected -> trigger rx callback */
 void RxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
-  UART* uart = find_uart_instance(huart);
+  UART* uart = FindInstance(huart);
   if (!uart) return;
 
   if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
@@ -113,33 +112,33 @@ void RxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
 UART::UART(UART_HandleTypeDef* huart)
     : huart_(huart),
       rx_size_(0),
-      rx_data0_(nullptr),
-      rx_data1_(nullptr),
+      rx_data_{ nullptr },
+      rx_index_(0),
       tx_size_(0),
       tx_pending_(0),
       tx_write_(nullptr),
       tx_read_(nullptr) {
-  RM_ASSERT_FALSE(uart_handle_exists(huart), "Uart repeated initialization");
-  uarts[num_uarts++] = this;
+  RM_ASSERT_FALSE(FindInstance(huart), "Uart repeated initialization");
+  ptr_map[huart] = this;
 }
 
 UART::~UART() {
-  if (rx_data0_) delete[] rx_data0_;
-  if (rx_data1_) delete[] rx_data1_;
+  if (rx_data_[0]) delete[] rx_data_[0];
+  if (rx_data_[1]) delete[] rx_data_[1];
   if (tx_write_) delete[] tx_write_;
   if (tx_read_) delete[] tx_read_;
 }
 
 void UART::SetupRx(uint32_t rx_buffer_size) {
   /* uart rx already setup */
-  if (rx_size_ || rx_data0_ || rx_data1_) return;
+  if (rx_size_ || rx_data_[0] || rx_data_[1]) return;
 
   rx_size_ = rx_buffer_size;
-  rx_data0_ = new uint8_t[rx_buffer_size];
-  rx_data1_ = new uint8_t[rx_buffer_size];
+  rx_data_[0] = new uint8_t[rx_buffer_size];
+  rx_data_[1] = new uint8_t[rx_buffer_size];
 
   /* enable uart rx dma transfer in back ground */
-  uart_receive_dma_double_buffer(huart_, rx_data0_, rx_data1_, rx_size_);
+  UartStartDmaNoInt(huart_, rx_data_[0], rx_data_[1], rx_size_);
 
   /* UART IDLE Interrupt can notify application of data reception ASAP */
   __HAL_UART_CLEAR_FLAG(huart_, UART_FLAG_IDLE);
@@ -158,47 +157,51 @@ void UART::SetupTx(uint32_t tx_buffer_size) {
   HAL_UART_RegisterCallback(huart_, HAL_UART_TX_COMPLETE_CB_ID, TxCompleteCallbackWrapper);
 }
 
+template <bool FromISR>
 int32_t UART::Read(uint8_t** data) {
   if (!data) return -1;
   /* capture pending bytes and perform hardware buffer switch */
   int32_t length;
-  taskENTER_CRITICAL();
+
+  // enter critical session
+  UBaseType_t isrflags;
+  if (FromISR) {
+    isrflags = taskENTER_CRITICAL_FROM_ISR();
+  } else {
+    taskENTER_CRITICAL();
+  }
+
   __HAL_DMA_DISABLE(huart_->hdmarx);
   length = rx_size_ - __HAL_DMA_GET_COUNTER(huart_->hdmarx);
+  rx_index_ = 1 - rx_index_;
+
+#ifdef BOARD_HAS_UART_DMA_DOUBLE_BUFFER
+  // hardware multi buffer switch
   __HAL_DMA_SET_COUNTER(huart_->hdmarx, rx_size_);
   huart_->hdmarx->Instance->CR ^= DMA_SxCR_CT;
   __HAL_DMA_ENABLE(huart_->hdmarx);
-  taskEXIT_CRITICAL();
+#else
+  // software double buffer
+  HAL_DMA_Abort(huart_->hdmarx);
+  HAL_DMA_Start(
+    huart_->hdmarx, (uint32_t)&huart_->Instance->DR, (uint32_t)rx_data_[rx_index_], rx_size_);
+#endif
+
+  // exit critical session
+  if (FromISR) {
+    taskEXIT_CRITICAL_FROM_ISR(isrflags);
+  } else {
+    taskEXIT_CRITICAL();
+  }
 
   /* return the buffer pointer currently not being used by DMA transfer */
-  if (huart_->hdmarx->Instance->CR & DMA_SxCR_CT)
-    *data = rx_data0_;  // DMA is transferring data into rx_data1
-  else
-    *data = rx_data1_;  // DMA is transferring data into rx_data0
+  *data = rx_data_[1 - rx_index_];
 
   return length;
 }
 
-int32_t UART::ReadFromISR(uint8_t** data) {
-  if (!data) return -1;
-  /* capture pending bytes and perform hardware buffer switch */
-  int32_t length;
-  UBaseType_t isrflags = taskENTER_CRITICAL_FROM_ISR();
-  __HAL_DMA_DISABLE(huart_->hdmarx);
-  length = rx_size_ - __HAL_DMA_GET_COUNTER(huart_->hdmarx);
-  __HAL_DMA_SET_COUNTER(huart_->hdmarx, rx_size_);
-  huart_->hdmarx->Instance->CR ^= DMA_SxCR_CT;
-  __HAL_DMA_ENABLE(huart_->hdmarx);
-  taskEXIT_CRITICAL_FROM_ISR(isrflags);
-
-  /* return the buffer pointer currently not being used by DMA transfer */
-  if (huart_->hdmarx->Instance->CR & DMA_SxCR_CT)
-    *data = rx_data0_;  // DMA is transferring data into rx_data1
-  else
-    *data = rx_data1_;  // DMA is transferring data into rx_data0
-
-  return length;
-}
+template int32_t UART::Read<true>(uint8_t** data);
+template int32_t UART::Read<false>(uint8_t** data);
 
 int32_t UART::Write(const uint8_t* data, uint32_t length) {
   taskENTER_CRITICAL();

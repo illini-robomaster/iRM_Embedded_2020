@@ -26,7 +26,7 @@
 
 namespace bsp {
 
-class USB {
+class VirtualUSB {
  public:
   /**
    * @brief constructor for usb instance
@@ -34,12 +34,12 @@ class USB {
    * @param true if use callback for receiving, otherwise manual read is required. The
    *        default value is false
    */
-  explicit USB();
+  explicit VirtualUSB();
 
   /**
    * @brief destructor (potentially deallocate buffer memories associated with tx / rx)
    */
-  virtual ~USB();
+  virtual ~VirtualUSB();
 
   /**
    * @brief set up usb non blocking transmission
@@ -54,8 +54,6 @@ class USB {
    *
    * @param rx_buffer_size  receive buffer size (all data that has not been read out is
    *                        queued into this buffer if there is no callbacks registered)
-   *
-   * @note if the USB
    */
   void SetupRx(uint32_t rx_buffer_size);
 

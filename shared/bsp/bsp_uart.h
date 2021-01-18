@@ -64,20 +64,8 @@ class UART {
    * @note memory is not copied for optimal performance, so second call to this
    *       method will invalidate the buffer produced by the previous call
    */
+  template <bool FromISR = false>
   int32_t Read(uint8_t** data);
-
-  /**
-   * @brief read out the pending received data inside IRQ Handler
-   *
-   * @param data  pointer to an array address that gets set to the receive buffer address
-   *
-   * @return number of bytes read, -1 if failure
-   *
-   * @note memory is not copied for optimal performance, so second call to this
-   *       method will invalidate the buffer produced by the previous call
-   * @note the implementation is NOT thread safe!
-   */
-  int32_t ReadFromISR(uint8_t** data);
 
   /**
    * @brief write data to uart without blocking
@@ -116,8 +104,8 @@ class UART {
   UART_HandleTypeDef* huart_;
   /* rx */
   uint32_t rx_size_;
-  uint8_t* rx_data0_;
-  uint8_t* rx_data1_;
+  uint8_t* rx_data_[2];
+  uint8_t  rx_index_;
   /* tx */
   uint32_t tx_size_;
   uint32_t tx_pending_;
