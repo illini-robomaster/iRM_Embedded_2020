@@ -36,8 +36,7 @@ std::map<CAN_HandleTypeDef*, CAN*> CAN::ptr_map;
  */
 CAN* CAN::FindInstance(CAN_HandleTypeDef* hcan) {
   const auto it = ptr_map.find(hcan);
-  if (it == ptr_map.end())
-    return nullptr;
+  if (it == ptr_map.end()) return nullptr;
 
   return it->second;
 }
@@ -49,9 +48,7 @@ CAN* CAN::FindInstance(CAN_HandleTypeDef* hcan) {
  *
  * @return true if found, otherwise false
  */
-bool CAN::HandleExists(CAN_HandleTypeDef* hcan) {
-  return FindInstance(hcan) != nullptr;
-}
+bool CAN::HandleExists(CAN_HandleTypeDef* hcan) { return FindInstance(hcan) != nullptr; }
 
 /**
  * @brief callback handler for CAN rx feedback data

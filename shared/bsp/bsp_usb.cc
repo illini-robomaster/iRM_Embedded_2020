@@ -22,8 +22,8 @@
 
 #include "bsp_error_handler.h"
 #include "cmsis_os.h"
-#include "usbd_cdc_if.h"
 #include "task.h"
+#include "usbd_cdc_if.h"
 
 static bsp::VirtualUSB* usb = nullptr;
 

@@ -112,7 +112,7 @@ void RxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
 UART::UART(UART_HandleTypeDef* huart)
     : huart_(huart),
       rx_size_(0),
-      rx_data_{ nullptr },
+      rx_data_{nullptr},
       rx_index_(0),
       tx_size_(0),
       tx_pending_(0),
@@ -183,8 +183,8 @@ int32_t UART::Read(uint8_t** data) {
 #else
   // software double buffer
   HAL_DMA_Abort(huart_->hdmarx);
-  HAL_DMA_Start(
-    huart_->hdmarx, (uint32_t)&huart_->Instance->DR, (uint32_t)rx_data_[rx_index_], rx_size_);
+  HAL_DMA_Start(huart_->hdmarx, (uint32_t)&huart_->Instance->DR, (uint32_t)rx_data_[rx_index_],
+                rx_size_);
 #endif
 
   // exit critical session

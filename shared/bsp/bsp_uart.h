@@ -105,7 +105,7 @@ class UART {
   /* rx */
   uint32_t rx_size_;
   uint8_t* rx_data_[2];
-  uint8_t  rx_index_;
+  uint8_t rx_index_;
   /* tx */
   uint32_t tx_size_;
   uint32_t tx_pending_;

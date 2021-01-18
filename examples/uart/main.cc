@@ -18,9 +18,9 @@
  *                                                                          *
  ****************************************************************************/
 
-#include <memory>
-
 #include "main.h"
+
+#include <memory>
 
 #include "bsp_print.h"
 #include "bsp_uart.h"
