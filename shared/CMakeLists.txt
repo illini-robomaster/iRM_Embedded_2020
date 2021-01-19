@@ -18,6 +18,11 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
+# Eigen interface library
+add_library(eigen3 INTERFACE)
+target_include_directories(eigen3 SYSTEM INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen-3.3.9)
+
 file(GLOB_RECURSE BSP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/bsp/*.cc)
 file(GLOB_RECURSE LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libraries/*.cc)
 file(GLOB_RECURSE THIRD_PARTY_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/third_party/*.c)
@@ -31,9 +36,5 @@ set(IRM_INCLUDES
 irm_add_board_specific_library(DJI_Board_TypeA_irm
     TARGET DJI_Board_TypeA
     SOURCES ${IRM_SOURCES}
-    INCLUDES ${IRM_INCLUDES})
-
-# Eigen interface library
-add_library(eigen3 INTERFACE)
-target_include_directories(eigen3 SYSTEM INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen-3.3.9)
+    INCLUDES ${IRM_INCLUDES}
+    DEPENDS eigen3)

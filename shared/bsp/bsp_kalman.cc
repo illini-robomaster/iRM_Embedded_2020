@@ -23,26 +23,27 @@
 namespace bsp {
 
 Kalman::Kalman(uint8_t dims, Eigen::MatrixXf F, Eigen::MatrixXf H, Eigen::MatrixXf B)
-     : F_(F), H_(H), B_(B){
- x_.Eigen::resize(dims);
- P_.Eigen::resize(dims, dims);
+     : dims_(dims), F_(F), H_(H), B_(B){
+ x_.resize(dims);
+ P_.resize(dims, dims);
 
- x_.Eigen::setZero(dims);
- P_.Eigen::setIdentity(dims, dims); 
- Q_.Eigen::setIdentity(dims, dims);
- R_.Eigen::setIdentity(dims, dims);
+ x_.setZero(dims);
+ P_.setIdentity(dims, dims); 
+ Q_.setIdentity(dims, dims);
+ R_.setIdentity(dims, dims);
 }
 
 void Kalman::Predict(Eigen::VectorXf u) {
  x_ = F_ * x_ + B_ * u;
- P_ = F_ * P_ * F_.Eigen::transpose() + Q_;
+ P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
 void Kalman::Update(Eigen::VectorXf y) {
- Eigen::Matrix<float, dims, dims> S = H_ * P_ * H_.Eigen::transpose() + R_;
- Eigen::Matrix<float, dims, dims> K = P_ * H_.Eigen::transpose() * S.Eigen::inverse();
- x_ = x_ + K * (y - H_ * x);
- P_ = (Eigen::Matrix<float, dims, dims>::Identity() - K * H_) * P_;
+
+ Eigen::MatrixXf S = H_ * P_ * H_.transpose() + R_;
+ Eigen::MatrixXf K = P_ * H_.transpose() * S.inverse();
+ x_ = x_ + K * (y - H_ * x_);
+ P_ = (Eigen::MatrixXf::Identity(dims_, dims_) - K * H_) * P_;
 }
 
 } // namespace bsp ends

@@ -33,16 +33,17 @@ class Kalman {
  void Update(Eigen::VectorXf observation);
  
  private:
+ uint8_t dims_;
  Eigen::VectorXf x_;    // estimation in wiki Kalman filter formula
  Eigen::MatrixXf P_;    // covariance in wiki Kalman filter formula
  
  Eigen::MatrixXf F_;    // transfer matrix: x_k -> x_k+1
  Eigen::MatrixXf H_;    // transfer matrix: observation y -> x_k+1
- Eigen:: MatrixXf B_;    // transfer matrix: input u -> x
+ Eigen::MatrixXf B_;    // transfer matrix: input u -> x
 
  Eigen::MatrixXf Q_;    // noise covariance
  Eigen::MatrixXf R_;    // noise covariance 
-}
+};
 
 
 
