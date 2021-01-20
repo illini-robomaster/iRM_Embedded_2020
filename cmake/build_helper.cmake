@@ -58,7 +58,7 @@ function(irm_add_arm_executable name)
         COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
         DEPENDS ${name}.elf)
 
-    if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         find_program(ARM_GDB arm-none-eabi-gdb REQUIRED)
         add_custom_target(debug-${name}
             COMMAND ${ARM_GDB} $<TARGET_FILE:${name}.elf>
@@ -76,7 +76,7 @@ endfunction(irm_add_arm_executable)
 #   see shared/CMakeLists.txt for example usage
 function(irm_add_board_specific_library name)
     cmake_parse_arguments(ARG "" "TARGET" "SOURCES;INCLUDES;DEPENDS" ${ARGN})
-    add_library(${name} ${ARG_SOURCES})
+    add_library(${name} OBJECT ${ARG_SOURCES})
     target_link_libraries(${name}
         PUBLIC ${ARG_TARGET}_interface
         PRIVATE ${ARG_DEPENDS})
