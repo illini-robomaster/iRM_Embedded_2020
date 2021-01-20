@@ -60,8 +60,10 @@ int32_t print(const char* format, ...) {
 
   if (print_uart)
     return print_uart->Write((uint8_t*)buffer, length);
-  else
+  else if (print_usb)
     return print_usb->Write((uint8_t*)buffer, length);
+  else
+    return 0;
 #endif  // #ifdef NDEBUG
 }
 

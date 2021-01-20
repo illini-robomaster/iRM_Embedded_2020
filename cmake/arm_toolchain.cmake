@@ -29,6 +29,9 @@ set(CMAKE_CXX_COMPILER_WORKS 1)
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
 
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+
 set(COMMON_FLAGS "-Wall -Werror -Wextra -fdiagnostics-color=always")
 
 # default to debug build
@@ -36,8 +39,8 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif(NOT CMAKE_BUILD_TYPE)
 
-set(CMAKE_C_FLAGS "${COMMON_FLAGS} -std=gnu99")
-set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -std=gnu++11")
+set(CMAKE_C_FLAGS "${COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${COMMON_FLAGS}")
 
 # Debug flags
 set(CMAKE_C_FLAGS_DEBUG "-Og -g -DDEBUG")
