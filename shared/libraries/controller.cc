@@ -6,7 +6,7 @@ PIDController::PIDController(float kp, float ki, float kd, float N, float dt)
   : a0_(1 + N * dt),
     uc1_((2 + N * dt) / a0_),
     uc2_(-1 / a0_),
-    ec0_((kp + ki * dt * a0_ + kd * N) / a0_),
+    ec0_(kp + (ki * dt * a0_ + kd * N) / a0_),
     ec1_(-(kp * (2 + N * dt) + ki * dt + 2 * kd * N) / a0_),
     ec2_((kp + kd * N) / a0_) {}
 
