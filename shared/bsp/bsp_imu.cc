@@ -36,7 +36,7 @@
 
 namespace bsp {
 
-MPU6500* MPU6500::mpu6500 = NULL;
+MPU6500* MPU6500::mpu6500 = nullptr;
 
 MPU6500::MPU6500(SPI_HandleTypeDef* hspi, const GPIO& chip_select, uint16_t int_pin)
     : GPIT(int_pin), hspi_(hspi), chip_select_(chip_select) {
