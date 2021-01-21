@@ -74,4 +74,8 @@ void Kalman::Update(Eigen::VectorXf y) {
  P_ = (Eigen::MatrixXf::Identity(dims_, dims_) - K * H_) * P_;
 }
 
+Eigen::VectorXf Kalman::GetState(void) {
+ return x_;
+}
+
 } // namespace bsp ends

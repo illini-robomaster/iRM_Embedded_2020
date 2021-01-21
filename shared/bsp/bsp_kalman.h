@@ -89,7 +89,15 @@ class Kalman {
  * @param observation 	observation (z)
  */
  void Update(Eigen::VectorXf observation);
- 
+
+/**
+ * @brief 	getter to private variable x
+ *
+ * @return 	system current state x
+ */
+ Eigen::VectorXf GetState(void);
+
+
  private:
  uint8_t dims_;
  Eigen::VectorXf x_;    // estimation in wiki Kalman filter formula
