@@ -18,55 +18,26 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_print.h"
+#pragma once
 
-#include "bsp_uart.h"
-#include "bsp_usb.h"
-#include "main.h"
-#include "printf.h"  // third party tiny-printf implemnetations
+#include "tim.h"
 
-#define MAX_PRINT_LEN 128
+namespace bsp {
 
-static bsp::UART* print_uart = NULL;
-static bsp::USB* print_usb = NULL;
+/**
+ * @brief set the timer to be used to generate high resolution ticks in [us]
+ *
+ * @param htim  HAL timer handle pointer
+ *
+ * @note this has to be called before starting rtos scheduler
+ */
+void set_highres_clock_timer(TIM_HandleTypeDef* htim);
 
-void print_use_uart(UART_HandleTypeDef* huart) {
-  if (print_uart) delete print_uart;
+/**
+ * @brief get the current counter value of the highres timer in [us]
+ *
+ * @return high res tick in [us] (0 if highres clock not set)
+ */
+uint32_t get_highres_tick_us(void);
 
-  print_uart = new bsp::UART(huart);
-  print_uart->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
-  print_usb = NULL;
-}
-
-void print_use_usb() {
-  if (!print_usb) print_usb = new bsp::USB();
-
-  print_usb->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
-  print_uart = NULL;
-}
-
-int32_t print(const char* format, ...) {
-#ifdef NDEBUG
-  UNUSED(format);
-  return 0;
-#else   // == #ifdef DEBUG
-  char buffer[MAX_PRINT_LEN];
-  va_list args;
-  int length;
-
-  va_start(args, format);
-  length = vsnprintf(buffer, MAX_PRINT_LEN, format, args);
-  va_end(args);
-
-  if (print_uart)
-    return print_uart->Write((uint8_t*)buffer, length);
-  else if (print_usb)
-    return print_usb->Write((uint8_t*)buffer, length);
-  else
-    return 0;
-#endif  // #ifdef NDEBUG
-}
-
-void set_cursor(int row, int col) { print("\033[%d;%dH", row, col); }
-
-void clear_screen(void) { print("\033[2J"); }
+} /* namespace bsp */

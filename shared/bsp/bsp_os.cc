@@ -18,55 +18,34 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_print.h"
+#include "bsp_os.h"
 
-#include "bsp_uart.h"
-#include "bsp_usb.h"
-#include "main.h"
-#include "printf.h"  // third party tiny-printf implemnetations
+#include "cmsis_os.h"
 
-#define MAX_PRINT_LEN 128
+static TIM_HandleTypeDef* htim_os = NULL;
 
-static bsp::UART* print_uart = NULL;
-static bsp::USB* print_usb = NULL;
-
-void print_use_uart(UART_HandleTypeDef* huart) {
-  if (print_uart) delete print_uart;
-
-  print_uart = new bsp::UART(huart);
-  print_uart->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
-  print_usb = NULL;
+void configureTimerForRunTimeStats(void) {
+  if (!htim_os) return;
+  __HAL_TIM_SET_AUTORELOAD(htim_os, 0xffffffff);
+  __HAL_TIM_SET_COUNTER(htim_os, 0);
+  __HAL_TIM_ENABLE(htim_os);
 }
 
-void print_use_usb() {
-  if (!print_usb) print_usb = new bsp::USB();
+void vApplicationStackOverflowHook(xTaskHandle xTask, char* pcTaskName) {
+  (void)xTask;
+  (void)pcTaskName;
 
-  print_usb->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
-  print_uart = NULL;
+  while (1)
+    ;
 }
 
-int32_t print(const char* format, ...) {
-#ifdef NDEBUG
-  UNUSED(format);
-  return 0;
-#else   // == #ifdef DEBUG
-  char buffer[MAX_PRINT_LEN];
-  va_list args;
-  int length;
+namespace bsp {
 
-  va_start(args, format);
-  length = vsnprintf(buffer, MAX_PRINT_LEN, format, args);
-  va_end(args);
+void set_highres_clock_timer(TIM_HandleTypeDef* htim) { htim_os = htim; }
 
-  if (print_uart)
-    return print_uart->Write((uint8_t*)buffer, length);
-  else if (print_usb)
-    return print_usb->Write((uint8_t*)buffer, length);
-  else
-    return 0;
-#endif  // #ifdef NDEBUG
+uint32_t get_highres_tick_us(void) {
+  if (!htim_os) return 0;
+  return htim_os->Instance->CNT;
 }
 
-void set_cursor(int row, int col) { print("\033[%d;%dH", row, col); }
-
-void clear_screen(void) { print("\033[2J"); }
+} /* namespace bsp */
