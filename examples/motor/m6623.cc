@@ -36,15 +36,18 @@ void RM_RTOS_Default_Task(const void* args) {
 
   auto can1 = std::make_shared<bsp::CAN>(&hcan1, 0x201);
   auto motor = std::make_unique<control::Motor6623>(can1, 0x209);
+  auto key = std::make_unique<bsp::GPIO>(KEY_GPIO_GROUP, KEY_GPIO_PIN);
 
-  bsp::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);
+  const std::vector<control::MotorCANBase*> motors = { motor.get() };
+
+  uint32_t timestamp = osKernelSysTick();
   while (1) {
-    motor->PrintData();
-    if (key.Read())
+    if (key->Read())
       motor->SetOutput(400);
     else
       motor->SetOutput(0);
-    control::MotorCANBase::TransmitOutput({motor.get()});
-    osDelay(100);
+    control::MotorCANBase::TransmitOutput(motors);
+    motor->PrintData();
+    osDelayUntil(&timestamp, 10);
   }
 }
