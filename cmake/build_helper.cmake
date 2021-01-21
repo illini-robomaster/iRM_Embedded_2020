@@ -76,7 +76,7 @@ endfunction(irm_add_arm_executable)
 #   see shared/CMakeLists.txt for example usage
 function(irm_add_board_specific_library name)
     cmake_parse_arguments(ARG "" "TARGET" "SOURCES;INCLUDES;DEPENDS" ${ARGN})
-    add_library(${name} ${ARG_SOURCES})
+    add_library(${name} OBJECT ${ARG_SOURCES})
     target_link_libraries(${name}
         PUBLIC ${ARG_TARGET}_interface
         PRIVATE ${ARG_DEPENDS})
