@@ -24,12 +24,70 @@
 
 namespace bsp{
 
+/**
+ * All the symbols stand the same meaning as the wikipedia page for Kalman filter
+ */
 class Kalman {
  public:
+ /**
+  * @brief	constructor for kalman filter with n dimensions and uncorrelated noises, both covariance matrices for the noise are identity matrices.
+  *
+  *
+  * @param F	transfer matrix from state(x_k) to the state in the next time frame(x_k+1)
+  * @param H	transfer matrix from state(x) to observation(z)
+  * @param B	transfer matrix from input(u) to its effect on state (Bu)
+  */
+ Kalman(Eigen::MatrixXf F, Eigen::MatrixXf H, Eigen::MatrixXf B);
  
- Kalman(uint8_t dims, Eigen::MatrixXf F, Eigen::MatrixXf H, Eigen::MatrixXf B);
+ /**
+  * @brief 	constructor for kalman filter with n dimensions
+  *
+  * @param F	transfer matrix from state(x_k) to the state in the next time frame(x_k+1)
+  * @param H	transfer matrix from state(x) to observation(z)
+  * @param B	transfer matrix from input(u) to its effect on state(Bu)
+  * @param Q	covariance matrix for process noise(w)
+  * @param R	covariance matrix for observation noise(v)
+  */
+ Kalman(Eigen::MatrixXf F, Eigen::MatrixXf H, Eigen::MatrixXf B, Eigen::MatrixXf Q, Eigen::MatrixXf R);
+
+/**
+ * @brief	 initialization for x(input) and P(covariance of input), without Init, x is set to a zero vector and P to an identity matrix.
+ */ 
+ void SetInit(Eigen::VectorXf x, Eigen::MatrixXf P);
+
+/**
+ * @brief 	get the closest estimation for the system state without observation, P(Covariance) will not be updated.
+ * 
+ * @param input		input of the system
+ *
+ * @return 		estimation of the system state
+ */
+ Eigen::VectorXf GetEstimate(Eigen::VectorXf input);
+
+/**
+ * @brief 	get the closest estimation for the system state without observation, P(Covariance) will not be updated. Used when the input is zero.
+ *
+ * @return 	estimation of the system state
+ */
  Eigen::VectorXf GetEstimate(void);
+
+/**
+ * @brief 	processing update of the kalman filter
+ *
+ * @param input 	input of the system (u)
+ */ 
  void Predict(Eigen::VectorXf input);
+
+/**
+ * @brief       processing update of the kalman filter, when input is zero
+ */
+ void Predict(void);
+
+/**
+ * @brief 	measure update of the kalman filter
+ * 
+ * @param observation 	observation (z)
+ */
  void Update(Eigen::VectorXf observation);
  
  private:
