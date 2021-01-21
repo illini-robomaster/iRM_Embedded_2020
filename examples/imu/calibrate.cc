@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- *  Copyright (C) 2020 RoboMaster.                                          *
+ *  Copyright (C) 2021 RoboMaster.                                          *
  *  Illini RoboMaster @ University of Illinois at Urbana-Champaign          *
  *                                                                          *
  *  This program is free software: you can redistribute it and/or modify    *
@@ -18,55 +18,52 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_print.h"
+#include <cstring>
 
-#include "bsp_uart.h"
+#include "bsp_gpio.h"
+#include "bsp_imu.h"
+#include "bsp_os.h"
 #include "bsp_usb.h"
+#include "cmsis_os.h"
 #include "main.h"
-#include "printf.h"  // third party tiny-printf implemnetations
 
-#define MAX_PRINT_LEN 128
+#define ONBOARD_IMU_SPI hspi5
+#define ONBOARD_IMU_CS_GROUP GPIOF
+#define ONBOARD_IMU_CS_PIN GPIO_PIN_6
 
-static bsp::UART* print_uart = NULL;
-static bsp::USB* print_usb = NULL;
+typedef struct {
+  char header;
+  bsp::vec3f_t acce;
+  bsp::vec3f_t gyro;
+  bsp::vec3f_t mag;
+  char terminator;
+} __attribute__((packed)) imu_data_t;
 
-void print_use_uart(UART_HandleTypeDef* huart) {
-  if (print_uart) delete print_uart;
+static bsp::MPU6500* imu = nullptr;
+static bsp::USB* usb = nullptr;
 
-  print_uart = new bsp::UART(huart);
-  print_uart->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
-  print_usb = NULL;
+static imu_data_t imu_data;
+
+void RM_RTOS_Default_Task(const void* arguments) {
+  UNUSED(arguments);
+
+  bsp::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
+  imu = new bsp::MPU6500(&ONBOARD_IMU_SPI, chip_select, MPU6500_IT_Pin);
+  usb = new bsp::USB();
+  usb->SetupTx(sizeof(imu_data_t));
+  osDelay(10);
+
+  while (true) {
+    imu_data.acce = imu->acce;
+    imu_data.gyro = imu->gyro;
+    imu_data.mag = imu->mag;
+    usb->Write((uint8_t*)&imu_data, sizeof(imu_data));
+    osDelay(10);
+  }
 }
 
-void print_use_usb() {
-  if (!print_usb) print_usb = new bsp::USB();
-
-  print_usb->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
-  print_uart = NULL;
+void RM_RTOS_Init(void) {
+  bsp::set_highres_clock_timer(&htim2);
+  imu_data.header = 's';
+  imu_data.terminator = '\0';
 }
-
-int32_t print(const char* format, ...) {
-#ifdef NDEBUG
-  UNUSED(format);
-  return 0;
-#else   // == #ifdef DEBUG
-  char buffer[MAX_PRINT_LEN];
-  va_list args;
-  int length;
-
-  va_start(args, format);
-  length = vsnprintf(buffer, MAX_PRINT_LEN, format, args);
-  va_end(args);
-
-  if (print_uart)
-    return print_uart->Write((uint8_t*)buffer, length);
-  else if (print_usb)
-    return print_usb->Write((uint8_t*)buffer, length);
-  else
-    return 0;
-#endif  // #ifdef NDEBUG
-}
-
-void set_cursor(int row, int col) { print("\033[%d;%dH", row, col); }
-
-void clear_screen(void) { print("\033[2J"); }
