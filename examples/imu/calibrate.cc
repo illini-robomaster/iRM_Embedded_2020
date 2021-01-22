@@ -63,7 +63,7 @@ void RM_RTOS_Default_Task(const void* arguments) {
 }
 
 void RM_RTOS_Init(void) {
-  bsp::set_highres_clock_timer(&htim2);
+  bsp::SetHighresClockTimer(&htim2);
   imu_data.header = 's';
   imu_data.terminator = '\0';
 }

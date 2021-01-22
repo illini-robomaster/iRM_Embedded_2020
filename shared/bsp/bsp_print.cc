@@ -29,6 +29,7 @@
 
 static bsp::UART* print_uart = NULL;
 static bsp::USB* print_usb = NULL;
+static char print_buffer[MAX_PRINT_LEN];
 
 void print_use_uart(UART_HandleTypeDef* huart) {
   if (print_uart) delete print_uart;
@@ -48,20 +49,20 @@ void print_use_usb() {
 int32_t print(const char* format, ...) {
 #ifdef NDEBUG
   UNUSED(format);
+  UNUSED(print_buffer);
   return 0;
 #else   // == #ifdef DEBUG
-  char buffer[MAX_PRINT_LEN];
   va_list args;
   int length;
 
   va_start(args, format);
-  length = vsnprintf(buffer, MAX_PRINT_LEN, format, args);
+  length = vsnprintf(print_buffer, MAX_PRINT_LEN, format, args);
   va_end(args);
 
   if (print_uart)
-    return print_uart->Write((uint8_t*)buffer, length);
+    return print_uart->Write((uint8_t*)print_buffer, length);
   else if (print_usb)
-    return print_usb->Write((uint8_t*)buffer, length);
+    return print_usb->Write((uint8_t*)print_buffer, length);
   else
     return 0;
 #endif  // #ifdef NDEBUG

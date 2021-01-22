@@ -22,30 +22,42 @@
 
 #include "cmsis_os.h"
 
-static TIM_HandleTypeDef* htim_os = NULL;
+static TIM_HandleTypeDef* htim_os = nullptr;
 
-void configureTimerForRunTimeStats(void) {
+/**
+ * @brief override FreeRTOS weak function to configure the timer used for generating run-time stats
+ */
+extern "C" void configureTimerForRunTimeStats(void) {
   if (!htim_os) return;
   __HAL_TIM_SET_AUTORELOAD(htim_os, 0xffffffff);
   __HAL_TIM_SET_COUNTER(htim_os, 0);
   __HAL_TIM_ENABLE(htim_os);
 }
 
-void vApplicationStackOverflowHook(xTaskHandle xTask, char* pcTaskName) {
+/**
+ * @brief triggered when a stack overflow is detected
+ *
+ * @param xTask       task handle
+ * @param pcTaskName  task name
+ */
+extern "C" void vApplicationStackOverflowHook(xTaskHandle xTask, signed char* pcTaskName) {
   (void)xTask;
   (void)pcTaskName;
 
-  while (1)
-    ;
+  while (true) {}
+}
+
+extern "C" unsigned long getRunTimeCounterValue(void) {
+  if (!htim_os) return 0;
+  return htim_os->Instance->CNT;
 }
 
 namespace bsp {
 
-void set_highres_clock_timer(TIM_HandleTypeDef* htim) { htim_os = htim; }
+void SetHighresClockTimer(TIM_HandleTypeDef* htim) { htim_os = htim; }
 
-uint32_t get_highres_tick_us(void) {
-  if (!htim_os) return 0;
-  return htim_os->Instance->CNT;
+uint32_t GetHighresTickMicroSec(void) {
+  return getRunTimeCounterValue();
 }
 
 } /* namespace bsp */

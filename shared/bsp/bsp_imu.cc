@@ -142,7 +142,7 @@ void MPU6500::SPITxRxCpltCallback() {
 }
 
 void MPU6500::IntCallback() {
-  timestamp = get_highres_tick_us();
+  timestamp = GetHighresTickMicroSec();
   UpdateData();
 }
 

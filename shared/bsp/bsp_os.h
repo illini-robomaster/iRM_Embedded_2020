@@ -31,13 +31,13 @@ namespace bsp {
  *
  * @note this has to be called before starting rtos scheduler
  */
-void set_highres_clock_timer(TIM_HandleTypeDef* htim);
+void SetHighresClockTimer(TIM_HandleTypeDef* htim);
 
 /**
  * @brief get the current counter value of the highres timer in [us]
  *
  * @return high res tick in [us] (0 if highres clock not set)
  */
-uint32_t get_highres_tick_us(void);
+uint32_t GetHighresTickMicroSec(void);
 
 } /* namespace bsp */

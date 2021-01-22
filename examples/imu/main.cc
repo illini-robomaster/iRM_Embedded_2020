@@ -34,8 +34,6 @@
 
 static bsp::MPU6500* imu;
 
-static char stats[256];
-
 void RM_RTOS_Default_Task(const void* arguments) {
   UNUSED(arguments);
 
@@ -46,7 +44,6 @@ void RM_RTOS_Default_Task(const void* arguments) {
   osDelay(3000);
 
   while (true) {
-    vTaskGetRunTimeStats(stats);
     set_cursor(0, 0);
     clear_screen();
     print("Temp: %10.4f\r\n", imu->temp);
@@ -54,13 +51,11 @@ void RM_RTOS_Default_Task(const void* arguments) {
     print("GYRO_X: %8.4f GYRO_Y: %8.4f GYRO_Z: %8.4f\r\n", imu->gyro.x, imu->gyro.y, imu->gyro.z);
     print("MAG_X: %9.0f MAG_Y: %9.0f MAG_Z: %9.0f\r\n", imu->mag.x, imu->mag.y, imu->mag.z);
     print("\r\nTime Stamp: %lu us\r\n", imu->timestamp);
-    osDelay(1);
-    print("\r\nCPU Usage:\r\n%s", stats);
     osDelay(100);
   }
 }
 
 void RM_RTOS_Init(void) {
-  bsp::set_highres_clock_timer(&htim2);
+  bsp::SetHighresClockTimer(&htim2);
   print_use_uart(&PRING_UART);
 }
