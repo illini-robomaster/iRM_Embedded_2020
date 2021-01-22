@@ -44,7 +44,8 @@ extern "C" void vApplicationStackOverflowHook(xTaskHandle xTask, signed char* pc
   (void)xTask;
   (void)pcTaskName;
 
-  while (true) {}
+  while (true) {
+  }
 }
 
 extern "C" unsigned long getRunTimeCounterValue(void) {
@@ -56,8 +57,6 @@ namespace bsp {
 
 void SetHighresClockTimer(TIM_HandleTypeDef* htim) { htim_os = htim; }
 
-uint32_t GetHighresTickMicroSec(void) {
-  return getRunTimeCounterValue();
-}
+uint32_t GetHighresTickMicroSec(void) { return getRunTimeCounterValue(); }
 
 } /* namespace bsp */
