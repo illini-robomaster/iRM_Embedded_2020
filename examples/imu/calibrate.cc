@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- *  Copyright (C) 2020 RoboMaster.                                          *
+ *  Copyright (C) 2021 RoboMaster.                                          *
  *  Illini RoboMaster @ University of Illinois at Urbana-Champaign          *
  *                                                                          *
  *  This program is free software: you can redistribute it and/or modify    *
@@ -18,44 +18,52 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "main.h"
-
 #include <cstring>
 
 #include "bsp_gpio.h"
 #include "bsp_imu.h"
 #include "bsp_os.h"
+#include "bsp_usb.h"
 #include "cmsis_os.h"
+#include "main.h"
 
 #define ONBOARD_IMU_SPI hspi5
 #define ONBOARD_IMU_CS_GROUP GPIOF
 #define ONBOARD_IMU_CS_PIN GPIO_PIN_6
-#define PRING_UART huart8
 
-static bsp::MPU6500* imu;
+typedef struct {
+  char header;
+  bsp::vec3f_t acce;
+  bsp::vec3f_t gyro;
+  bsp::vec3f_t mag;
+  char terminator;
+} __attribute__((packed)) imu_data_t;
+
+static bsp::MPU6500* imu = nullptr;
+static bsp::USB* usb = nullptr;
+
+static imu_data_t imu_data;
 
 void RM_RTOS_Default_Task(const void* arguments) {
   UNUSED(arguments);
 
   bsp::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
   imu = new bsp::MPU6500(&ONBOARD_IMU_SPI, chip_select, MPU6500_IT_Pin);
-
-  print("IMU Initialized!\r\n");
-  osDelay(3000);
+  usb = new bsp::USB();
+  usb->SetupTx(sizeof(imu_data_t));
+  osDelay(10);
 
   while (true) {
-    set_cursor(0, 0);
-    clear_screen();
-    print("Temp: %10.4f\r\n", imu->temp);
-    print("ACC_X: %9.4f ACC_Y: %9.4f ACC_Z: %9.4f\r\n", imu->acce.x, imu->acce.y, imu->acce.z);
-    print("GYRO_X: %8.4f GYRO_Y: %8.4f GYRO_Z: %8.4f\r\n", imu->gyro.x, imu->gyro.y, imu->gyro.z);
-    print("MAG_X: %9.0f MAG_Y: %9.0f MAG_Z: %9.0f\r\n", imu->mag.x, imu->mag.y, imu->mag.z);
-    print("\r\nTime Stamp: %lu us\r\n", imu->timestamp);
-    osDelay(100);
+    imu_data.acce = imu->acce;
+    imu_data.gyro = imu->gyro;
+    imu_data.mag = imu->mag;
+    usb->Write((uint8_t*)&imu_data, sizeof(imu_data));
+    osDelay(10);
   }
 }
 
 void RM_RTOS_Init(void) {
   bsp::SetHighresClockTimer(&htim2);
-  print_use_uart(&PRING_UART);
+  imu_data.header = 's';
+  imu_data.terminator = '\0';
 }
