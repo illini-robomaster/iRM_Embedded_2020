@@ -25,17 +25,17 @@
 #include "bsp_kalman.h"
 #include "cmsis_os.h"
 
-static bsp::Kalman *filter;
+static bsp::Kalman<2,2,2> *filter;
 
 
 void RM_RTOS_Init(void) {
   Eigen::Matrix2f F;
   F.setIdentity(2, 2);
-  Eigen::Matrix2f H;
+  Eigen::Matrix<float,2,2> H;
   H << 1, -1, 1, 0;
-  Eigen::Vector2f B;
-  B << 1, 0;
-
+  Eigen::Matrix<float,2,2> B;
+  B << 1, 0, 0, 1;
+  
   filter = new bsp::Kalman(F, H, B); // Kalman(F, H, B, Q, R) also works
   
   Eigen::Vector2f x;
