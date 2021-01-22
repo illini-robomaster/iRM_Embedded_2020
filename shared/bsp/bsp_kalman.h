@@ -65,7 +65,7 @@ class Kalman {
  *
  * @return 		estimation of the system state
  */
- Eigen::Matrix<float, xDims, 1>& GetEstimate(const Eigen::Matrix<float, uDims, 1>& input
+ Eigen::Matrix<float, xDims, 1>& EstimateNext(const Eigen::Matrix<float, uDims, 1>& input
 			= Eigen::VectorXf::Zero(uDims));
 
 /**
@@ -136,7 +136,7 @@ void Kalman<xDims, yDims, uDims>::SetInit(
 }
 
 template <int xDims, int yDims, int uDims>
-Eigen::Matrix<float, xDims, 1>& Kalman<xDims, yDims, uDims>::GetEstimate(
+Eigen::Matrix<float, xDims, 1>& Kalman<xDims, yDims, uDims>::EstimateNext(
 		const Eigen::Matrix<float, uDims, 1>& u) {
  x_ = F_ * x_ + B_ * u;
  return x_;

@@ -53,12 +53,12 @@ void RM_RTOS_Default_Task(const void* arguments) {
   osDelay(5000);  // wait for USB connection
 
  
-  Eigen::Vector2f esti = filter->GetEstimate();     // estimate without observation
+  Eigen::Vector2f esti = filter->EstimateNext();     // estimate without observation
   print("[%.4f]\r\n[%.4f]\r\n", esti(0), esti(1));
   
   Eigen::Vector2f u;
   u << 1, 1;
-  esti = filter->GetEstimate(u);
+  esti = filter->EstimateNext(u);
   print("Estimation = [%.4f]\r\n[%.4f]\r\n", esti(0), esti(1)); // should output [1, 1]
 
   Eigen::Vector2f obse;
