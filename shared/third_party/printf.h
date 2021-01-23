@@ -55,8 +55,7 @@ void _putchar(char character);
  * \return The number of characters that are written into the array, not counting the terminating
  * null character
  */
-#define printf printf_
-int printf_(const char* format, ...);
+int printf(const char* format, ...);
 
 /**
  * Tiny sprintf implementation
@@ -66,8 +65,7 @@ int printf_(const char* format, ...);
  * number of characters that are WRITTEN into the buffer, not counting the terminating null
  * character
  */
-#define sprintf sprintf_
-int sprintf_(char* buffer, const char* format, ...);
+int sprintf(char* buffer, const char* format, ...);
 
 /**
  * Tiny snprintf/vsnprintf implementation
@@ -79,10 +77,8 @@ int sprintf_(char* buffer, const char* format, ...);
  * than count indicates truncation. Only when the returned value is non-negative and less than
  * count, the string has been completely written.
  */
-#define snprintf snprintf_
-#define vsnprintf vsnprintf_
-int snprintf_(char* buffer, size_t count, const char* format, ...);
-int vsnprintf_(char* buffer, size_t count, const char* format, va_list va);
+int snprintf(char* buffer, size_t count, const char* format, ...);
+int vsnprintf(char* buffer, size_t count, const char* format, va_list va);
 
 /**
  * Tiny vprintf implementation
@@ -91,8 +87,7 @@ int vsnprintf_(char* buffer, size_t count, const char* format, va_list va);
  * \return The number of characters that are WRITTEN into the buffer, not counting the terminating
  * null character
  */
-#define vprintf vprintf_
-int vprintf_(const char* format, va_list va);
+int vprintf(const char* format, va_list va);
 
 /**
  * printf with output function

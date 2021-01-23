@@ -28,9 +28,9 @@
 static uint8_t tx1[] = "first message\n";
 static uint8_t tx2[] = "second message\n";
 
-static osThreadId sd_task_handle;
+static osThreadId_t sd_task_thread;
 
-void sd_task(void const* argu) {
+void sd_task(void* argu) {
   UNUSED(argu);
   bsp::SDFileLogger logger("log.txt");
   logger.Log(tx1, strlen((char*)tx1));
@@ -40,6 +40,6 @@ void sd_task(void const* argu) {
 }
 
 void RM_RTOS_Threads_Init(void) {
-  osThreadDef(sdTask, sd_task, osPriorityNormal, 0, 256);
-  sd_task_handle = osThreadCreate(osThread(sdTask), NULL);
+  osThreadAttr_t sd_task_thread_attr;
+  sd_task_thread = osThreadNew(sd_task, NULL, &sd_task_thread_attr);
 }

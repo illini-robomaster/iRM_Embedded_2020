@@ -45,10 +45,9 @@
 
 #define RX_SIGNAL (1 << 0)
 
-extern osThreadId defaultTaskHandle;
+extern osThreadId_t defaultTaskHandle;
 
 static bsp::UART* uart8;
-static osEvent uart_event;
 
 class CustomUART : public bsp::UART {
  public:
@@ -56,7 +55,7 @@ class CustomUART : public bsp::UART {
 
  protected:
   /* notify application when rx data is pending read */
-  void RxCompleteCallback() override final { osSignalSet(defaultTaskHandle, RX_SIGNAL); }
+  void RxCompleteCallback() override final { osThreadFlagsSet(defaultTaskHandle, RX_SIGNAL); }
 };
 
 void RM_RTOS_Init(void) {
@@ -74,8 +73,8 @@ void RM_RTOS_Default_Task(const void* argument) {
 
   while (1) {
     /* wait until rx data is available */
-    uart_event = osSignalWait(RX_SIGNAL, osWaitForever);
-    if (uart_event.value.signals & RX_SIGNAL) {  // uncessary check
+    uint32_t flags = osThreadFlagsWait(RX_SIGNAL, osFlagsWaitAll, osWaitForever);
+    if (flags & RX_SIGNAL) {  // uncessary check
       /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
       start = osKernelSysTick();
       length = uart8->Read(&data);
