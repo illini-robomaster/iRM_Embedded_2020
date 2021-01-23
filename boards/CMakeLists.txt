@@ -26,7 +26,7 @@ target_compile_options(board_interface INTERFACE
     -ffunction-sections -fdata-sections -fmessage-length=0)
 target_link_options(board_interface INTERFACE
     -specs=nano.specs -specs=nosys.specs -Wl,--gc-sections
-    -Wl,--wrap=malloc -Wl,--wrap=free -Wl,--wrap=calloc)
+    -Wl,--wrap=malloc -Wl,--wrap=free -Wl,--wrap=calloc -Wl,--wrap=realloc)
 target_link_libraries(board_interface INTERFACE c m)
 
 # board specific interfaces
