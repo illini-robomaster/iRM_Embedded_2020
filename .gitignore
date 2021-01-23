@@ -154,6 +154,6 @@ compile_commands.json
 # Vim
 *.swp
 
-# Vim YCM
+# YCM config
 .ycm_extra_conf.py
 

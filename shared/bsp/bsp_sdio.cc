@@ -22,6 +22,8 @@
 
 namespace bsp {
 
+#ifdef BOARD_HAS_SD_FATFS
+
 bool SDFileLogger::mounted_ = false;
 
 SDFileLogger::SDFileLogger(const std::string& filename) : filename_(filename) {
@@ -52,5 +54,7 @@ int32_t SDFileLogger::Log(const uint8_t* data, uint32_t length) {
 
   return ret;
 }
+
+#endif  // BOARD_HAS_SD_FATFS
 
 } /* namespace bsp */

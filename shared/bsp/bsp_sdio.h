@@ -22,6 +22,7 @@
 
 #include <string>
 
+#ifdef BOARD_HAS_SD_FATFS
 #include "fatfs.h"
 
 namespace bsp {
@@ -53,3 +54,5 @@ class SDFileLogger {
 };
 
 } /* namespace bsp */
+
+#endif  // BOARD_HAS_SD_FATFS
