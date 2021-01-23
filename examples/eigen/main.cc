@@ -17,7 +17,7 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.    *
  *                                                                          *
  ****************************************************************************/
-/*
+
 #include "main.h"
 
 #include <Eigen/Dense>
@@ -25,9 +25,20 @@
 #include "bsp_print.h"
 #include "cmsis_os.h"
 
-static osThreadId eigen_task_handle;
+static osThreadId_t eigen_task_handle;
+const osThreadAttr_t eigen_task_thread_attr = {
+    .name = "eigenTask",
+    .attr_bits = 0,
+    .cb_mem = 0,
+    .cb_size = 0,
+    .stack_mem = 0,
+    .stack_size = 256 * 4,
+    .priority = osPriorityNormal,
+    .tz_module = 0,
+    .reserved = 0,
+};
 
-void eigen_task(const void* arguments) {
+void eigen_task(void* arguments) {
   UNUSED(arguments);
 
   print_use_usb();
@@ -48,8 +59,5 @@ void eigen_task(const void* arguments) {
 }
 
 extern "C" void RM_RTOS_Threads_Init() {
-  osThreadDef(eigenTask, eigen_task, osPriorityNormal, 0, 1024);
-  eigen_task_handle = osThreadCreate(osThread(eigenTask), NULL);
+  eigen_task_handle = osThreadNew(eigen_task, NULL, &eigen_task_thread_attr);
 }
-
-*/
