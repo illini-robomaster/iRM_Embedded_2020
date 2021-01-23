@@ -18,39 +18,44 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "main.h"
-
 #include <Eigen/Dense>
 
 #include "bsp_print.h"
-#include "bsp_uart.h"
 #include "cmsis_os.h"
+#include "main.h"
 
-void RM_RTOS_Default_Task(const void* args) {
-  UNUSED(args);
-  //auto uart = bsp::UART(&UART_HANDLE);
+static osThreadId_t eigen_task_handle;
+const osThreadAttr_t eigen_task_thread_attr = {
+    .name = "eigenTask",
+    .attr_bits = 0,
+    .cb_mem = 0,
+    .cb_size = 0,
+    .stack_mem = 0,
+    .stack_size = 256 * 4,
+    .priority = osPriorityNormal,
+    .tz_module = 0,
+    .reserved = 0,
+};
+
+void eigen_task(void* arguments) {
+  UNUSED(arguments);
 
   print_use_uart(&huart1);
-  
-  Eigen::Matrix2f mat = Eigen::Matrix2f::Identity();
-  Eigen::Matrix2f mat_acc = Eigen::Matrix2f::Identity();
-  //mat << 1, 1, 1, 0;  // accumulative multiplication of this yields Fibonacci Sequence
 
-  for (int i = 0; i < 10; ++i) {
-    osDelay(500);
-    print("1/n");
-    osDelay(500);
-    print("%.4f, %.4f, %.4f, %.4f \n", mat_acc(0,0), mat_acc(0,1), mat_acc(1,0), mat_acc(1,1));
-    osDelay(2000);    
-    print("2/n");
-    osDelay(500);    
-    mat_acc = mat_acc + mat;
-    osDelay(500);    
-    print("3/n");
-    osDelay(500);        
-//print("%d, %d, %d, %d \n", mat_acc(0,0), mat_acc(0,1), mat_acc(1,0), mat_acc(1,1));
-    //print("\r\n[Iter %d]: \r\n[%.4f %.4f]\r\n[%.4f %.4f]\r\n", i, mat_acc(0, 0), mat_acc(0, 1),
-          //mat_acc(1, 0), mat_acc(1, 1));
-    
+  Eigen::Matrix2f mat;
+  Eigen::Matrix2f mat_acc = Eigen::Matrix2f::Identity();
+  mat << 1, 1, 1, 0;  // accumulative multiplication of this yields Fibonacci Sequence
+
+  for (int i = 0; i < 30; ++i) {
+    osDelay(1000);
+
+    print("\r\n[Iter %d]: \r\n[%.4f %.4f]\r\n[%.4f %.4f]\r\n", i, mat_acc(0, 0), mat_acc(0, 1),
+          mat_acc(1, 0), mat_acc(1, 1));
+
+    mat_acc *= mat;
   }
+}
+
+extern "C" void RM_RTOS_Threads_Init() {
+  eigen_task_handle = osThreadNew(eigen_task, NULL, &eigen_task_thread_attr);
 }

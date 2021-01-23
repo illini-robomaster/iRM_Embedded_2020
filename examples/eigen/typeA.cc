@@ -18,12 +18,11 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "main.h"
-
 #include <Eigen/Dense>
 
 #include "bsp_print.h"
 #include "cmsis_os.h"
+#include "main.h"
 
 static osThreadId_t eigen_task_handle;
 const osThreadAttr_t eigen_task_thread_attr = {

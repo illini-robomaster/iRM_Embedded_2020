@@ -18,10 +18,10 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
+# Eigen interface library
 add_library(eigen3 INTERFACE)
 target_include_directories(eigen3 SYSTEM INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen-3.3.9)
-# Eigen interface library
 
 file(GLOB_RECURSE BSP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/bsp/*.cc)
 file(GLOB_RECURSE LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libraries/*.cc)
@@ -46,7 +46,3 @@ irm_add_board_specific_library(F103C8_irm
     INCLUDES ${IRM_INCLUDES}
     DEPENDS eigen3)
 
-# Eigen interface library
-add_library(eigen3 INTERFACE)
-target_include_directories(eigen3 SYSTEM INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen-3.3.9)

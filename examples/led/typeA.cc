@@ -18,10 +18,9 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "main.h"
-
 #include "bsp_gpio.h"
 #include "cmsis_os.h"
+#include "main.h"
 
 #define LED_RED_Pin GPIO_PIN_11
 #define LED_RED_GPIO_Port GPIOE
