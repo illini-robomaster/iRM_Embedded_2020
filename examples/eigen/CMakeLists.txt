@@ -29,4 +29,3 @@ irm_add_arm_executable(${PROJECT_NAME}_f1
     TARGET F103C8
     SOURCES f103.cc
     DEPENDS eigen3)
-target_compile_definitions(${PROJECT_NAME}_f1.elf PRIVATE UART_HANDLE=huart1)
