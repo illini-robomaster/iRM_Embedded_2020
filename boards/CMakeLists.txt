@@ -31,3 +31,4 @@ target_link_libraries(board_interface INTERFACE c m)
 
 # board specific interfaces
 add_subdirectory(DJI_Board_TypeA)
+add_subdirectory(F103C8)

@@ -20,6 +20,8 @@
 
 #include "main.h"
 
+#include <memory>
+
 #include "bsp_print.h"
 #include "bsp_uart.h"
 #include "cmsis_os.h"
@@ -45,10 +47,7 @@
 
 #define RX_SIGNAL (1 << 0)
 
-extern osThreadId defaultTaskHandle;
-
-static bsp::UART* uart8;
-static osEvent uart_event;
+extern osThreadId_t defaultTaskHandle;
 
 class CustomUART : public bsp::UART {
  public:
@@ -56,34 +55,28 @@ class CustomUART : public bsp::UART {
 
  protected:
   /* notify application when rx data is pending read */
-  void RxCompleteCallback() override final { osSignalSet(defaultTaskHandle, RX_SIGNAL); }
+  void RxCompleteCallback() override final { osThreadFlagsSet(defaultTaskHandle, RX_SIGNAL); }
 };
 
-void RM_RTOS_Init(void) {
-  uart8 = new CustomUART(&huart8);
-  uart8->SetupRx(50);
-  uart8->SetupTx(50);
-}
-
 void RM_RTOS_Default_Task(const void* argument) {
-  uint32_t start, end;
+  UNUSED(argument);
+
   uint32_t length;
   uint8_t* data;
 
-  UNUSED(argument);
+  auto uart = std::make_unique<CustomUART>(&UART_HANDLE);  // see cmake for which uart
+  uart->SetupRx(50);
+  uart->SetupTx(50);
 
   while (1) {
     /* wait until rx data is available */
-    uart_event = osSignalWait(RX_SIGNAL, osWaitForever);
-    if (uart_event.value.signals & RX_SIGNAL) {  // uncessary check
+    uint32_t flags = osThreadFlagsWait(RX_SIGNAL, osFlagsWaitAll, osWaitForever);
+    if (flags & RX_SIGNAL) {  // uncessary check
       /* time the non-blocking rx / tx calls (should be <= 1 osTick) */
-      start = osKernelSysTick();
-      length = uart8->Read(&data);
-      uart8->Write(data, length);
-      uart8->Write(data, length);
-      uart8->Write(data, length);
-      end = osKernelSysTick();
-      print("non blocking tx rx loopback api used %u ms\r\n", end - start);
+      length = uart->Read(&data);
+      uart->Write(data, length);
+      uart->Write(data, length);
+      uart->Write(data, length);
     }
   }
 }

@@ -33,7 +33,9 @@ set(MCU_OPTIONS -mcpu=${MCU_ARCH} -mthumb -mthumb-interwork
 # ----- create board specific interface library -----#
 ######################################################
 add_library(${PROJECT_NAME}_interface INTERFACE)
-target_compile_definitions(${PROJECT_NAME}_interface INTERFACE ${MCU_LINE} ARM_MATH_CM4)
+target_compile_definitions(${PROJECT_NAME}_interface INTERFACE ${MCU_LINE}
+    ARM_MATH_CM4
+    BOARD_HAS_SD_FATFS BOARD_HAS_UART_DMA_DOUBLE_BUFFER)
 target_compile_options(${PROJECT_NAME}_interface INTERFACE ${MCU_OPTIONS})
 target_link_options(${PROJECT_NAME}_interface INTERFACE
     ${MCU_OPTIONS} -T${CMAKE_CURRENT_SOURCE_DIR}/${MCU_LINKER_SCRIPT})
@@ -54,7 +56,7 @@ target_include_directories(${PROJECT_NAME}_interface INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FatFs/src
     ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FreeRTOS/Source/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
     ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
 
 #####################################################
@@ -82,7 +84,7 @@ add_library(${PROJECT_NAME} OBJECT
     ${DRIVER_SOURCES} ${MIDDLEWARE_SOURCES} ${STARTUP_ASM})
 # ST libraries throws those warnings
 target_compile_options(${PROJECT_NAME} PRIVATE
-    -Wno-maybe-uninitialized -Wno-unused-parameter -Wno-sign-compare)
+    -Wno-maybe-uninitialized -Wno-unused-parameter -Wno-sign-compare -Wno-int-conversion)
 # link against board specific arm dsp library and interface
 target_link_libraries(${PROJECT_NAME}
     PRIVATE ${PROJECT_NAME}_libDSP
