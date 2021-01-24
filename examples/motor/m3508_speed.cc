@@ -29,7 +29,7 @@
 #define KEY_GPIO_PIN GPIO_PIN_2
 
 #define TARGET_SPEED 80
-#define CONTROL_DT   10
+#define CONTROL_DT 10
 
 void RM_RTOS_Default_Task(const void* args) {
   UNUSED(args);
@@ -41,7 +41,7 @@ void RM_RTOS_Default_Task(const void* args) {
   auto pid = std::make_unique<control::PIDController>(20, 0.01, 1, CONTROL_DT / 1e3, 20);
   auto key = std::make_unique<bsp::GPIO>(KEY_GPIO_GROUP, KEY_GPIO_PIN);
 
-  const std::vector<control::MotorCANBase*> motors = { motor.get() };
+  const std::vector<control::MotorCANBase*> motors = {motor.get()};
 
   while (1) {
     const uint32_t start = osKernelSysTick();

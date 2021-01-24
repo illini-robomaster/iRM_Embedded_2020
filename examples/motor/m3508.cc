@@ -38,7 +38,7 @@ void RM_RTOS_Default_Task(const void* args) {
   auto motor = std::make_unique<control::Motor3508>(can1, 0x201);
   auto key = std::make_unique<bsp::GPIO>(KEY_GPIO_GROUP, GPIO_PIN_2);
 
-  const std::vector<control::MotorCANBase*> motors = { motor.get() };
+  const std::vector<control::MotorCANBase*> motors = {motor.get()};
 
   while (1) {
     const uint32_t start = osKernelSysTick();
