@@ -25,8 +25,7 @@
 
 namespace bsp {
 
-static CAN* can1 = 0;
-static CAN* can2 = 0;
+std::map<CAN_HandleTypeDef*, CAN*> CAN::ptr_map;
 
 /**
  * @brief find instantiated can line
@@ -35,12 +34,11 @@ static CAN* can2 = 0;
  *
  * @return can instance if found, otherwise NULL
  */
-static inline CAN* find_can_instance(CAN_HandleTypeDef* hcan) {
-  if (can1 && hcan == &hcan1)
-    return can1;
-  else if (can2 && hcan == &hcan2)
-    return can2;
-  return NULL;
+CAN* CAN::FindInstance(CAN_HandleTypeDef* hcan) {
+  const auto it = ptr_map.find(hcan);
+  if (it == ptr_map.end()) return nullptr;
+
+  return it->second;
 }
 
 /**
@@ -50,36 +48,33 @@ static inline CAN* find_can_instance(CAN_HandleTypeDef* hcan) {
  *
  * @return true if found, otherwise false
  */
-static inline bool can_handle_exists(CAN_HandleTypeDef* hcan) {
-  return (can1 && hcan == &hcan1) || (can2 && hcan == &hcan2);
-}
+bool CAN::HandleExists(CAN_HandleTypeDef* hcan) { return FindInstance(hcan) != nullptr; }
 
 /**
  * @brief callback handler for CAN rx feedback data
  *
  * @param hcan  HAL can handle
  */
-static void can_rx_fifo0_message_pending_callback(CAN_HandleTypeDef* hcan) {
-  CAN* can = find_can_instance(hcan);
+void CAN::RxFIFO0MessagePendingCallback(CAN_HandleTypeDef* hcan) {
+  CAN* can = FindInstance(hcan);
   if (!can) return;
   can->RxCallback();
 }
 
-CAN::CAN(CAN_HandleTypeDef* hcan, uint32_t start_id) : hcan_(hcan), start_id_(start_id) {
-  RM_ASSERT_FALSE(can_handle_exists(hcan), "Repeated CAN initialization");
-  ConfigureFilter(hcan);
+CAN::CAN(CAN_HandleTypeDef* hcan, uint32_t start_id, bool is_master)
+    : hcan_(hcan), start_id_(start_id) {
+  RM_ASSERT_FALSE(HandleExists(hcan), "Repeated CAN initialization");
+  ConfigureFilter(is_master);
   // activate rx interrupt
   RM_ASSERT_HAL_OK(HAL_CAN_RegisterCallback(hcan, HAL_CAN_RX_FIFO0_MSG_PENDING_CB_ID,
-                                            can_rx_fifo0_message_pending_callback),
+                                            RxFIFO0MessagePendingCallback),
                    "Cannot register CAN rx callback");
   RM_ASSERT_HAL_OK(HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING),
                    "Cannot activate CAN rx message pending notification");
   RM_ASSERT_HAL_OK(HAL_CAN_Start(hcan), "Cannot start CAN");
+
   // save can instance as global pointer
-  if (hcan == &hcan1)
-    can1 = this;
-  else if (hcan == &hcan2)
-    can2 = this;
+  ptr_map[hcan] = this;
 }
 
 int CAN::RegisterRxCallback(uint32_t std_id, can_rx_callback_t callback, void* args) {
@@ -127,7 +122,7 @@ void CAN::RxCallback() {
     rx_callbacks_[callback_id](data, rx_args_[callback_id]);
 }
 
-void CAN::ConfigureFilter(CAN_HandleTypeDef* hcan) {
+void CAN::ConfigureFilter(bool is_master) {
   CAN_FilterTypeDef CAN_FilterConfigStructure;
   /* Configure Filter Property */
   CAN_FilterConfigStructure.FilterIdHigh = 0x0000;
@@ -140,10 +135,10 @@ void CAN::ConfigureFilter(CAN_HandleTypeDef* hcan) {
   CAN_FilterConfigStructure.FilterActivation = ENABLE;
   CAN_FilterConfigStructure.SlaveStartFilterBank = 14;  // CAN1 and CAN2 split all 28 filters
   /* Configure each CAN bus */
-  if (hcan == &hcan1)
-    CAN_FilterConfigStructure.FilterBank = 0;  // Master CAN1 get filter 0-13
-  else if (hcan == &hcan2)
-    CAN_FilterConfigStructure.FilterBank = 14;  // Slave CAN2 get filter 14-27
+  if (is_master)
+    CAN_FilterConfigStructure.FilterBank = 0;  // Master CAN get filter 0-13
+  else
+    CAN_FilterConfigStructure.FilterBank = 14;  // Slave CAN get filter 14-27
 
   RM_EXPECT_HAL_OK(HAL_CAN_ConfigFilter(hcan_, &CAN_FilterConfigStructure),
                    "CAN filter configuration failed.");

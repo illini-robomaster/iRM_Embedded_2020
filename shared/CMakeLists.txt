@@ -33,3 +33,7 @@ irm_add_board_specific_library(DJI_Board_TypeA_irm
     SOURCES ${IRM_SOURCES}
     INCLUDES ${IRM_INCLUDES})
 
+irm_add_board_specific_library(F103C8_irm
+    TARGET F103C8
+    SOURCES ${IRM_SOURCES}
+    INCLUDES ${IRM_INCLUDES})

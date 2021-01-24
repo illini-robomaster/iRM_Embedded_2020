@@ -21,6 +21,7 @@
 #include "bsp_os.h"
 
 #include "cmsis_os.h"
+#include "task.h"
 
 static TIM_HandleTypeDef* htim_os = nullptr;
 

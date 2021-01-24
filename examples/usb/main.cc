@@ -46,9 +46,9 @@
 
 extern osThreadId_t defaultTaskHandle;
 
-static bsp::USB* usb;
+static bsp::VirtualUSB* usb;
 
-class CustomUSBCallback : public bsp::USB {
+class CustomUSBCallback : public bsp::VirtualUSB {
  protected:
   void RxCompleteCallback() override final { osThreadFlagsSet(defaultTaskHandle, RX_SIGNAL); }
 };

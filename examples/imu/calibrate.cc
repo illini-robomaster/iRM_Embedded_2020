@@ -40,7 +40,7 @@ typedef struct {
 } __attribute__((packed)) imu_data_t;
 
 static bsp::MPU6500* imu = nullptr;
-static bsp::USB* usb = nullptr;
+static bsp::VirtualUSB* usb = nullptr;
 
 static imu_data_t imu_data;
 
@@ -49,7 +49,7 @@ void RM_RTOS_Default_Task(const void* arguments) {
 
   bsp::GPIO chip_select(ONBOARD_IMU_CS_GROUP, ONBOARD_IMU_CS_PIN);
   imu = new bsp::MPU6500(&ONBOARD_IMU_SPI, chip_select, MPU6500_IT_Pin);
-  usb = new bsp::USB();
+  usb = new bsp::VirtualUSB();
   usb->SetupTx(sizeof(imu_data_t));
   osDelay(10);
 
