@@ -40,14 +40,16 @@ void RM_RTOS_Default_Task(const void* args) {
 
   const std::vector<control::MotorCANBase*> motors = { motor.get() };
 
-  uint32_t timestamp = osKernelSysTick();
   while (1) {
+    const uint32_t start = osKernelSysTick();
+
     if (key->Read())
       motor->SetOutput(400);
     else
       motor->SetOutput(0);
+
     control::MotorCANBase::TransmitOutput(motors);
     motor->PrintData();
-    osDelayUntil(&timestamp, 10);
+    osDelayUntil(start + 10);
   }
 }
