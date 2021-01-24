@@ -18,14 +18,15 @@
 #                                                                        #
 # ---------------------------------------------------------------------- #
 
-add_subdirectory(buzzer)
-add_subdirectory(dbus)
-add_subdirectory(eigen)
-add_subdirectory(imu)
-add_subdirectory(kalman)
-add_subdirectory(led)
-add_subdirectory(motor)
-add_subdirectory(sdio)
-add_subdirectory(uart)
-add_subdirectory(usb)
+project(example_kalman ASM C CXX)
+
+irm_add_arm_executable(${PROJECT_NAME}_f1
+    TARGET F103C8
+    SOURCES f103.cc
+    DEPENDS eigen3)
+
+irm_add_arm_executable(${PROJECT_NAME}_typeA
+    TARGET DJI_Board_TypeA
+    SOURCES typeA.cc
+    DEPENDS eigen3)
 
