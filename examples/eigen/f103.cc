@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- *  Copyright (C) 2020 RoboMaster.                                          *
+ *  Copyright (C) 2021 RoboMaster.                                          *
  *  Illini RoboMaster @ University of Illinois at Urbana-Champaign          *
  *                                                                          *
  *  This program is free software: you can redistribute it and/or modify    *
@@ -18,30 +18,44 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "bsp_gpio.h"
+#include <Eigen/Dense>
+
+#include "bsp_print.h"
 #include "cmsis_os.h"
 #include "main.h"
 
-#define LED_RED_Pin GPIO_PIN_11
-#define LED_RED_GPIO_Port GPIOE
+static osThreadId_t eigen_task_handle;
+const osThreadAttr_t eigen_task_thread_attr = {
+    .name = "eigenTask",
+    .attr_bits = 0,
+    .cb_mem = 0,
+    .cb_size = 0,
+    .stack_mem = 0,
+    .stack_size = 256 * 4,
+    .priority = osPriorityNormal,
+    .tz_module = 0,
+    .reserved = 0,
+};
 
-#define LED_GREEN_Pin GPIO_PIN_14
-#define LED_GREEN_GPIO_Port GPIOF
+void eigen_task(void* arguments) {
+  UNUSED(arguments);
 
-static bsp::GPIO *gpio_red, *gpio_green;
+  print_use_uart(&huart1);
 
-void RM_RTOS_Init(void) {
-  gpio_red = new bsp::GPIO(LED_RED_GPIO_Port, LED_RED_Pin);
-  gpio_green = new bsp::GPIO(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-  gpio_red->High();
-  gpio_green->Low();
+  Eigen::Matrix2f mat;
+  Eigen::Matrix2f mat_acc = Eigen::Matrix2f::Identity();
+  mat << 1, 1, 1, 0;  // accumulative multiplication of this yields Fibonacci Sequence
+
+  for (int i = 0; i < 30; ++i) {
+    osDelay(1000);
+
+    print("\r\n[Iter %d]: \r\n[%.4f %.4f]\r\n[%.4f %.4f]\r\n", i, mat_acc(0, 0), mat_acc(0, 1),
+          mat_acc(1, 0), mat_acc(1, 1));
+
+    mat_acc *= mat;
+  }
 }
 
-void RM_RTOS_Default_Task(const void* args) {
-  UNUSED(args);
-  while (1) {
-    gpio_red->Toggle();
-    gpio_green->Toggle();
-    osDelay(500);
-  }
+extern "C" void RM_RTOS_Threads_Init() {
+  eigen_task_handle = osThreadNew(eigen_task, NULL, &eigen_task_thread_attr);
 }

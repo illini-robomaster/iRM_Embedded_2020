@@ -31,18 +31,6 @@
 
 namespace bsp {
 
-static std::map<UART_HandleTypeDef*, UART*> ptr_map;
-
-/* get initialized uart_t instance given its huart handle struct */
-static inline UART* FindInstance(UART_HandleTypeDef* huart) {
-  const auto it = ptr_map.find(huart);
-  if (it == ptr_map.end()) {
-    return nullptr;
-  }
-
-  return it->second;
-}
-
 /* modified version of HAL_UART_Receive_DMA */
 static HAL_StatusTypeDef UartStartDmaNoInt(UART_HandleTypeDef* huart, uint8_t* data0,
                                            uint8_t* data1, uint16_t size) {
@@ -88,14 +76,14 @@ static HAL_StatusTypeDef UartStartDmaNoInt(UART_HandleTypeDef* huart, uint8_t* d
 
 /* tx dma complete -> check for pending message to keep transmitting */
 void TxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
-  UART* uart = FindInstance(huart);
+  UART* uart = UART::FindInstance(huart);
   if (!uart) return;
   uart->TxCompleteCallback();
 }
 
 /* rx idle line detected -> trigger rx callback */
 void RxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
-  UART* uart = FindInstance(huart);
+  UART* uart = UART::FindInstance(huart);
   if (!uart) return;
 
   if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
@@ -107,6 +95,18 @@ void RxCompleteCallbackWrapper(UART_HandleTypeDef* huart) {
   if (__HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR)) {
     __HAL_UART_CLEAR_PEFLAG(huart);
   }
+}
+
+std::map<UART_HandleTypeDef*, UART*> UART::ptr_map;
+
+/* get initialized uart_t instance given its huart handle struct */
+UART* UART::FindInstance(UART_HandleTypeDef* huart) {
+  const auto it = ptr_map.find(huart);
+  if (it == ptr_map.end()) {
+    return nullptr;
+  }
+
+  return it->second;
 }
 
 UART::UART(UART_HandleTypeDef* huart)
@@ -203,8 +203,16 @@ int32_t UART::Read(uint8_t** data) {
 template int32_t UART::Read<true>(uint8_t** data);
 template int32_t UART::Read<false>(uint8_t** data);
 
+template <bool FromISR>
 int32_t UART::Write(const uint8_t* data, uint32_t length) {
-  taskENTER_CRITICAL();
+  // enter critical session
+  UBaseType_t isrflags;
+  if (FromISR) {
+    isrflags = taskENTER_CRITICAL_FROM_ISR();
+  } else {
+    taskENTER_CRITICAL();
+  }
+
   if (huart_->gState == HAL_UART_STATE_BUSY_TX || tx_pending_) {
     /* uart tx currently transmitting -> atomically queue up new data */
     if (length + tx_pending_ > tx_size_) length = tx_size_ - tx_pending_;
@@ -216,12 +224,19 @@ int32_t UART::Write(const uint8_t* data, uint32_t length) {
     memcpy(tx_read_, data, length);
     HAL_UART_Transmit_DMA(huart_, tx_read_, length);
   }
-  taskEXIT_CRITICAL();
+
+  // exit critical session
+  if (FromISR) {
+    taskEXIT_CRITICAL_FROM_ISR(isrflags);
+  } else {
+    taskEXIT_CRITICAL();
+  }
 
   return length;
 }
 
-bool UART::Uses(UART_HandleTypeDef* huart) { return huart == huart_; }
+template int32_t UART::Write<true>(const uint8_t* data, uint32_t length);
+template int32_t UART::Write<false>(const uint8_t* data, uint32_t length);
 
 void UART::TxCompleteCallback() {
   uint8_t* tmp;

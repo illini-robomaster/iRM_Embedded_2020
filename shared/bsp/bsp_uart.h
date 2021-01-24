@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <map>
+
 #include "usart.h"
 
 namespace bsp {
@@ -57,6 +59,7 @@ class UART {
   /**
    * @brief read out the pending received data
    *
+   * @tparam FromISR  set to true to call inside an interrupt handler
    * @param data  pointer to an array address that gets set to the receive buffer address
    *
    * @return number of bytes read, -1 if failure
@@ -70,6 +73,7 @@ class UART {
   /**
    * @brief write data to uart without blocking
    *
+   * @tparam FromISR  set to true to call inside an interrupt handler
    * @param data    pointer to the data buffer to be transmitted
    * @param length  length of the data to be transmitted
    *
@@ -79,16 +83,8 @@ class UART {
    *       to fill up, so remember to check return value for the actual number
    *       of bytes successfully transmitted
    */
+  template <bool FromISR = false>
   int32_t Write(const uint8_t* data, uint32_t length);
-
-  /**
-   * @brief check if the uart instance is associated with a particular HAL uart handle
-   *
-   * @param huart HAL uart handle
-   *
-   * @return true / false
-   */
-  bool Uses(UART_HandleTypeDef* huart);
 
  protected:
   /**
@@ -115,6 +111,9 @@ class UART {
  private:
   friend void RxCompleteCallbackWrapper(UART_HandleTypeDef* huart);
   friend void TxCompleteCallbackWrapper(UART_HandleTypeDef* huart);
+
+  static std::map<UART_HandleTypeDef*, UART*> ptr_map;
+  static UART* FindInstance(UART_HandleTypeDef* huart);
 };
 
 } /* namespace bsp */
