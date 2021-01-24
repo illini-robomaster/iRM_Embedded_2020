@@ -84,6 +84,16 @@ class Kalman {
  void Update(const Eigen::Matrix<float, yDims, 1>& observation);
 
 /**
+ * @brief		processing update and measure update.
+ *
+ * @param observation 	observation (z)
+ * @param input 	input of the system (u), default to be Zero
+ */
+ void Process(	const Eigen::Matrix<float, yDims, 1>& observation,
+		const Eigen::Matrix<float, uDims, 1>& input
+		= Eigen::VectorXf::Zero(uDims));
+
+/**
  * @brief 		getter to private variable x
  *
  * @return 		system current state x
@@ -157,6 +167,15 @@ void Kalman<xDims, yDims, uDims>::Update(
  x_ = x_ + K * (y - H_ * x_);
  P_ = (Eigen::Matrix<float, xDims, xDims>::Identity(xDims, xDims) - K * H_) * P_;
 }
+
+template <int xDims, int yDims, int uDims>
+void Kalman<xDims, yDims, uDims>::Process(
+		const Eigen::Matrix<float, yDims, 1>& y,
+		const Eigen::Matrix<float, uDims, 1>& u) {
+ Predict(u);
+ Update(y);
+}
+
 
 template <int xDims, int yDims, int uDims>
  const Eigen::Matrix<float, xDims, 1>& Kalman<xDims, yDims, uDims>::GetState(void) const {
