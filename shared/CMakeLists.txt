@@ -33,3 +33,7 @@ irm_add_board_specific_library(DJI_Board_TypeA_irm
     SOURCES ${IRM_SOURCES}
     INCLUDES ${IRM_INCLUDES})
 
+# Eigen interface library
+add_library(eigen3 INTERFACE)
+target_include_directories(eigen3 SYSTEM INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/eigen-3.3.9)

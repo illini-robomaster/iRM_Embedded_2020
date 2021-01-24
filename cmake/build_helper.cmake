@@ -58,7 +58,7 @@ function(irm_add_arm_executable name)
         COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
         DEPENDS ${name}.elf)
 
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
         find_program(ARM_GDB arm-none-eabi-gdb REQUIRED)
         add_custom_target(debug-${name}
             COMMAND ${ARM_GDB} $<TARGET_FILE:${name}.elf>
