@@ -28,7 +28,7 @@
 #define MAX_PRINT_LEN 128
 
 static bsp::UART* print_uart = NULL;
-static bsp::USB* print_usb = NULL;
+static bsp::VirtualUSB* print_usb = NULL;
 static char print_buffer[MAX_PRINT_LEN];
 
 void print_use_uart(UART_HandleTypeDef* huart) {
@@ -40,7 +40,7 @@ void print_use_uart(UART_HandleTypeDef* huart) {
 }
 
 void print_use_usb() {
-  if (!print_usb) print_usb = new bsp::USB();
+  if (!print_usb) print_usb = new bsp::VirtualUSB();
 
   print_usb->SetupTx(MAX_PRINT_LEN * 2);  // burst transfer size up to 2x max buffer size
   print_uart = NULL;

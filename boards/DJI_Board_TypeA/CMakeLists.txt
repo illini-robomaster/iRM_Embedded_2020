@@ -33,7 +33,9 @@ set(MCU_OPTIONS -mcpu=${MCU_ARCH} -mthumb -mthumb-interwork
 # ----- create board specific interface library -----#
 ######################################################
 add_library(${PROJECT_NAME}_interface INTERFACE)
-target_compile_definitions(${PROJECT_NAME}_interface INTERFACE ${MCU_LINE} ARM_MATH_CM4)
+target_compile_definitions(${PROJECT_NAME}_interface INTERFACE ${MCU_LINE}
+    ARM_MATH_CM4
+    BOARD_HAS_SD_FATFS BOARD_HAS_UART_DMA_DOUBLE_BUFFER)
 target_compile_options(${PROJECT_NAME}_interface INTERFACE ${MCU_OPTIONS})
 target_link_options(${PROJECT_NAME}_interface INTERFACE
     ${MCU_OPTIONS} -T${CMAKE_CURRENT_SOURCE_DIR}/${MCU_LINKER_SCRIPT})
