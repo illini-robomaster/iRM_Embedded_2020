@@ -18,9 +18,10 @@
  *                                                                          *
  ****************************************************************************/
 
+#include <cmath>
+
 #include "motor.h"
 
-#include "arm_math.h"
 #include "bsp_error_handler.h"
 #include "utils.h"
 
@@ -75,7 +76,7 @@ void MotorCANBase::TransmitOutput(const std::vector<MotorCANBase*>& motors) {
 float MotorCANBase::GetTheta() const { return theta_; }
 
 float MotorCANBase::GetThetaDelta(float target) const {
-  return wrap<float>(target - theta_, -PI, PI);
+  return wrap<float>(target - theta_, -M_PI, M_PI);
 }
 
 float MotorCANBase::GetOmega() const { return omega_; }
@@ -88,8 +89,8 @@ void Motor3508::UpdateData(const uint8_t data[]) {
   raw_current_get_ = data[4] << 8 | data[5];
   raw_temperature_ = data[6];
 
-  constexpr float THETA_SCALE = 2 * PI / 8192;  // digital -> rad
-  constexpr float OMEGA_SCALE = 2 * PI / 60;    // rpm -> rad / sec
+  constexpr float THETA_SCALE = 2 * M_PI / 8192;  // digital -> rad
+  constexpr float OMEGA_SCALE = 2 * M_PI / 60;    // rpm -> rad / sec
   theta_ = raw_theta * THETA_SCALE;
   omega_ = raw_omega * OMEGA_SCALE;
 }
@@ -111,7 +112,7 @@ void Motor6623::UpdateData(const uint8_t data[]) {
   raw_current_get_ = (data[2] << 8 | data[3]) * CURRENT_CORRECTION;
   raw_current_set_ = (data[4] << 8 | data[5]) * CURRENT_CORRECTION;
 
-  constexpr float THETA_SCALE = 2 * PI / 8192;
+  constexpr float THETA_SCALE = 2 * M_PI / 8192;
   theta_ = raw_theta * THETA_SCALE;
 }
 
@@ -142,8 +143,8 @@ void Motor2006::UpdateData(const uint8_t data[]) {
   const int16_t raw_omega = data[2] << 8 | data[3];
   raw_current_get_ = data[4] << 8 | data[5];
 
-  constexpr float THETA_SCALE = 2 * PI / 8192;  // digital -> rad
-  constexpr float OMEGA_SCALE = 2 * PI / 60;    // rpm -> rad / sec
+  constexpr float THETA_SCALE = 2 * M_PI / 8192;  // digital -> rad
+  constexpr float OMEGA_SCALE = 2 * M_PI / 60;    // rpm -> rad / sec
   theta_ = raw_theta * THETA_SCALE;
   omega_ = raw_omega * OMEGA_SCALE;
 }
