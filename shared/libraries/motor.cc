@@ -18,9 +18,9 @@
  *                                                                          *
  ****************************************************************************/
 
-#include <cmath>
-
 #include "motor.h"
+
+#include <cmath>
 
 #include "bsp_error_handler.h"
 #include "utils.h"
