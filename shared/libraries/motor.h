@@ -20,6 +20,9 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "bsp_can.h"
 #include "bsp_pwm.h"
 
@@ -50,7 +53,7 @@ class MotorCANBase : public MotorBase {
    * @param can    CAN instance
    * @param rx_id  CAN rx id
    */
-  MotorCANBase(bsp::CAN* can, uint16_t rx_id);
+  MotorCANBase(const std::shared_ptr<bsp::CAN>& can, uint16_t rx_id);
 
   /**
    * @brief update motor feedback data
@@ -102,14 +105,14 @@ class MotorCANBase : public MotorBase {
    * @param motors[]    array of CAN motor pointers
    * @param num_motors  number of motors to transmit
    */
-  static void TransmitOutput(MotorCANBase* motors[], uint8_t num_motors);
+  static void TransmitOutput(const std::vector<MotorCANBase*>& motors);
 
  protected:
   volatile float theta_;
   volatile float omega_;
 
  private:
-  bsp::CAN* can_;
+  std::shared_ptr<bsp::CAN> can_ = nullptr;
   uint16_t rx_id_;
   uint16_t tx_id_;
 };
@@ -119,8 +122,7 @@ class MotorCANBase : public MotorBase {
  */
 class Motor3508 : public MotorCANBase {
  public:
-  /* constructor wrapper over MotorCANBase */
-  Motor3508(bsp::CAN* can, uint16_t rx_id);
+  using MotorCANBase::MotorCANBase;
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
@@ -138,8 +140,7 @@ class Motor3508 : public MotorCANBase {
  */
 class Motor6623 : public MotorCANBase {
  public:
-  /* constructor wrapper over MotorCANBase */
-  Motor6623(bsp::CAN* can, uint16_t rx_id);
+  using MotorCANBase::MotorCANBase;
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */
@@ -162,8 +163,7 @@ class Motor6623 : public MotorCANBase {
  */
 class Motor2006 : public MotorCANBase {
  public:
-  /* constructor wrapper over MotorCANBase */
-  Motor2006(bsp::CAN* can, uint16_t rx_id);
+  using MotorCANBase::MotorCANBase;
   /* implements data update callback */
   void UpdateData(const uint8_t data[]) override final;
   /* implements data printout */

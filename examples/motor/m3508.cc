@@ -18,6 +18,8 @@
  *                                                                          *
  ****************************************************************************/
 
+#include <memory>
+
 #include "bsp_gpio.h"
 #include "bsp_print.h"
 #include "cmsis_os.h"
@@ -27,28 +29,25 @@
 #define KEY_GPIO_GROUP GPIOB
 #define KEY_GPIO_PIN GPIO_PIN_2
 
-bsp::CAN* can1 = NULL;
-control::MotorCANBase* motor = NULL;
-
-void RM_RTOS_Init() {
-  print_use_uart(&huart8);
-
-  can1 = new bsp::CAN(&hcan1, 0x201);
-  motor = new control::Motor3508(can1, 0x201);
-}
-
 void RM_RTOS_Default_Task(const void* args) {
   UNUSED(args);
-  control::MotorCANBase* motors[] = {motor};
 
-  bsp::GPIO key(KEY_GPIO_GROUP, GPIO_PIN_2);
+  print_use_uart(&huart8);
+
+  auto can1 = std::make_shared<bsp::CAN>(&hcan1, 0x201);
+  auto motor = std::make_unique<control::Motor3508>(can1, 0x201);
+  auto key = std::make_unique<bsp::GPIO>(KEY_GPIO_GROUP, GPIO_PIN_2);
+
+  const std::vector<control::MotorCANBase*> motors = {motor.get()};
+
   while (1) {
-    motor->PrintData();
-    if (key.Read())
+    const uint32_t start = osKernelSysTick();
+    if (key->Read())
       motor->SetOutput(800);
     else
       motor->SetOutput(0);
-    control::MotorCANBase::TransmitOutput(motors, 1);
-    osDelay(100);
+    control::MotorCANBase::TransmitOutput(motors);
+    motor->PrintData();
+    osDelayUntil(start + 10);
   }
 }
